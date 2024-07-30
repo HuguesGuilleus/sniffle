@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -16,13 +17,14 @@ import (
 
 type Fetcher interface {
 	FetchGET(ctx context.Context, url string) ([]byte, error)
+	Error(msg string, args ...any)
 }
 
 // Create a new standard fetcher.
 // - Log each HTTP request and error
 // - Put reponse in cacheBase
 // - Do not exed limit argument of concurent request
-func New(logger *slog.Logger, roundTripper http.RoundTripper, cacheBase string, limit int) Fetcher {
+func NewFetcher(logger *slog.Logger, roundTripper http.RoundTripper, cacheBase string, limit int) Fetcher {
 	f := &stdFetcher{logger, roundTripper, cacheBase, make(chan struct{}, limit)}
 
 	for range limit {
@@ -76,12 +78,7 @@ func (fetcher *stdFetcher) FetchGET(ctx context.Context, url string) ([]byte, er
 	}
 
 	// Save cache
-	query := ""
-	if request.URL.RawQuery != "" {
-		query = "?" + request.URL.Query().Encode()
-	}
-	pathHash := sha256.Sum256([]byte(request.URL.Path + query))
-	pathHex := hex.EncodeToString(pathHash[:])
+	pathHex := hashURL(request.URL)
 	cacheDir := filepath.Join(fetcher.cacheBase, request.URL.Scheme, request.URL.Host)
 	cachePath := filepath.Join(fetcher.cacheBase, request.URL.Scheme, request.URL.Host, pathHex)
 
@@ -103,7 +100,34 @@ func (fetcher *stdFetcher) FetchGET(ctx context.Context, url string) ([]byte, er
 		return nil, err
 	}
 
-	fetcher.logger.Info("http.ok", "url", url, "hash", pathHex)
+	fetcher.logger.Info("http.ok", "h", pathHex, "url", url)
 
 	return buff.Bytes(), err
+}
+
+func (fetcher *stdFetcher) Error(msg string, args ...any) {
+	fetcher.logger.Error(msg, args...)
+}
+
+func hashURL(u *url.URL) string {
+	query := ""
+	if u.RawQuery != "" {
+		query = "?" + u.Query().Encode()
+	}
+	hashArray := sha256.Sum256([]byte(u.Path + query))
+	return hex.EncodeToString(hashArray[:])
+}
+
+func FetchGETJSON(ctx context.Context, fetcher Fetcher, url string, v any) error {
+	data, err := fetcher.FetchGET(ctx, url)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(data, v); err != nil {
+		fetcher.Error("http.parseJson", "url", url, "err", err.Error())
+		return err
+	}
+
+	return nil
 }
