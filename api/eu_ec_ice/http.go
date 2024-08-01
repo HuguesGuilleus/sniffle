@@ -3,6 +3,7 @@ package eu_ec_ice
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sniffle/tool"
 	"sniffle/tool/country"
 	"time"
@@ -23,6 +24,9 @@ type ICEOut struct {
 	LastUpdate time.Time
 
 	Status string
+
+	// A sorted and uniq slice of categories
+	Categorie []string
 
 	// process
 
@@ -93,7 +97,6 @@ func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) 
 }
 
 func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*ICEOut, error) {
-	// ice := new(ICEOut)
 	ice := &ICEOut{
 		Year:      info.year,
 		Number:    info.number,
@@ -103,6 +106,9 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 	dto := &struct {
 		Status     string `json:"status"`
 		LastUpdate string `json:"latestUpdateDate"`
+		Categories []struct {
+			CategoryType string `json:"categoryType"`
+		} `json:"categories"`
 		Signatures struct {
 			Entry []struct {
 				Country country.Country `json:"countryCodeType"`
@@ -114,13 +120,20 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 		return nil, err
 	}
 
-	ice.Status = dto.Status
-
 	t, err := time.Parse("02/01/2006 15:04", dto.LastUpdate)
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse last update %w", err)
 	}
 	ice.LastUpdate = t
+
+	ice.Status = dto.Status
+
+	categories := make([]string, 0, len(dto.Categories))
+	for _, entry := range dto.Categories {
+		categories = append(categories, entry.CategoryType)
+	}
+	slices.Sort(categories)
+	ice.Categorie = slices.Compact(categories)
 
 	for _, entry := range dto.Signatures.Entry {
 		ice.Signature[entry.Country] = entry.Total

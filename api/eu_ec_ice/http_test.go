@@ -28,6 +28,12 @@ var fetcher = TestFetcher{
 	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000008": []byte(`{
 		"status": "ONGOING",
 		"latestUpdateDate": "24/07/2024 13:52",
+		"categories": [
+			{ "categoryType": "SANTE" },
+			{ "categoryType": "TRADE" },
+			{ "categoryType": "SANTE" },
+			{ "categoryType": "AGRI" }
+		],
 		"sosReport": {
 			"entry": [
 				{ "countryCodeType": "FI", "total": 2171 },
@@ -81,9 +87,9 @@ func TestFetchDetail(t *testing.T) {
 	assert.Equal(t, &ICEOut{
 		Year:       2024,
 		Number:     8,
-		Status:     "ONGOING",
-		Image:      []byte(`image8846`),
 		LastUpdate: time.Date(2024, time.July, 24, 13, 52, 0, 0, time.UTC),
+		Status:     "ONGOING",
+		Categorie:  []string{"AGRI", "SANTE", "TRADE"},
 
 		TotalSignature: 76176,
 		Signature: map[country.Country]uint{
@@ -115,5 +121,7 @@ func TestFetchDetail(t *testing.T) {
 			country.Estonia:     244,
 			country.Malta:       61,
 		},
+
+		Image: []byte(`image8846`),
 	}, ice)
 }
