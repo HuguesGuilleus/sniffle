@@ -5,10 +5,13 @@ import (
 	"fmt"
 )
 
-type Country int
+type Country uint
 
+// The List of Country.
+// The code can change, any no order
+// Can contain non UE country.
 const (
-	Invalid Country = iota + 1
+	Invalid Country = iota
 	Austria
 	Belgium
 	Bulgaria
@@ -52,7 +55,13 @@ func (c *Country) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (c Country) String() string { return country2iso[c] }
+func (c Country) String() string {
+	s := country2iso[c]
+	if s == "" {
+		return "??"
+	}
+	return s
+}
 
 var iso2Country = map[string]Country{
 	"AT": Austria,
