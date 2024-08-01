@@ -100,7 +100,7 @@ func (fetcher *stdFetcher) FetchGET(ctx context.Context, url string) ([]byte, er
 		return nil, err
 	}
 
-	fetcher.logger.Info("http.ok", "h", pathHex, "url", url)
+	fetcher.logger.Info("http.ok", "url", url, "h", pathHex)
 
 	return buff.Bytes(), err
 }

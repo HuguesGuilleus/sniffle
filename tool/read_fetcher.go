@@ -2,7 +2,9 @@ package tool
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net/url"
 	"os"
@@ -21,14 +23,18 @@ func ReadFetcher(logger *slog.Logger, cacheBase string) Fetcher {
 func (r readFetcher) FetchGET(ctx context.Context, u string) ([]byte, error) {
 	parsedURL, err := url.Parse(u)
 	if err != nil {
-		r.logger.Error("http.wrongURL", "u", u, "err", err)
+		r.logger.Warn("http.wrongURL", "u", u, "err", err)
 		return nil, fmt.Errorf("wrong URL syntax: %w", err)
 	}
 	p := filepath.Join(r.cacheBase, parsedURL.Scheme, parsedURL.Host, hashURL(parsedURL))
 
 	data, err := os.ReadFile(p)
 	if err != nil {
-		r.logger.Error("http.readFile", "url", u, "err", err)
+		if errors.Is(err, fs.ErrNotExist) {
+			r.logger.Warn("http.noFile", "url", u, "err", err)
+		} else {
+			r.logger.Error("http.readFile", "url", u, "err", err)
+		}
 		return nil, fmt.Errorf("read for url %q fail: %w", u, err)
 	}
 
