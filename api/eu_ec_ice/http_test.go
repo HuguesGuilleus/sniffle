@@ -2,32 +2,53 @@ package eu_ec_ice
 
 import (
 	"context"
+	"net/url"
 	"sniffle/tool/country"
-	. "sniffle/tool/testingtool"
+	"sniffle/tool/language"
+	"sniffle/tool/testingtool"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var fetcher = TestFetcher{
+var fetcher = testingtool.TestFetcher{
 	indexURL: []byte(`{
 		"entries": [
 			{
 				"year": "2024",
-				"number": "000009"
+				"number": "000008"
 			},
 			{
 				"year": "2024",
-				"number": "000008",
+				"number": "000009",
 				"logo": { "id": 8846 }
 			}
 		]
 	}`),
 	"https://register.eci.ec.europa.eu/core/api/register/logo/8846": []byte(`image8846`),
-	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000008": []byte(`{
+	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000009": []byte(`{
 		"status": "ONGOING",
 		"latestUpdateDate": "24/07/2024 13:52",
+		"linguisticVersions": [
+			{
+				"original": true,
+				"languageCode": "EN",
+				"title": "Title",
+				"objectives": "<p>objectives</p>",
+				"annexText": "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
+				"treaties": "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+				"website": "https://furfreeeurope.eu/"
+			},
+			{
+				"original": false,
+				"languageCode": "FR",
+				"title": "Titre",
+				"objectives": "<p>Objectifs</p>",
+				"annexText": "<ul><li>arg 1: PARCE QUE!!!</li><li>arg 2 ...</li></ul>",
+				"treaties": "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE"
+			}
+		],
 		"categories": [
 			{ "categoryType": "SANTE" },
 			{ "categoryType": "TRADE" },
@@ -72,24 +93,45 @@ func TestFetchIndex(t *testing.T) {
 	items, err := fetchIndex(context.Background(), fetcher)
 	assert.NoError(t, err)
 	assert.Equal(t, []indexItem{
-		{year: 2024, number: 9},
-		{year: 2024, number: 8, logoID: 8846},
+		{year: 2024, number: 8},
+		{year: 2024, number: 9, logoID: 8846},
 	}, items)
 }
 
 func TestFetchDetail(t *testing.T) {
 	ice, err := fetchDetail(context.Background(), fetcher, indexItem{
 		year:   2024,
-		number: 8,
+		number: 9,
 		logoID: 8846,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, &ICEOut{
 		Year:       2024,
-		Number:     8,
+		Number:     9,
 		LastUpdate: time.Date(2024, time.July, 24, 13, 52, 0, 0, time.UTC),
 		Status:     "ONGOING",
 		Categorie:  []string{"AGRI", "SANTE", "TRADE"},
+
+		Description: map[language.Langage]*Description{
+			language.English: {
+				Title: "Title",
+				Website: &url.URL{
+					Scheme: "https",
+					Host:   "furfreeeurope.eu",
+					Path:   "/",
+				},
+				Objective: "<p>objectives</p>",
+				Annex:     "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
+				Treaty:    "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+			},
+			language.French: {
+				Title:     "Titre",
+				Objective: "<p>Objectifs</p>",
+				Annex:     "<ul><li>arg 1: PARCE QUE!!!</li><li>arg 2 ...</li></ul>",
+				Treaty:    "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+			},
+		},
+		DescriptionOriginalLangage: language.English,
 
 		TotalSignature: 76176,
 		Signature: map[country.Country]uint{
@@ -124,4 +166,5 @@ func TestFetchDetail(t *testing.T) {
 
 		Image: []byte(`image8846`),
 	}, ice)
+	assert.Same(t, ice.Description[language.English], ice.GetOriginalDescription())
 }

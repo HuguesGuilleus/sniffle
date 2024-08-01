@@ -3,9 +3,12 @@ package eu_ec_ice
 import (
 	"context"
 	"fmt"
+	"html/template"
+	"net/url"
 	"slices"
 	"sniffle/tool"
 	"sniffle/tool/country"
+	"sniffle/tool/language"
 	"time"
 )
 
@@ -28,9 +31,12 @@ type ICEOut struct {
 	// A sorted and uniq slice of categories
 	Categorie []string
 
-	// process
+	// Description text in all language
+	Description map[language.Langage]*Description
+	// The based language used to write the ICE text.
+	DescriptionOriginalLangage language.Langage
 
-	// about text ...
+	// process
 
 	// Members
 
@@ -38,6 +44,13 @@ type ICEOut struct {
 	Signature      map[country.Country]uint
 
 	Image []byte
+}
+type Description struct {
+	Title     string
+	Website   *url.URL
+	Objective template.HTML
+	Annex     template.HTML
+	Treaty    string
 }
 
 func Fetch(ctx context.Context, fetcher tool.Fetcher) ([]*ICEOut, error) {
@@ -98,9 +111,10 @@ func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) 
 
 func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*ICEOut, error) {
 	ice := &ICEOut{
-		Year:      info.year,
-		Number:    info.number,
-		Signature: make(map[country.Country]uint),
+		Year:        info.year,
+		Number:      info.number,
+		Description: make(map[language.Langage]*Description),
+		Signature:   make(map[country.Country]uint),
 	}
 
 	dto := &struct {
@@ -109,6 +123,15 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 		Categories []struct {
 			CategoryType string `json:"categoryType"`
 		} `json:"categories"`
+		Description []struct {
+			Original  bool             `json:"original"`
+			Language  language.Langage `json:"languageCode"`
+			Title     string           `json:"title"`
+			Website   string           `json:"website"`
+			Objective string           `json:"objectives"`
+			Annex     string           `json:"annexText"`
+			Treaty    string           `json:"treaties"`
+		} `json:"linguisticVersions"`
 		Signatures struct {
 			Entry []struct {
 				Country country.Country `json:"countryCodeType"`
@@ -135,6 +158,19 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 	slices.Sort(categories)
 	ice.Categorie = slices.Compact(categories)
 
+	for _, desc := range dto.Description {
+		ice.Description[desc.Language] = &Description{
+			Title:     desc.Title,
+			Website:   tool.ParseURL(desc.Website),
+			Objective: tool.SecureHTML(desc.Objective),
+			Annex:     tool.SecureHTML(desc.Annex),
+			Treaty:    desc.Treaty,
+		}
+		if desc.Original {
+			ice.DescriptionOriginalLangage = desc.Language
+		}
+	}
+
 	for _, entry := range dto.Signatures.Entry {
 		ice.Signature[entry.Country] = entry.Total
 		ice.TotalSignature += entry.Total
@@ -150,4 +186,8 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 	}
 
 	return ice, nil
+}
+
+func (ice *ICEOut) GetOriginalDescription() *Description {
+	return ice.Description[ice.DescriptionOriginalLangage]
 }

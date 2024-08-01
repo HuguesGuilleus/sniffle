@@ -44,9 +44,7 @@ func renderSecureHTML(node *html.Node, buff *strings.Builder) {
 			for _, attr := range node.Attr {
 				if attr.Key == "href" {
 					rawURL = attr.Val
-					if u, _ := url.Parse(attr.Val); u != nil && (u.Scheme == "https" || u.Scheme == "http") {
-						parsedURL = u
-					}
+					parsedURL = ParseURL(attr.Val)
 					break
 				}
 			}
@@ -73,5 +71,21 @@ func renderSecureHTML(node *html.Node, buff *strings.Builder) {
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		renderSecureHTML(child, buff)
+	}
+}
+
+func ParseURL(s string) *url.URL {
+	if s == "" {
+		return nil
+	}
+	u, _ := url.Parse(s)
+	if u == nil {
+		return nil
+	}
+	switch u.Scheme {
+	case "https", "http":
+		return u
+	default:
+		return nil
 	}
 }

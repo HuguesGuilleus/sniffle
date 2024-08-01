@@ -2,8 +2,11 @@
 title: Get ICE
 ---
 
-Is a kind of petition addressed to European Commission. If more than one million
-signtaures collected in one year, the Commission must responds.
+Is a kind of petition (with 1 million signature milestone) addressed to European
+Commission
+
+- https://citizens-initiative.europa.eu/find-initiative_en
+- https://citizens-initiative.europa.eu/initiatives/details/2022/000002_en
 
 # Get the index
 
