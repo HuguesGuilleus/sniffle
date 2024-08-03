@@ -1,0 +1,3 @@
+package myhandler
+
+func staticPC() {}
