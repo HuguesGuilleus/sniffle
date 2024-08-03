@@ -39,6 +39,7 @@ const (
 	Sweden
 	Slovenia
 	Slovakia
+	UnitedKingdom
 )
 
 func (c *Country) UnmarshalJSON(data []byte) error {
@@ -91,34 +92,37 @@ var iso2Country = map[string]Country{
 	"SE": Sweden,
 	"SI": Slovenia,
 	"SK": Slovakia,
+
+	"GB": UnitedKingdom,
 }
 
 var country2iso = map[Country]string{
-	Austria:     "AT",
-	Belgium:     "BE",
-	Bulgaria:    "BG",
-	Cyprus:      "CY",
-	Czechia:     "CZ",
-	Germany:     "DE",
-	Denmark:     "DK",
-	Estonia:     "EE",
-	Spain:       "ES",
-	Finland:     "FI",
-	France:      "FR",
-	Greece:      "GR",
-	Croatia:     "HR",
-	Hungary:     "HU",
-	Ireland:     "IE",
-	Italy:       "IT",
-	Lithuania:   "LT",
-	Luxembourg:  "LU",
-	Latvia:      "LV",
-	Malta:       "MT",
-	Netherlands: "NL",
-	Poland:      "PL",
-	Portugal:    "PT",
-	Romania:     "RO",
-	Sweden:      "SE",
-	Slovenia:    "SI",
-	Slovakia:    "SK",
+	Austria:       "AT",
+	Belgium:       "BE",
+	Bulgaria:      "BG",
+	Cyprus:        "CY",
+	Czechia:       "CZ",
+	Germany:       "DE",
+	Denmark:       "DK",
+	Estonia:       "EE",
+	Spain:         "ES",
+	Finland:       "FI",
+	France:        "FR",
+	Greece:        "GR",
+	Croatia:       "HR",
+	Hungary:       "HU",
+	Ireland:       "IE",
+	Italy:         "IT",
+	Lithuania:     "LT",
+	Luxembourg:    "LU",
+	Latvia:        "LV",
+	Malta:         "MT",
+	Netherlands:   "NL",
+	Poland:        "PL",
+	Portugal:      "PT",
+	Romania:       "RO",
+	Sweden:        "SE",
+	Slovenia:      "SI",
+	Slovakia:      "SK",
+	UnitedKingdom: "GB",
 }
