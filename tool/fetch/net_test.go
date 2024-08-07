@@ -28,12 +28,12 @@ func TestNetNormal(t *testing.T) {
 	body, id, err := Net(fakeRoudnTrip{}, "cache", 0, 0).Fetch(context.Background(), u)
 	assert.NoError(t, err)
 	assert.Equal(t, "62caa69659", id)
-	assert.IsType(t, &os.File{}, body)
 	defer body.Close()
 
 	data, err := io.ReadAll(body)
 	assert.NoError(t, err)
 	assert.EqualValues(t, "body", data)
+	assert.IsType(t, &os.File{}, body)
 
 	assert.NoError(t, os.RemoveAll("cache"))
 }

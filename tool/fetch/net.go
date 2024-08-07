@@ -51,7 +51,7 @@ func (fetcher netFetcher) Fetch(ctx context.Context, u *url.URL) (io.ReadCloser,
 
 	response, err := fetcher.RoundTrip(request)
 	if err != nil {
-		return nil, "", err
+		return nil, logId, err
 	}
 	defer response.Body.Close()
 	saveMeta(fileID, &meta{u.String(), response.Status, time.Now(), response.Header})
