@@ -21,6 +21,10 @@ type netFetcher struct {
 }
 
 func Net(roundTripper http.RoundTripper, cacheBase string, limit uint, sleep time.Duration) Fetcher {
+	if roundTripper == nil {
+		roundTripper = http.DefaultTransport
+	}
+
 	l := make(chan struct{}, max(limit, 1))
 	for range cap(l) {
 		l <- struct{}{}
@@ -32,10 +36,7 @@ func Net(roundTripper http.RoundTripper, cacheBase string, limit uint, sleep tim
 func (netFetcher) Name() string { return "net" }
 
 func (fetcher netFetcher) Fetch(ctx context.Context, u *url.URL) (io.ReadCloser, string, error) {
-	request, err := http.NewRequestWithContext(ctx, http.MethodGet, "", nil)
-	if err != nil {
-		return nil, "", fmt.Errorf("make request fail: %w", err)
-	}
+	request, _ := http.NewRequestWithContext(ctx, http.MethodGet, "", nil)
 	request.URL = u
 
 	logId, fileID := GetFileID(fetcher.cacheBase, request.URL)

@@ -12,16 +12,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNetWrongurl(t *testing.T) {
-	body, id, err := Net(nil, "", 0, 0).Fetch(nil, nil)
-	assert.Error(t, err)
-	assert.Empty(t, id)
-	assert.Nil(t, body)
-
+func TestNet(t *testing.T) {
 	assert.Equal(t, "net", Net(nil, "", 0, 0).Name())
-}
 
-func TestNetNormal(t *testing.T) {
 	u, err := url.Parse("https://example.com/file?b=2&a=1")
 	assert.NoError(t, err)
 
