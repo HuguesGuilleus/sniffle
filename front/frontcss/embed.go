@@ -1,18 +1,21 @@
 package frontcss
 
 import (
+	"bytes"
 	"cmp"
 	"embed"
 	"fmt"
 	"io/fs"
 	"regexp"
 	"slices"
+
+	"github.com/tdewolff/minify/v2/css"
 )
 
 //go:embed *.css
 var files embed.FS
 
-var Style = func() (all []byte) {
+var Style = func() []byte {
 	r := regexp.MustCompile(`(_[\w\d]+)`)
 	m := map[string]string{
 		"_line":   ".3ex",
@@ -31,19 +34,25 @@ var Style = func() (all []byte) {
 	slices.SortFunc(entries, func(a, b fs.DirEntry) int {
 		return cmp.Compare(a.Name(), b.Name())
 	})
+	buff := bytes.Buffer{}
 	for _, entry := range entries {
 		data, err := fs.ReadFile(files, entry.Name())
 		if err != nil {
 			panic(err)
 		}
-		all = append(all, r.ReplaceAllFunc(data, func(s []byte) []byte {
-			out, ok := m[string(s)]
+		buff.WriteString(r.ReplaceAllStringFunc(string(data), func(s string) string {
+			out, ok := m[s]
 			if !ok {
 				panic(fmt.Sprintf("Not found %q in file %q", s, entry.Name()))
 			}
-			return []byte(out)
-		})...)
+			return out
+		}))
 	}
 
-	return
+	out := bytes.Buffer{}
+	if err := css.Minify(nil, &out, &buff, nil); err != nil {
+		panic(err.Error())
+	}
+
+	return out.Bytes()
 }()
