@@ -1,5 +1,39 @@
 body {
 	margin: 0;
 	font-family: 'Roboto', sans-serif;
-	background: #EEE;
+
+	background: _back;
+}
+
+.w {
+	max-width: 40rem;
+	margin-left: max(0%, calc(calc(100vw - 40rem) * .3));
+	padding: _sp;
+}
+
+h1 {
+	border: _colorA _line;
+	border-style: solid none;
+}
+
+a {
+	color: inherit;
+}
+
+a:hover {
+	background: _back1;
+	color: _color;
+}
+
+p {
+	text-indent: _sp;
+	text-align: justify;
+}
+
+.tag {
+	border: solid _line;
+	border: solid _line _colorA;
+	border-radius: _spThin;
+	padding: 0 _spThin;
+	font-weight: bolder;
 }

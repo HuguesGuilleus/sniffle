@@ -1,11 +1,27 @@
 {
 	"PageTop": "This is not an official european website.",
+	"InDev": "This page is actualy on development",
 	"AboutTextLink": "About",
-	"EU_EC_ICE_INDEX": {},
-	"EU_EC_ICE_ONE": {
-		"LastUpdate": "Last update: ",
-		"H1DescriptionGeneral": "General description",
-		"H1DescriptionAnnex": "Description annex",
-		"H1Signature": "Signature"
+	"HomeTitle": "Home page",
+	"HomeName": "home",
+
+	"EU": {
+		"Name": "European Union"
+	},
+
+	"EU_EC": {
+		"Name": "European Commission"
+	},
+
+	"EU_EC_ICE": {
+		"Name": "European Citizens' Initiative",
+		"INDEX": {},
+		"ONE": {
+			"LastUpdate": "Last update: ",
+			"H1DescriptionGeneral": "General description",
+			"H1DescriptionAnnex": "Description annex",
+			"H1Treaty": "Traité",
+			"H1Signature": "Signature"
+		}
 	}
 }

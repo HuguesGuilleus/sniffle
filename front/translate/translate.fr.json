@@ -1,11 +1,27 @@
 {
 	"PageTop": "Ce n'est pas un site officiel de l'union europénne.",
+	"InDev": "Cette page est actuellement en dévelopement",
 	"AboutTextLink": "À propos",
-	"EU_EC_ICE_INDEX": {},
-	"EU_EC_ICE_ONE": {
-		"LastUpdate": "Dernière modification\u202F: ",
-		"H1DescriptionGeneral": "Description générale",
-		"H1DescriptionAnnex": "Annexe",
-		"H1Signature": "Signature"
+	"HomeTitle": "Page d'Accueil",
+	"HomeName": "accueil",
+
+	"EU": {
+		"Name": "Union européenne"
+	},
+
+	"EU_EC": {
+		"Name": "Commission européenne"
+	},
+
+	"EU_EC_ICE": {
+		"Name": "Initiative citoyenne européenne",
+		"INDEX": {},
+		"ONE": {
+			"LastUpdate": "Dernière modification\u00A0: ",
+			"H1DescriptionGeneral": "Description générale",
+			"H1DescriptionAnnex": "Annexe",
+			"H1Treaty": "Treaty",
+			"H1Signature": "Signature"
+		}
 	}
 }

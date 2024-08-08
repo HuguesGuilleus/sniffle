@@ -1,37 +1,42 @@
 .topHeader {
-	background: black;
-	color: white;
 	padding: _spThin;
+	font-weight: bold;
+	background: _color;
+	color: _back;
 }
 
 .subHeader {
 	padding: _spThin;
-	background: black;
-	color: white;
+	background: _color;
+	font-weight: 900;
+	color: _back;
+	background-image:
+		repeating-linear-gradient(-45deg, _color 0 1ex, _color1 1ex 1.3ex);
 }
 
-.subHeader>div {
-	border: solid _line;
-	padding: _spThin;
-}
-
-.titles {
-	background: _colorGrey;
+header {
 	padding: _sp;
+	font-weight: bold;
+	background-image:
+		repeating-linear-gradient(0deg, _back 0 1ex, transparent 1ex 1.5ex),
+		repeating-linear-gradient(90deg, _back 0 1ex, _back1 1ex 1.5ex);
 }
 
-.titles>div {
-	padding: _spThin;
-}
-
-.titles>.ids>div {
+.headerId {
 	display: inline-block;
-	font-size: large;
-	background-color: _colorA;
 	margin: 0 _sp _sp 0;
+	padding: _spThin;
+	font-size: x-large;
+	background-color: _colorA;
 }
 
-.titles>.title {
+.headerTitle {
+	padding: _spThin;
 	font-size: xx-large;
-	background: _colorB;
+	background: _colorA;
+}
+
+.summary {
+	border: dashed _line _colorA;
+	padding: _sp;
 }

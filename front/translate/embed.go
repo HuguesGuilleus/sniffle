@@ -9,15 +9,29 @@ import (
 
 type Translation struct {
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
+	InDev         render.H `help:"This page is actualy on development"`
 	AboutTextLink render.H `help:"About text for link"`
+	HomeTitle     string   `help:"Home page link title"`
+	HomeName      render.H `help:"Home page link name"`
 
-	EU_EC_ICE_INDEX struct{}
+	EU struct {
+		Name string `help:"Name of European Union"`
+	}
 
-	EU_EC_ICE_ONE struct {
-		LastUpdate           render.H
-		H1DescriptionGeneral render.H
-		H1DescriptionAnnex   render.H
-		H1Signature          render.H
+	EU_EC struct {
+		Name string `help:"Name of European Commission"`
+	}
+
+	EU_EC_ICE struct {
+		Name  string `help:"Name of European Citizens' Initiative"`
+		INDEX struct{}
+		ONE   struct {
+			LastUpdate           render.H
+			H1DescriptionGeneral render.H
+			H1DescriptionAnnex   render.H
+			H1Treaty             render.H
+			H1Signature          render.H
+		}
 	}
 }
 

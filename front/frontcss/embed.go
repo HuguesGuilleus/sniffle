@@ -18,13 +18,18 @@ var files embed.FS
 var Style = func() []byte {
 	r := regexp.MustCompile(`(_[\w\d]+)`)
 	m := map[string]string{
-		"_line":   ".3ex",
-		"_spThin": ".7ex",
-		"_sp":     "2ex",
+		"_line":   ".1rem",
+		"_spThin": ".5rem",
+		"_sp":     "1rem",
 
-		"_colorA":    "#FFCC00", // EU original yellow
-		"_colorB":    "#2E98FF",
-		"_colorGrey": "lightgrey",
+		"_back":   "#EEE",
+		"_back1":  "#DDD",
+		"_color":  "black",
+		"_color1": "#222",
+
+		"_colorA": "#2E98FF",
+		// "_colorB":    "#FFCC00", // EU original yellow
+		// "_colorGrey": "lightgrey",
 	}
 
 	entries, err := files.ReadDir(".")
