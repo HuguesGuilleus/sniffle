@@ -112,7 +112,7 @@ func TestFetchDetail(t *testing.T) {
 		Status:     "ONGOING",
 		Categorie:  []string{"AGRI", "SANTE", "TRADE"},
 
-		Description: map[language.Langage]*Description{
+		Description: map[language.Language]*Description{
 			language.English: {
 				Title: "Title",
 				Website: &url.URL{

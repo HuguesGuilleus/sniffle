@@ -1,4 +1,11 @@
 {
 	"PageTop": "Ce n'est pas un site officiel de l'union europénne.",
-	"AboutTextLink": "À propos"
+	"AboutTextLink": "À propos",
+	"EU_EC_ICE_INDEX": {},
+	"EU_EC_ICE_ONE": {
+		"LastUpdate": "Dernière modification\u202F: ",
+		"H1DescriptionGeneral": "Description générale",
+		"H1DescriptionAnnex": "Annexe",
+		"H1Signature": "Signature"
+	}
 }

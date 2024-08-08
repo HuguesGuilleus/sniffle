@@ -1,0 +1,49 @@
+package component
+
+import (
+	"sniffle/tool"
+	"sniffle/tool/language"
+	"sniffle/tool/render"
+)
+
+type Page struct {
+	Language    language.Language
+	AllLanguage []language.Language
+
+	Title string
+	// The host path, with scheme, host (port if any).
+	// Ex: https://www.example.com/
+	HostURL string
+	// The base URL of the page, without the lang.
+	// Ex: /eu/ec/
+	BaseURL string
+
+	Body render.Node
+}
+
+// Render the page in
+func Html(t *tool.Tool, page *Page) {
+	data := render.Merge(render.No("html", render.A("lang", page.Language.String()),
+		render.N("head",
+			render.H(`<meta charset=utf-8>`+
+				`<meta name=viewport content="width=device-width,initial-scale=1.0">`+
+				`<link rel=stylesheet href=/style.css>`),
+			render.N("title", page.Title),
+			langAlternate(page.BaseURL, page.Language, page.AllLanguage),
+			End,
+		),
+		page.Body,
+	))
+	t.WriteFile(page.BaseURL+page.Language.String()+".html", data)
+}
+
+func langAlternate(url string, l language.Language, langs []language.Language) []render.Node {
+	return render.Slice(langs, func(_ int, ll language.Language) render.Node {
+		if ll == l {
+			return render.Z
+		}
+		return render.No("link", render.A("rel", "alternate").
+			A("hreflang", l.String()).
+			A("href", url+l.String()+".html"))
+	})
+}

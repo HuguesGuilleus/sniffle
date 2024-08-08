@@ -32,9 +32,9 @@ type ICEOut struct {
 	Categorie []string
 
 	// Description text in all language
-	Description map[language.Langage]*Description
+	Description map[language.Language]*Description
 	// The based language used to write the ICE text.
-	DescriptionOriginalLangage language.Langage
+	DescriptionOriginalLangage language.Language
 
 	// process
 
@@ -51,6 +51,20 @@ type Description struct {
 	Objective template.HTML
 	Annex     template.HTML
 	Treaty    string
+}
+
+func Do(ctx context.Context, t *tool.Tool) {
+	iceSlice, err := Fetch(ctx, t)
+	if err != nil {
+		t.Error("err", "err", err.Error())
+		return
+	}
+
+	for _, ice := range iceSlice {
+		for _, l := range t.Languages {
+			renderOne(t, ice, l)
+		}
+	}
 }
 
 func Fetch(ctx context.Context, fetcher tool.Fetcher) ([]*ICEOut, error) {
@@ -113,7 +127,7 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 	ice := &ICEOut{
 		Year:        info.year,
 		Number:      info.number,
-		Description: make(map[language.Langage]*Description),
+		Description: make(map[language.Language]*Description),
 		Signature:   make(map[country.Country]uint),
 	}
 
@@ -124,13 +138,13 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 			CategoryType string `json:"categoryType"`
 		} `json:"categories"`
 		Description []struct {
-			Original  bool             `json:"original"`
-			Language  language.Langage `json:"languageCode"`
-			Title     string           `json:"title"`
-			Website   string           `json:"website"`
-			Objective string           `json:"objectives"`
-			Annex     string           `json:"annexText"`
-			Treaty    string           `json:"treaties"`
+			Original  bool              `json:"original"`
+			Language  language.Language `json:"languageCode"`
+			Title     string            `json:"title"`
+			Website   string            `json:"website"`
+			Objective string            `json:"objectives"`
+			Annex     string            `json:"annexText"`
+			Treaty    string            `json:"treaties"`
 		} `json:"linguisticVersions"`
 		Signatures struct {
 			Entry []struct {

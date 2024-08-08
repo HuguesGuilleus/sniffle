@@ -5,9 +5,11 @@ import (
 	"log/slog"
 	"os"
 	"sniffle/api/eu_ec_ice"
+	"sniffle/front/frontcss"
 	"sniffle/myhandler"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
+	"sniffle/tool/language"
 	"sniffle/tool/writefile"
 	"time"
 )
@@ -20,8 +22,10 @@ func main() {
 	// fetcher := tool.NewFetcher(logger, http.DefaultTransport, "cache", 1)
 	// fetcher := tool.ReadFetcher(logger, "cache")
 
-	fetcher := tool.New(&tool.Config{
+	t := tool.New(&tool.Config{
 		Logger:    logger,
+		HostURL:   "https://sniffle.eu/",
+		Languages: []language.Language{language.English, language.French},
 		Writefile: writefile.Os("public"),
 		Fetcher: []fetch.Fetcher{
 			fetch.CacheOnly("cache"),
@@ -29,12 +33,13 @@ func main() {
 		},
 	})
 
-	ice, err := eu_ec_ice.Fetch(context.Background(), fetcher)
-	if err != nil {
-		logger.Error(err.Error())
-	}
+	t.WriteFile("style.css", frontcss.Style)
 
-	logger.Info("iceSlice.len", "len", len(ice))
+	eu_ec_ice.Do(context.Background(), t)
+	// ice, err := eu_ec_ice.Fetch(context.Background(), t)
+	// if err != nil {
+	// 	logger.Error(err.Error())
+	// }
 
-	fetcher.WriteFile("eu/ec/ice/file.txt", []byte("Hello World"))
+	// logger.Info("iceSlice.len", "len", len(ice))
 }

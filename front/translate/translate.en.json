@@ -1,4 +1,11 @@
 {
 	"PageTop": "This is not an official european website.",
-	"AboutTextLink": "About"
+	"AboutTextLink": "About",
+	"EU_EC_ICE_INDEX": {},
+	"EU_EC_ICE_ONE": {
+		"LastUpdate": "Last update: ",
+		"H1DescriptionGeneral": "General description",
+		"H1DescriptionAnnex": "Description annex",
+		"H1Signature": "Signature"
+	}
 }

@@ -53,6 +53,9 @@ func No(tags string, attr Attributes, children ...any) Node {
 	return Node{tags, attr, children}
 }
 
+// Create a zero node, that production nothing.
+var Z = Node{"!", nil, nil}
+
 // Merge all nodes to a HTML page.
 // So the root should be a HTML tag.
 func Merge(root Node) []byte {
@@ -61,6 +64,10 @@ func Merge(root Node) []byte {
 	return root.mergeSlice(h)
 }
 func (node *Node) mergeSlice(h []byte) []byte {
+	if node.tags == "!" {
+		return h
+	}
+
 	tagsSplited := strings.Split(node.tags, ".")
 	tagName := tagsSplited[0]
 
@@ -123,15 +130,22 @@ func (node *Node) mergeSlice(h []byte) []byte {
 			h = append(h, strconv.Itoa(child)...)
 		case uint:
 			h = append(h, strconv.FormatUint(uint64(child), 10)...)
+		case nil:
+			// Nothing
 		default:
 			h = append(h, fmt.Sprint(child)...)
 		}
 	}
 
 	// End tag
-	h = append(h, '<', '/')
-	h = append(h, tagName...)
-	h = append(h, '>')
+	switch tagName {
+	case "link", "img", "meta":
+		// Do not close
+	default:
+		h = append(h, '<', '/')
+		h = append(h, tagName...)
+		h = append(h, '>')
+	}
 
 	return h
 }
@@ -149,4 +163,12 @@ func Map[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
 	}
 
 	return children
+}
+
+func Slice[V any](s []V, f func(i int, v V) Node) []Node {
+	nodes := make([]Node, len(s))
+	for i, v := range s {
+		nodes[i] = f(i, v)
+	}
+	return nodes
 }

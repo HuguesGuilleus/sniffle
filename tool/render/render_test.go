@@ -19,6 +19,7 @@ func TestRender(t *testing.T) {
 		uint(42),
 		-1,
 		boolHTML(true),
+		nil,
 	))
 
 	assert.Equal(t, `<!DOCTYPE html>`+
@@ -39,6 +40,25 @@ func TestRender(t *testing.T) {
 		string(h))
 }
 
+func TestZ(t *testing.T) {
+	assert.Nil(t, Z.mergeSlice(nil))
+}
+
+func TestEmptyNode(t *testing.T) {
+	n := N("link")
+	assert.Equal(t, `<link>`, string(n.mergeSlice(nil)))
+}
+
+type boolHTML bool
+
+func (b boolHTML) HTML() H {
+	if b {
+		return "TRUE"
+	} else {
+		return "FALSE"
+	}
+}
+
 func TestMap(t *testing.T) {
 	m := map[int]bool{2: false, 1: true}
 	h := Merge(N("ul", Map(m, func(k int, v bool) Node {
@@ -52,12 +72,14 @@ func TestMap(t *testing.T) {
 		string(h))
 }
 
-type boolHTML bool
-
-func (b boolHTML) HTML() H {
-	if b {
-		return "TRUE"
-	} else {
-		return "FALSE"
-	}
+func TestSlice(t *testing.T) {
+	s := []bool{true, false}
+	assert.Equal(t,
+		[]Node{
+			{"code", nil, []any{true}},
+			{"code", nil, []any{false}},
+		},
+		Slice(s, func(i int, b bool) Node {
+			return N("code", b)
+		}))
 }

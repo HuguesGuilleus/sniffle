@@ -6,10 +6,10 @@ import (
 	"strings"
 )
 
-type Langage uint
+type Language uint
 
 const (
-	Invalid Langage = iota
+	Invalid Language = iota
 	Bulgarian
 	Croatian
 	Czech
@@ -37,7 +37,7 @@ const (
 )
 
 // https://en.wikipedia.org/wiki/Languages_of_the_European_Union#Official_EU_languages
-var language2iso = map[Langage]string{
+var language2iso = map[Language]string{
 	Bulgarian:  "bg",
 	Croatian:   "hr",
 	Czech:      "cs",
@@ -63,7 +63,7 @@ var language2iso = map[Langage]string{
 	Spanish:    "es",
 	Swedish:    "sv",
 }
-var iso2langage = map[string]Langage{
+var iso2language = map[string]Language{
 	"bg": Bulgarian,
 	"hr": Croatian,
 	"cs": Czech,
@@ -90,13 +90,13 @@ var iso2langage = map[string]Langage{
 	"sv": Swedish,
 }
 
-func (l *Langage) UnmarshalJSON(data []byte) error {
+func (l *Language) UnmarshalJSON(data []byte) error {
 	s := ""
 	if err := json.Unmarshal(data, &s); err != nil {
 		return fmt.Errorf("unmarshal langage code string: %w", err)
 	}
 
-	*l = iso2langage[strings.ToLower(s)]
+	*l = iso2language[strings.ToLower(s)]
 	if *l == Invalid {
 		return fmt.Errorf("unknwon langage %q", s)
 	}
@@ -104,7 +104,7 @@ func (l *Langage) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (l Langage) String() string {
+func (l Language) String() string {
 	s := language2iso[l]
 	if s == "" {
 		return "??"

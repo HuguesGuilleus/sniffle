@@ -1,0 +1,37 @@
+.topHeader {
+	background: black;
+	color: white;
+	padding: _spThin;
+}
+
+.subHeader {
+	padding: _spThin;
+	background: black;
+	color: white;
+}
+
+.subHeader>div {
+	border: solid _line;
+	padding: _spThin;
+}
+
+.titles {
+	background: _colorGrey;
+	padding: _sp;
+}
+
+.titles>div {
+	padding: _spThin;
+}
+
+.titles>.ids>div {
+	display: inline-block;
+	font-size: large;
+	background-color: _colorA;
+	margin: 0 _sp _sp 0;
+}
+
+.titles>.title {
+	font-size: xx-large;
+	background: _colorB;
+}

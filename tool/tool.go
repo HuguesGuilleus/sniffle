@@ -7,18 +7,27 @@ import (
 	"log/slog"
 	"net/url"
 	"sniffle/tool/fetch"
+	"sniffle/tool/language"
 	"sniffle/tool/writefile"
 )
 
 type Config struct {
-	Logger    *slog.Logger
+	Logger *slog.Logger
+
+	HostURL   string
+	Languages []language.Language
+
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
 }
 
 func New(config *Config) *Tool {
 	return &Tool{
-		Logger:    config.Logger,
+		Logger: config.Logger,
+
+		HostURL:   config.HostURL,
+		Languages: config.Languages,
+
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
 	}
@@ -31,6 +40,10 @@ func New(config *Config) *Tool {
 // - consider error as fatal: return nothing because the service cannot resolve it.
 type Tool struct {
 	*slog.Logger
+
+	HostURL   string
+	Languages []language.Language
+
 	writefile writefile.WriteFile
 	fetcher   []fetch.Fetcher
 }
