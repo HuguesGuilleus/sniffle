@@ -1,6 +1,7 @@
 package front
 
 import (
+	"context"
 	_ "embed"
 	"sniffle/front/frontcss"
 	"sniffle/tool"
@@ -9,7 +10,11 @@ import (
 //go:embed favicon.ico
 var favicon []byte
 
-func WriteAssets(t *tool.Tool) {
+//go:embed robots.txt
+var robots []byte
+
+func Do(_ context.Context, t *tool.Tool) {
 	t.WriteFile("favicon.ico", favicon)
+	t.WriteFile("robots.txt", robots)
 	t.WriteFile("style.css", frontcss.Style)
 }

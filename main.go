@@ -4,9 +4,9 @@ import (
 	"context"
 	"log/slog"
 	"os"
-	"sniffle/api/eu_ec_ice"
 	"sniffle/front"
 	"sniffle/myhandler"
+	"sniffle/service/eu_ec_ice"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
@@ -33,7 +33,7 @@ func main() {
 		},
 	})
 
-	front.WriteAssets(t)
+	front.Do(context.Background(), t)
 
 	eu_ec_ice.Do(context.Background(), t)
 	// ice, err := eu_ec_ice.Fetch(context.Background(), t)
