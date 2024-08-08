@@ -4,9 +4,8 @@ import (
 	"context"
 	"log/slog"
 	"os"
-	"sniffle/front"
 	"sniffle/myhandler"
-	"sniffle/service/eu_ec_ice"
+	"sniffle/service"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
@@ -16,13 +15,9 @@ import (
 
 func main() {
 	logger := slog.New(myhandler.New(os.Stdout, slog.LevelDebug))
-	// logger := slog.New(myhandler.New(os.Stdout, slog.LevelInfo))
+	// logger = slog.New(myhandler.New(os.Stdout, slog.LevelWarn))
 
-	// fetcher := tool.FallBackFetcher(logger, http.DefaultTransport, "cache", 1)
-	// fetcher := tool.NewFetcher(logger, http.DefaultTransport, "cache", 1)
-	// fetcher := tool.ReadFetcher(logger, "cache")
-
-	t := tool.New(&tool.Config{
+	config := tool.Config{
 		Logger:    logger,
 		HostURL:   "https://sniffle.eu/",
 		Languages: []language.Language{language.English, language.French},
@@ -31,15 +26,7 @@ func main() {
 			fetch.CacheOnly("cache"),
 			fetch.Net(nil, "cache", 1, time.Millisecond*100),
 		},
-	})
+	}
 
-	front.Do(context.Background(), t)
-
-	eu_ec_ice.Do(context.Background(), t)
-	// ice, err := eu_ec_ice.Fetch(context.Background(), t)
-	// if err != nil {
-	// 	logger.Error(err.Error())
-	// }
-
-	// logger.Info("iceSlice.len", "len", len(ice))
+	tool.Run(context.Background(), &config, service.List)
 }
