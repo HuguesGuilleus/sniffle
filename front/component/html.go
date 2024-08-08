@@ -27,7 +27,8 @@ func Html(t *tool.Tool, page *Page) {
 		render.N("head",
 			render.H(`<meta charset=utf-8>`+
 				`<meta name=viewport content="width=device-width,initial-scale=1.0">`+
-				`<link rel=stylesheet href=/style.css>`),
+				`<link rel=stylesheet href=/style.css>`+
+				`<link rel=icon href=/favicon.ico>`),
 			render.N("title", page.Title),
 			langAlternate(page.BaseURL, page.Language, page.AllLanguage),
 			End,

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"sniffle/api/eu_ec_ice"
-	"sniffle/front/frontcss"
+	"sniffle/front"
 	"sniffle/myhandler"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -33,7 +33,7 @@ func main() {
 		},
 	})
 
-	t.WriteFile("style.css", frontcss.Style)
+	front.WriteAssets(t)
 
 	eu_ec_ice.Do(context.Background(), t)
 	// ice, err := eu_ec_ice.Fetch(context.Background(), t)
