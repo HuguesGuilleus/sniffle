@@ -70,7 +70,9 @@ func (h *handler) Handle(_ context.Context, record slog.Record) error {
 	buff.WriteString(record.Time.UTC().Format("2006-01-02T15:04:05 "))
 	buff.WriteString(record.Level.String())
 	buff.WriteByte(' ')
+	buff.WriteByte('[')
 	quote(&buff, record.Message)
+	buff.WriteByte(']')
 
 	if h.level < slog.LevelInfo {
 		if f := runtime.FuncForPC(record.PC); f != nil {
@@ -79,7 +81,7 @@ func (h *handler) Handle(_ context.Context, record slog.Record) error {
 		}
 	}
 
-	h.attr.WriteTo(&buff)
+	buff.Write(h.attr.Bytes())
 
 	g := h.group.String()
 	record.Attrs(func(attr slog.Attr) bool {
