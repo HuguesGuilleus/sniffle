@@ -16,5 +16,5 @@ var robots []byte
 func Do(_ context.Context, t *tool.Tool) {
 	t.WriteFile("favicon.ico", favicon)
 	t.WriteFile("robots.txt", robots)
-	t.WriteFile("style.css", frontcss.Style)
+	t.WriteFile("style."+frontcss.StyleHash+".css", frontcss.Style)
 }

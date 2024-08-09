@@ -1,6 +1,7 @@
 package component
 
 import (
+	"sniffle/front/frontcss"
 	"sniffle/tool"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
@@ -21,14 +22,16 @@ type Page struct {
 	Body render.Node
 }
 
+var htmlHeadBegin = `<meta charset=utf-8>` +
+	`<meta name=viewport content="width=device-width,initial-scale=1.0">` +
+	`<link rel=stylesheet href=/style.` + frontcss.StyleHash + `.css>` +
+	`<link rel=icon href=/favicon.ico>`
+
 // Render the page in
 func Html(t *tool.Tool, page *Page) {
 	data := render.Merge(render.No("html", render.A("lang", page.Language.String()),
 		render.N("head",
-			render.H(`<meta charset=utf-8>`+
-				`<meta name=viewport content="width=device-width,initial-scale=1.0">`+
-				`<link rel=stylesheet href=/style.css>`+
-				`<link rel=icon href=/favicon.ico>`),
+			render.H(htmlHeadBegin),
 			render.N("title", page.Title),
 			render.No("meta", render.A("name", "description").A("content", page.Description)),
 			langAlternate(t.HostURL+page.BaseURL, page.Language, page.AllLanguage),

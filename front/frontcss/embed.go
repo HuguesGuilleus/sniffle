@@ -3,7 +3,9 @@ package frontcss
 import (
 	"bytes"
 	"cmp"
+	"crypto/sha256"
 	"embed"
+	"encoding/hex"
 	"fmt"
 	"io/fs"
 	"regexp"
@@ -61,4 +63,9 @@ var Style = func() []byte {
 	}
 
 	return out.Bytes()
+}()
+
+var StyleHash = func() string {
+	hash := sha256.Sum256(Style)
+	return hex.EncodeToString(hash[:4])
 }()
