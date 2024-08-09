@@ -19,6 +19,7 @@ func TestRender(t *testing.T) {
 		uint(42),
 		-1,
 		boolHTML(true),
+		[]H{"a", "b"},
 		nil,
 	))
 
@@ -36,6 +37,7 @@ func TestRender(t *testing.T) {
 		`42`+
 		`-1`+
 		`TRUE`+
+		`ab`+
 		`</body>`,
 		string(h))
 }

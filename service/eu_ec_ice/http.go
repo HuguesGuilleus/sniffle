@@ -61,10 +61,10 @@ func Do(ctx context.Context, t *tool.Tool) {
 		return
 	}
 
-	t.WriteFile("/eu/ec/ice/index.html", component.RedirectIndex(t.Languages))
+	component.RedirectIndex(t, "/eu/ec/ice/")
 
 	for _, ice := range iceSlice {
-		t.WriteFile(fmt.Sprintf("/eu/ec/ice/%d/%d/index.html", ice.Year, ice.Number), component.RedirectIndex(t.Languages))
+		component.RedirectIndex(t, fmt.Sprintf("/eu/ec/ice/%d/%d/index.html", ice.Year, ice.Number))
 		for _, l := range t.Languages {
 			renderOne(t, ice, l)
 		}

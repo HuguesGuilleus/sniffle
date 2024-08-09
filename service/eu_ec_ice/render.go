@@ -23,7 +23,6 @@ func renderOne(t *tool.Tool, ice *ICEOut, l language.Language) {
 		Language:    l,
 		AllLanguage: t.Languages,
 		Title:       desc.Title,
-		HostURL:     t.HostURL,
 		BaseURL:     fmt.Sprintf("/eu/ec/ice/%d/%d/", ice.Year, ice.Number),
 	}
 

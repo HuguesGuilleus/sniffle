@@ -120,6 +120,10 @@ func (node *Node) mergeSlice(h []byte) []byte {
 			for _, subChild := range child {
 				h = subChild.mergeSlice(h)
 			}
+		case []H:
+			for _, subChild := range child {
+				h = append(h, subChild...)
+			}
 		case HTML:
 			h = append(h, child.HTML()...)
 		case H:

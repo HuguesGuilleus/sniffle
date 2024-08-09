@@ -10,10 +10,10 @@ type Page struct {
 	Language    language.Language
 	AllLanguage []language.Language
 
-	Title string
-	// The host path, with scheme, host (port if any).
-	// Ex: https://www.example.com/
-	HostURL string
+	// <head> informations
+	Title       string
+	Description string
+
 	// The base URL of the page, without the lang.
 	// Ex: /eu/ec/
 	BaseURL string
@@ -30,6 +30,7 @@ func Html(t *tool.Tool, page *Page) {
 				`<link rel=stylesheet href=/style.css>`+
 				`<link rel=icon href=/favicon.ico>`),
 			render.N("title", page.Title),
+			render.No("meta", render.A("name", "description").A("content", page.Description)),
 			langAlternate(page.BaseURL, page.Language, page.AllLanguage),
 			End,
 		),

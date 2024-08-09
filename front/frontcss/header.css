@@ -27,10 +27,11 @@ header {
 	margin: 0 _sp _sp 0;
 	padding: _spThin;
 	font-size: x-large;
-	background-color: _colorA;
+	background: _colorA;
 }
 
 .headerTitle {
+	display: table;
 	padding: _spThin;
 	font-size: xx-large;
 	background: _colorA;

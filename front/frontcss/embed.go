@@ -27,7 +27,8 @@ var Style = func() []byte {
 		"_color":  "black",
 		"_color1": "#222",
 
-		"_colorA": "#2E98FF",
+		"_colorA":     "#2E98FF",
+		"_colorEdito": "orchid",
 		// "_colorB":    "#FFCC00", // EU original yellow
 		// "_colorGrey": "lightgrey",
 	}

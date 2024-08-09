@@ -4,6 +4,20 @@
 	"AboutTextLink": "À propos",
 	"HomeTitle": "Page d'Accueil",
 	"HomeName": "accueil",
+	"FooterBuild": "Construction\u00A0: ",
+
+	"ABOUT": {
+		"PageTitle": "À propos de ce site web",
+		"PageDescription": "Page d'information sur ce site web",
+		"Text": [
+			"<p>Ce site web extrait des informations légales de l'Union européenne pour les présenter simplement. Le but est une meilleure compréhension de cette organisation en suivant son activité. Étant en construction, il ne présente pas toutes les procédures.</p>",
+			"<p>Il ne présentera pas d'article éditorialisé (analyse, entretient...). Mais, il contiendra des indications en mauve sur la nature des objets affichés (ce qu'est un règlement, un amendement...).</p>",
+			"<hr>",
+			"<p class=noindent>Ce site web est créé par un citoyen français.</p>",
+			"<p class=noindent>Contact\u00A0: ghugues[at]netc[dot]fr</p>",
+			"<p class=noindent>Hébergeur\u00A0: OVH SAS\u202F; 2 rue Kellermann, 59100 Roubaix. France.</p>"
+		]
+	},
 
 	"EU": {
 		"Name": "Union européenne"

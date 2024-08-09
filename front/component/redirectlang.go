@@ -1,12 +1,12 @@
 package component
 
 import (
-	"sniffle/tool/language"
+	"sniffle/tool"
 	"strings"
 )
 
 // Create a redirect page for
-func RedirectIndex(langs []language.Language) []byte {
+func RedirectIndex(t *tool.Tool, base string) {
 	h := []byte(`<!DOCTYPE html>` +
 		`<html>` +
 		`<head>` +
@@ -16,7 +16,7 @@ func RedirectIndex(langs []language.Language) []byte {
 		`<body>` +
 		`<p>Choose a language:</p>`)
 
-	for _, l := range langs {
+	for _, l := range t.Languages {
 		h = append(h, `<a hreflang=`...)
 		h = append(h, l.String()...)
 		h = append(h, ` href=`...)
@@ -28,7 +28,7 @@ func RedirectIndex(langs []language.Language) []byte {
 
 	h = append(h, redirectIndexJs...)
 
-	return h
+	t.WriteFile(base+"index.html", h)
 }
 
 var redirectIndexJs = strings.NewReplacer("\n", "", "\t", "").Replace(`<script>

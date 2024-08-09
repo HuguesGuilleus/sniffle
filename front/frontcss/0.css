@@ -1,8 +1,19 @@
 body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
 	margin: 0;
 	font-family: 'Roboto', sans-serif;
-
 	background: _back;
+}
+
+.edito * {
+	border-color: _colorEdito !important;
+}
+
+.edito .headerId,
+.edito .headerTitle {
+	background: _colorEdito !important;
 }
 
 .w {
@@ -28,6 +39,14 @@ a:hover {
 p {
 	text-indent: _sp;
 	text-align: justify;
+}
+
+p.noindent {
+	text-indent: 0;
+}
+
+hr {
+	border-color: _colorA;
 }
 
 .tag {

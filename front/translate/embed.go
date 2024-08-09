@@ -13,6 +13,13 @@ type Translation struct {
 	AboutTextLink render.H `help:"About text for link"`
 	HomeTitle     string   `help:"Home page link title"`
 	HomeName      render.H `help:"Home page link name"`
+	FooterBuild   render.H `help:"In Footer, before build date"`
+
+	ABOUT struct {
+		PageTitle       string     `help:"Header title"`
+		PageDescription string     `help:"head description"`
+		Text            []render.H `help:"page content"`
+	} `help:"Website about page"`
 
 	EU struct {
 		Name string `help:"Name of European Union"`
