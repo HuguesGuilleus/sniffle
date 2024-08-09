@@ -58,6 +58,11 @@ func TestDate(t *testing.T) {
 		string(n.mergeSlice(nil)))
 }
 
+func TestArray(t *testing.T) {
+	n := N("_", []any{1, "A", true})
+	assert.Equal(t, `<_>1Atrue</_>`, string(n.mergeSlice(nil)))
+}
+
 func TestEmptyNode(t *testing.T) {
 	n := N("link")
 	assert.Equal(t, `<link>`, string(n.mergeSlice(nil)))

@@ -118,43 +118,7 @@ func (node *Node) mergeSlice(h []byte) []byte {
 
 	// Children
 	for _, child := range node.children {
-		switch child := child.(type) {
-		case Node:
-			h = child.mergeSlice(h)
-		case []Node:
-			for _, subChild := range child {
-				h = subChild.mergeSlice(h)
-			}
-		case []H:
-			for _, subChild := range child {
-				h = append(h, subChild...)
-			}
-		case HTML:
-			h = append(h, child.HTML()...)
-		case H:
-			h = append(h, child...)
-		case string:
-			h = append(h, html.EscapeString(child)...)
-		case int:
-			h = append(h, strconv.Itoa(child)...)
-		case uint:
-			h = append(h, strconv.FormatUint(uint64(child), 10)...)
-		case time.Time:
-			h = append(h, `<time datetime=`...)
-			if child.Location() == DateZone {
-				h = child.AppendFormat(h, `2006-01-02>2006-01-02`)
-			} else {
-				child = child.UTC().Truncate(time.Second)
-				h = child.AppendFormat(h, `2006-01-02T15:04:05Z`)
-				h = append(h, `>`...)
-				h = child.AppendFormat(h, `2006-01-02 15:04:05 UTC`)
-			}
-			h = append(h, `</time>`...)
-		case nil:
-			// Nothing
-		default:
-			h = append(h, fmt.Sprint(child)...)
-		}
+		h = renderChild(h, child)
 	}
 
 	// End tag
@@ -167,6 +131,50 @@ func (node *Node) mergeSlice(h []byte) []byte {
 		h = append(h, '>')
 	}
 
+	return h
+}
+func renderChild(h []byte, child any) []byte {
+	switch child := child.(type) {
+	case Node:
+		h = child.mergeSlice(h)
+	case []Node:
+		for _, subChild := range child {
+			h = subChild.mergeSlice(h)
+		}
+	case HTML:
+		h = append(h, child.HTML()...)
+	case H:
+		h = append(h, child...)
+	case []H:
+		for _, subChild := range child {
+			h = append(h, subChild...)
+		}
+	case string:
+		h = append(h, html.EscapeString(child)...)
+	case int:
+		h = append(h, strconv.Itoa(child)...)
+	case uint:
+		h = append(h, strconv.FormatUint(uint64(child), 10)...)
+	case time.Time:
+		h = append(h, `<time datetime=`...)
+		if child.Location() == DateZone {
+			h = child.AppendFormat(h, `2006-01-02>2006-01-02`)
+		} else {
+			child = child.UTC().Truncate(time.Second)
+			h = child.AppendFormat(h, `2006-01-02T15:04:05Z`)
+			h = append(h, `>`...)
+			h = child.AppendFormat(h, `2006-01-02 15:04:05 UTC`)
+		}
+		h = append(h, `</time>`...)
+	case nil:
+		// Nothing
+	case []any:
+		for _, subChild := range child {
+			h = renderChild(h, subChild)
+		}
+	default:
+		h = append(h, fmt.Sprint(child)...)
+	}
 	return h
 }
 
