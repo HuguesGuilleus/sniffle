@@ -32,6 +32,9 @@
 		"INDEX": {},
 		"ONE": {
 			"LastUpdate": "Last update: ",
+			"LinkOfficial": "Official page",
+			"LinkSupport": "Support page",
+			"LinkWebsite": "Organisator website",
 			"H1DescriptionGeneral": "General description",
 			"H1DescriptionAnnex": "Description annex",
 			"H1Treaty": "Traité",

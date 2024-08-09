@@ -51,12 +51,13 @@ type ECIOut struct {
 	Image []byte
 }
 type Description struct {
-	Title     string
-	PlainDesc string
-	Website   *url.URL
-	Objective template.HTML
-	Annex     template.HTML
-	Treaty    string
+	Title       string
+	PlainDesc   string
+	SupportLink string
+	Website     *url.URL
+	Objective   template.HTML
+	Annex       template.HTML
+	Treaty      string
 }
 
 func Do(ctx context.Context, t *tool.Tool) {
@@ -147,13 +148,14 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 			CategoryType string `json:"categoryType"`
 		} `json:"categories"`
 		Description []struct {
-			Original  bool              `json:"original"`
-			Language  language.Language `json:"languageCode"`
-			Title     string            `json:"title"`
-			Website   string            `json:"website"`
-			Objective string            `json:"objectives"`
-			Annex     string            `json:"annexText"`
-			Treaty    string            `json:"treaties"`
+			Original    bool              `json:"original"`
+			Language    language.Language `json:"languageCode"`
+			Title       string            `json:"title"`
+			SupportLink string            `json:"supportLink"`
+			Website     string            `json:"website"`
+			Objective   string            `json:"objectives"`
+			Annex       string            `json:"annexText"`
+			Treaty      string            `json:"treaties"`
 		} `json:"linguisticVersions"`
 		Signatures struct {
 			UpdateDate dtoDate `json:"updateDate"`
@@ -179,12 +181,13 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 
 	for _, desc := range dto.Description {
 		eci.Description[desc.Language] = &Description{
-			Title:     desc.Title,
-			PlainDesc: securehtml.Text(desc.Objective, 200),
-			Website:   securehtml.ParseURL(desc.Website),
-			Objective: securehtml.Secure(desc.Objective),
-			Annex:     securehtml.Secure(desc.Annex),
-			Treaty:    desc.Treaty,
+			Title:       desc.Title,
+			PlainDesc:   securehtml.Text(desc.Objective, 200),
+			SupportLink: desc.SupportLink,
+			Website:     securehtml.ParseURL(desc.Website),
+			Objective:   securehtml.Secure(desc.Objective),
+			Annex:       securehtml.Secure(desc.Annex),
+			Treaty:      desc.Treaty,
 		}
 		if desc.Original {
 			eci.DescriptionOriginalLangage = desc.Language

@@ -31,6 +31,14 @@ a {
 	color: inherit;
 }
 
+a.box {
+	display: inline-block;
+	margin-top: _sp;
+	margin-right: _sp;
+	padding: _line _sp;
+	background: _colorA;
+}
+
 a:hover {
 	background: _back1;
 	color: _color;

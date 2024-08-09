@@ -47,6 +47,19 @@ func TestZ(t *testing.T) {
 	assert.Nil(t, Z.mergeSlice(nil))
 }
 
+func TestIf(t *testing.T) {
+	n := If(false, func() Node { return N("img") })
+	assert.Nil(t, n.mergeSlice(nil))
+	n = If(true, func() Node { return N("img") })
+	assert.Equal(t, `<img>`, string(n.mergeSlice(nil)))
+}
+func TestIfElse(t *testing.T) {
+	n := IfElse(true, func() Node { return N("a") }, func() Node { return N("b") })
+	assert.Equal(t, `<a></a>`, string(n.mergeSlice(nil)))
+	n = IfElse(false, func() Node { return N("a") }, func() Node { return N("b") })
+	assert.Equal(t, `<b></b>`, string(n.mergeSlice(nil)))
+}
+
 func TestTime(t *testing.T) {
 	n := N("b", time.Date(2024, time.February, 14, 20, 21, 32, 1, time.FixedZone("TEST", 10)))
 	assert.Equal(t, `<b><time datetime=2024-02-14T20:21:22Z>2024-02-14 20:21:22 UTC</time></b>`,

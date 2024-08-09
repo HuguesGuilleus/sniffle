@@ -61,6 +61,23 @@ func No(tags string, attr Attributes, children ...any) Node {
 // Create a zero node, that production nothing.
 var Z = Node{"!", nil, nil}
 
+// If b is true, return f call else return Z.
+func If(b bool, f func() Node) Node {
+	if b {
+		return f()
+	}
+	return Z
+}
+
+// If b is true, return yes call else return no call.
+func IfElse(b bool, yes, no func() Node) Node {
+	if b {
+		return yes()
+	} else {
+		return no()
+	}
+}
+
 // Merge all nodes to a HTML page.
 // So the root should be a HTML tag.
 func Merge(root Node) []byte {

@@ -39,6 +39,7 @@ var fetcher = testingtool.TestFetcher{
 				"objectives": "<p>objectives</p>",
 				"annexText": "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
 				"treaties": "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+				"supportLink": "https://eci.ec.europa.eu/043/public/?lg=fr",
 				"website": "https://furfreeeurope.eu/"
 			},
 			{
@@ -116,7 +117,8 @@ func TestFetchDetail(t *testing.T) {
 
 		Description: map[language.Language]*Description{
 			language.English: {
-				Title: "Title",
+				Title:       "Title",
+				SupportLink: "https://eci.ec.europa.eu/043/public/?lg=fr",
 				Website: &url.URL{
 					Scheme: "https",
 					Host:   "furfreeeurope.eu",

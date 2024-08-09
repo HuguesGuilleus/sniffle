@@ -34,6 +34,9 @@ type Translation struct {
 		INDEX struct{}
 		ONE   struct {
 			LastUpdate           render.H
+			LinkOfficial         render.H `help:"Official page link"`
+			LinkSupport          render.H `help:"Support page link"`
+			LinkWebsite          render.H `help:"Organisator website link"`
 			H1DescriptionGeneral render.H
 			H1DescriptionAnnex   render.H
 			H1Treaty             render.H
