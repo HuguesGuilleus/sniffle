@@ -1,4 +1,4 @@
-package eu_ec_ice
+package eu_ec_eci
 
 import (
 	"context"
@@ -19,7 +19,7 @@ const (
 	logoURL   = "https://register.eci.ec.europa.eu/core/api/register/logo/%d"
 )
 
-type ICEOut struct {
+type ECIOut struct {
 	// Identifier
 	Year   int
 	Number int
@@ -34,7 +34,7 @@ type ICEOut struct {
 
 	// Description text in all language
 	Description map[language.Language]*Description
-	// The based language used to write the ICE text.
+	// The based language used to write the ECI text.
 	DescriptionOriginalLangage language.Language
 
 	// process
@@ -55,38 +55,38 @@ type Description struct {
 }
 
 func Do(ctx context.Context, t *tool.Tool) {
-	iceSlice, err := Fetch(ctx, t)
+	eciSlice, err := Fetch(ctx, t)
 	if err != nil {
 		t.Error("err", "err", err.Error())
 		return
 	}
 
-	component.RedirectIndex(t, "/eu/ec/ice/")
+	component.RedirectIndex(t, "/eu/ec/eci/")
 
-	for _, ice := range iceSlice {
-		component.RedirectIndex(t, fmt.Sprintf("/eu/ec/ice/%d/%d/index.html", ice.Year, ice.Number))
+	for _, eci := range eciSlice {
+		component.RedirectIndex(t, fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number))
 		for _, l := range t.Languages {
-			renderOne(t, ice, l)
+			renderOne(t, eci, l)
 		}
 	}
 }
 
-func Fetch(ctx context.Context, fetcher tool.Fetcher) ([]*ICEOut, error) {
+func Fetch(ctx context.Context, fetcher tool.Fetcher) ([]*ECIOut, error) {
 	items, err := fetchIndex(ctx, fetcher)
 	if err != nil {
 		return nil, err
 	}
 
-	iceSlice := make([]*ICEOut, 0, len(items))
+	eciSlice := make([]*ECIOut, 0, len(items))
 	for _, info := range items {
-		ice, err := fetchDetail(ctx, fetcher, info)
+		eci, err := fetchDetail(ctx, fetcher, info)
 		if err != nil {
 			return nil, err
 		}
-		iceSlice = append(iceSlice, ice)
+		eciSlice = append(eciSlice, eci)
 	}
 
-	return iceSlice, nil
+	return eciSlice, nil
 }
 
 type indexItem struct {
@@ -95,7 +95,7 @@ type indexItem struct {
 	logoID int
 }
 
-// Get all ICE item to after get all details.
+// Get all ECI item to after get all details.
 func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) {
 	dto := struct {
 		Entries []struct {
@@ -127,8 +127,8 @@ func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) 
 	return items, nil
 }
 
-func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*ICEOut, error) {
-	ice := &ICEOut{
+func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*ECIOut, error) {
+	eci := &ECIOut{
 		Year:        info.year,
 		Number:      info.number,
 		Description: make(map[language.Language]*Description),
@@ -165,19 +165,19 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse last update %w", err)
 	}
-	ice.LastUpdate = t
+	eci.LastUpdate = t
 
-	ice.Status = dto.Status
+	eci.Status = dto.Status
 
 	categories := make([]string, 0, len(dto.Categories))
 	for _, entry := range dto.Categories {
 		categories = append(categories, entry.CategoryType)
 	}
 	slices.Sort(categories)
-	ice.Categorie = slices.Compact(categories)
+	eci.Categorie = slices.Compact(categories)
 
 	for _, desc := range dto.Description {
-		ice.Description[desc.Language] = &Description{
+		eci.Description[desc.Language] = &Description{
 			Title:     desc.Title,
 			Website:   tool.ParseURL(desc.Website),
 			Objective: tool.SecureHTML(desc.Objective),
@@ -185,13 +185,13 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 			Treaty:    desc.Treaty,
 		}
 		if desc.Original {
-			ice.DescriptionOriginalLangage = desc.Language
+			eci.DescriptionOriginalLangage = desc.Language
 		}
 	}
 
 	for _, entry := range dto.Signatures.Entry {
-		ice.Signature[entry.Country] = entry.Total
-		ice.TotalSignature += entry.Total
+		eci.Signature[entry.Country] = entry.Total
+		eci.TotalSignature += entry.Total
 	}
 
 	// Image
@@ -200,12 +200,12 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*IC
 		if err != nil {
 			return nil, err
 		}
-		ice.Image = img
+		eci.Image = img
 	}
 
-	return ice, nil
+	return eci, nil
 }
 
-func (ice *ICEOut) GetOriginalDescription() *Description {
-	return ice.Description[ice.DescriptionOriginalLangage]
+func (eci *ECIOut) GetOriginalDescription() *Description {
+	return eci.Description[eci.DescriptionOriginalLangage]
 }

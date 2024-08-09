@@ -1,4 +1,4 @@
-package eu_ec_ice
+package eu_ec_eci
 
 import (
 	"fmt"
@@ -11,11 +11,11 @@ import (
 	"strings"
 )
 
-func renderOne(t *tool.Tool, ice *ICEOut, l language.Language) {
-	desc := ice.Description[l]
+func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
+	desc := eci.Description[l]
 
 	if desc == nil {
-		t.Error("data.err", "err", "ice.Description[] is nil", "lang", l.String(), "year", ice.Year, "nb", ice.Number)
+		t.Error("data.err", "err", "eci.Description[] is nil", "lang", l.String(), "year", eci.Year, "nb", eci.Number)
 		return
 	}
 
@@ -23,7 +23,7 @@ func renderOne(t *tool.Tool, ice *ICEOut, l language.Language) {
 		Language:    l,
 		AllLanguage: t.Languages,
 		Title:       desc.Title,
-		BaseURL:     fmt.Sprintf("/eu/ec/ice/%d/%d/", ice.Year, ice.Number),
+		BaseURL:     fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number),
 	}
 
 	tr := translate.AllTranslation[l]
@@ -46,10 +46,10 @@ func renderOne(t *tool.Tool, ice *ICEOut, l language.Language) {
 						"ec"),
 					" / ",
 					render.No("a",
-						render.A("href", "/eu/ec/ice/").A("title", tr.EU_EC_ICE.Name),
-						"ice"),
+						render.A("href", "/eu/ec/eci/").A("title", tr.EU_EC_ECI.Name),
+						"eci"),
 				),
-				render.N("div.headerId", ice.Year, "/", ice.Number)),
+				render.N("div.headerId", eci.Year, "/", eci.Number)),
 			render.N("div.headerTitle", desc.Title),
 		),
 
@@ -57,24 +57,24 @@ func renderOne(t *tool.Tool, ice *ICEOut, l language.Language) {
 
 		render.N("div.w",
 			render.N("div.summary",
-				render.N("div", "Status: ", render.N("span.tag", ice.Status)),
-				render.N("div", tr.EU_EC_ICE.ONE.LastUpdate, ice.LastUpdate),
-				render.N("div", "Categories: ", strings.Join(ice.Categorie, ", ")),
+				render.N("div", "Status: ", render.N("span.tag", eci.Status)),
+				render.N("div", tr.EU_EC_ECI.ONE.LastUpdate, eci.LastUpdate),
+				render.N("div", "Categories: ", strings.Join(eci.Categorie, ", ")),
 			),
 
-			render.N("h1", tr.EU_EC_ICE.ONE.H1DescriptionGeneral),
+			render.N("h1", tr.EU_EC_ECI.ONE.H1DescriptionGeneral),
 			// website
 			render.N("div.text", desc.Objective),
 			// image link
 
-			render.N("h1", tr.EU_EC_ICE.ONE.H1DescriptionAnnex),
+			render.N("h1", tr.EU_EC_ECI.ONE.H1DescriptionAnnex),
 			render.N("div.text", desc.Annex),
 
-			render.N("h1", tr.EU_EC_ICE.ONE.H1Treaty),
+			render.N("h1", tr.EU_EC_ECI.ONE.H1Treaty),
 			render.N("div.text", desc.Treaty),
 
-			render.N("h1", tr.EU_EC_ICE.ONE.H1Signature),
-			render.N("ul", render.Map(ice.Signature, func(c country.Country, sig uint) render.Node {
+			render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
+			render.N("ul", render.Map(eci.Signature, func(c country.Country, sig uint) render.Node {
 				return render.N("li", "Country ", c.String(), ": ", sig)
 			}),
 			),

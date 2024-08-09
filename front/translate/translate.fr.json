@@ -27,14 +27,14 @@
 		"Name": "Commission européenne"
 	},
 
-	"EU_EC_ICE": {
+	"EU_EC_ECI": {
 		"Name": "Initiative citoyenne européenne",
 		"INDEX": {},
 		"ONE": {
 			"LastUpdate": "Dernière modification\u00A0: ",
 			"H1DescriptionGeneral": "Description générale",
 			"H1DescriptionAnnex": "Annexe",
-			"H1Treaty": "Treaty",
+			"H1Treaty": "Traité",
 			"H1Signature": "Signature"
 		}
 	}

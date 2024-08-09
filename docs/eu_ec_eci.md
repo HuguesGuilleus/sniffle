@@ -1,5 +1,5 @@
 ---
-title: Get ICE
+title: Get ECI
 ---
 
 Is a kind of petition (with 1 million signature milestone) addressed to European
@@ -24,7 +24,7 @@ GET https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/0/0
 => JSON response
 ```
 
-# Detail of one ICE
+# Detail of one ECI
 
 ```txt
 GET https://register.eci.ec.europa.eu/core/api/register/details/:year/:number

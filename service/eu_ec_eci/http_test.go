@@ -1,4 +1,4 @@
-package eu_ec_ice
+package eu_ec_eci
 
 import (
 	"context"
@@ -99,13 +99,13 @@ func TestFetchIndex(t *testing.T) {
 }
 
 func TestFetchDetail(t *testing.T) {
-	ice, err := fetchDetail(context.Background(), fetcher, indexItem{
+	eci, err := fetchDetail(context.Background(), fetcher, indexItem{
 		year:   2024,
 		number: 9,
 		logoID: 8846,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, &ICEOut{
+	assert.Equal(t, &ECIOut{
 		Year:       2024,
 		Number:     9,
 		LastUpdate: time.Date(2024, time.July, 24, 13, 52, 0, 0, time.UTC),
@@ -165,6 +165,6 @@ func TestFetchDetail(t *testing.T) {
 		},
 
 		Image: []byte(`image8846`),
-	}, ice)
-	assert.Same(t, ice.Description[language.English], ice.GetOriginalDescription())
+	}, eci)
+	assert.Same(t, eci.Description[language.English], eci.GetOriginalDescription())
 }

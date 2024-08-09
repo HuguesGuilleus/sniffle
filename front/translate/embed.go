@@ -29,7 +29,7 @@ type Translation struct {
 		Name string `help:"Name of European Commission"`
 	}
 
-	EU_EC_ICE struct {
+	EU_EC_ECI struct {
 		Name  string `help:"Name of European Citizens' Initiative"`
 		INDEX struct{}
 		ONE   struct {
