@@ -9,6 +9,7 @@ import (
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/writefile"
+	"strings"
 )
 
 type Config struct {
@@ -25,7 +26,7 @@ func New(config *Config) *Tool {
 	return &Tool{
 		Logger: config.Logger,
 
-		HostURL:   config.HostURL,
+		HostURL:   strings.TrimRight(config.HostURL, "/"),
 		Languages: config.Languages,
 
 		writefile: config.Writefile,
@@ -41,6 +42,8 @@ func New(config *Config) *Tool {
 type Tool struct {
 	*slog.Logger
 
+	// The host URL, whithout the training slash.
+	// Ex: https://www.example.com
 	HostURL   string
 	Languages []language.Language
 

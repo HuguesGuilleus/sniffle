@@ -31,16 +31,16 @@ func Html(t *tool.Tool, page *Page) {
 				`<link rel=icon href=/favicon.ico>`),
 			render.N("title", page.Title),
 			render.No("meta", render.A("name", "description").A("content", page.Description)),
-			langAlternate(page.BaseURL, page.Language, page.AllLanguage),
+			langAlternate(t.HostURL+page.BaseURL, page.Language, page.AllLanguage),
 		),
 		page.Body,
 	))
 	t.WriteFile(page.BaseURL+page.Language.String()+".html", data)
 }
 
-func langAlternate(url string, l language.Language, langs []language.Language) []render.Node {
-	return render.Slice(langs, func(_ int, ll language.Language) render.Node {
-		if ll == l {
+func langAlternate(url string, pageLang language.Language, langs []language.Language) []render.Node {
+	return render.Slice(langs, func(_ int, l language.Language) render.Node {
+		if pageLang == l {
 			return render.Z
 		}
 		return render.No("link", render.A("rel", "alternate").
