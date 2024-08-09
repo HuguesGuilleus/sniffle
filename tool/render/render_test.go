@@ -2,6 +2,7 @@ package render
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -44,6 +45,17 @@ func TestRender(t *testing.T) {
 
 func TestZ(t *testing.T) {
 	assert.Nil(t, Z.mergeSlice(nil))
+}
+
+func TestTime(t *testing.T) {
+	n := N("b", time.Date(2024, time.February, 14, 20, 21, 32, 1, time.FixedZone("TEST", 10)))
+	assert.Equal(t, `<b><time datetime=2024-02-14T20:21:22Z>2024-02-14 20:21:22 UTC</time></b>`,
+		string(n.mergeSlice(nil)))
+}
+func TestDate(t *testing.T) {
+	n := N("b", time.Date(2024, time.February, 14, 0, 0, 0, 0, DateZone))
+	assert.Equal(t, `<b><time datetime=2024-02-14>2024-02-14</time></b>`,
+		string(n.mergeSlice(nil)))
 }
 
 func TestEmptyNode(t *testing.T) {

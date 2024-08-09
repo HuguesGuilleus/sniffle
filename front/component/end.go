@@ -13,7 +13,7 @@ var (
 	end []byte
 	End render.H = func() render.H {
 		buff := bytes.Buffer{}
-		buff.WriteString(`<script defer>`)
+		buff.WriteString(`<script>`)
 		if err := js.Minify(nil, &buff, bytes.NewReader(end), nil); err != nil {
 			panic(err)
 		}

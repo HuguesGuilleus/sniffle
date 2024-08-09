@@ -32,7 +32,6 @@ func Html(t *tool.Tool, page *Page) {
 			render.N("title", page.Title),
 			render.No("meta", render.A("name", "description").A("content", page.Description)),
 			langAlternate(page.BaseURL, page.Language, page.AllLanguage),
-			End,
 		),
 		page.Body,
 	))

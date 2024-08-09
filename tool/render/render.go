@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Used to indicate that this string is already escaped, or the HTML content is safe.
@@ -17,6 +18,10 @@ type H = template.HTML
 type HTML interface {
 	HTML() H
 }
+
+// A fake time zone to indicate that this thime, is a date.
+// So hour, minute, seconds and milisecond must be ignored.
+var DateZone = time.FixedZone("DATE", 0)
 
 // Attributes, pair of key value.
 // Key is considerated as same.
@@ -134,6 +139,17 @@ func (node *Node) mergeSlice(h []byte) []byte {
 			h = append(h, strconv.Itoa(child)...)
 		case uint:
 			h = append(h, strconv.FormatUint(uint64(child), 10)...)
+		case time.Time:
+			h = append(h, `<time datetime=`...)
+			if child.Location() == DateZone {
+				h = child.AppendFormat(h, `2006-01-02>2006-01-02`)
+			} else {
+				child = child.UTC().Truncate(time.Second)
+				h = child.AppendFormat(h, `2006-01-02T15:04:05Z`)
+				h = append(h, `>`...)
+				h = child.AppendFormat(h, `2006-01-02 15:04:05 UTC`)
+			}
+			h = append(h, `</time>`...)
 		case nil:
 			// Nothing
 		default:
