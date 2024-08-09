@@ -23,6 +23,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 		Language:    l,
 		AllLanguage: t.Languages,
 		Title:       desc.Title,
+		Description: desc.PlainDesc,
 		BaseURL:     fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number),
 	}
 

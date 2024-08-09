@@ -1,16 +1,17 @@
-package tool
+package securehtml
 
 import (
 	"html/template"
 	"net/url"
+	"sniffle/tool/render"
 	"strings"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
 
-// Secure HTML by escape unknown markup and by removing attribute.
-func SecureHTML(src string) template.HTML {
+// Secure Secure by escape unknown markup and by removing attribute.
+func Secure(src string) render.H {
 	root, err := html.Parse(strings.NewReader(src))
 	if err != nil {
 		return template.HTML(html.EscapeString(src))
@@ -71,6 +72,27 @@ func renderSecureHTML(node *html.Node, buff *strings.Builder) {
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		renderSecureHTML(child, buff)
+	}
+}
+
+func Text(src string, limit int) string {
+	root, err := html.Parse(strings.NewReader(src))
+	if err != nil {
+		return src
+	}
+	buff := strings.Builder{}
+	plainText(root, &buff, limit)
+	if buff.Len() > limit {
+		return buff.String()[:limit]
+	}
+	return buff.String()
+}
+func plainText(node *html.Node, buff *strings.Builder, limit int) {
+	if node.Type == html.TextNode {
+		buff.WriteString(node.Data)
+	}
+	for child := node.FirstChild; child != nil && buff.Len() < limit; child = child.NextSibling {
+		plainText(child, buff, limit)
 	}
 }
 

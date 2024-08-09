@@ -11,6 +11,7 @@ import (
 	"sniffle/tool/country"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
+	"sniffle/tool/securehtml"
 	"time"
 )
 
@@ -51,6 +52,7 @@ type ECIOut struct {
 }
 type Description struct {
 	Title     string
+	PlainDesc string
 	Website   *url.URL
 	Objective template.HTML
 	Annex     template.HTML
@@ -178,9 +180,10 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 	for _, desc := range dto.Description {
 		eci.Description[desc.Language] = &Description{
 			Title:     desc.Title,
-			Website:   tool.ParseURL(desc.Website),
-			Objective: tool.SecureHTML(desc.Objective),
-			Annex:     tool.SecureHTML(desc.Annex),
+			PlainDesc: securehtml.Text(desc.Objective, 200),
+			Website:   securehtml.ParseURL(desc.Website),
+			Objective: securehtml.Secure(desc.Objective),
+			Annex:     securehtml.Secure(desc.Annex),
 			Treaty:    desc.Treaty,
 		}
 		if desc.Original {
