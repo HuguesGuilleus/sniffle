@@ -10,6 +10,7 @@ import (
 	"sniffle/tool"
 	"sniffle/tool/country"
 	"sniffle/tool/language"
+	"sniffle/tool/render"
 	"time"
 )
 
@@ -43,6 +44,8 @@ type ECIOut struct {
 
 	TotalSignature uint
 	Signature      map[country.Country]uint
+	// Date of the last organisators signatures update.
+	SignaturesUpdate time.Time
 
 	Image []byte
 }
@@ -136,8 +139,8 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 	}
 
 	dto := &struct {
-		Status     string `json:"status"`
-		LastUpdate string `json:"latestUpdateDate"`
+		Status     string  `json:"status"`
+		LastUpdate dtoTime `json:"latestUpdateDate"`
 		Categories []struct {
 			CategoryType string `json:"categoryType"`
 		} `json:"categories"`
@@ -151,7 +154,8 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 			Treaty    string            `json:"treaties"`
 		} `json:"linguisticVersions"`
 		Signatures struct {
-			Entry []struct {
+			UpdateDate dtoDate `json:"updateDate"`
+			Entry      []struct {
 				Country country.Country `json:"countryCodeType"`
 				Total   uint            `json:"total"`
 			} `json:"entry"`
@@ -161,12 +165,7 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 		return nil, err
 	}
 
-	t, err := time.Parse("02/01/2006 15:04", dto.LastUpdate)
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse last update %w", err)
-	}
-	eci.LastUpdate = t
-
+	eci.LastUpdate = dto.LastUpdate.Time
 	eci.Status = dto.Status
 
 	categories := make([]string, 0, len(dto.Categories))
@@ -189,6 +188,7 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 		}
 	}
 
+	eci.SignaturesUpdate = dto.Signatures.UpdateDate.Time
 	for _, entry := range dto.Signatures.Entry {
 		eci.Signature[entry.Country] = entry.Total
 		eci.TotalSignature += entry.Total
@@ -208,4 +208,30 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 
 func (eci *ECIOut) GetOriginalDescription() *Description {
 	return eci.Description[eci.DescriptionOriginalLangage]
+}
+
+type dtoDate struct {
+	Time time.Time
+}
+
+func (dto *dtoDate) UnmarshalText(data []byte) error {
+	t, err := time.ParseInLocation("02/01/2006", string(data), render.DateZone)
+	if err != nil {
+		return err
+	}
+	dto.Time = t
+	return nil
+}
+
+type dtoTime struct {
+	Time time.Time
+}
+
+func (dto *dtoTime) UnmarshalText(data []byte) error {
+	t, err := time.Parse("02/01/2006 15:04", string(data))
+	if err != nil {
+		return err
+	}
+	dto.Time = t
+	return nil
 }

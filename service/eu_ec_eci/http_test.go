@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"sniffle/tool/country"
 	"sniffle/tool/language"
+	"sniffle/tool/render"
 	"sniffle/tool/testingtool"
 	"testing"
 	"time"
@@ -56,6 +57,7 @@ var fetcher = testingtool.TestFetcher{
 			{ "categoryType": "AGRI" }
 		],
 		"sosReport": {
+			"updateDate": "24/07/2024",
 			"entry": [
 				{ "countryCodeType": "FI", "total": 2171 },
 				{ "countryCodeType": "RO", "total": 1362 },
@@ -133,7 +135,8 @@ func TestFetchDetail(t *testing.T) {
 		},
 		DescriptionOriginalLangage: language.English,
 
-		TotalSignature: 76176,
+		TotalSignature:   76176,
+		SignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
 		Signature: map[country.Country]uint{
 			country.Finland:     2171,
 			country.Romania:     1362,
