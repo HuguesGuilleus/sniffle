@@ -8,31 +8,35 @@ import (
 
 type Language uint
 
+// Langue constants.
+// The order can change, and can be undense.
+// Invalid is always == 0
 const (
 	Invalid Language = iota
+	// Sorted by name in own language
 	Bulgarian
-	Croatian
+	Spanish
 	Czech
 	Danish
-	Dutch
-	English
-	Estonian
-	Finnish
-	French
 	German
+	Estonian
 	Greek
-	Hungarian
+	English
+	French
 	Irish
+	Croatian
 	Italian
 	Latvian
 	Lithuanian
+	Hungarian
 	Maltese
+	Dutch
 	Polish
 	Portuguese
 	Romanian
 	Slovak
 	Slovene
-	Spanish
+	Finnish
 	Swedish
 )
 
@@ -63,30 +67,41 @@ var language2iso = map[Language]string{
 	Spanish:    "es",
 	Swedish:    "sv",
 }
+
+// Two ascii letter of the ISO language code.
+// If unknwo return "??"
+func (l Language) String() string {
+	s := language2iso[l]
+	if s == "" {
+		return "??"
+	}
+	return s
+}
+
 var iso2language = map[string]Language{
 	"bg": Bulgarian,
-	"hr": Croatian,
 	"cs": Czech,
 	"da": Danish,
-	"nl": Dutch,
+	"de": German,
+	"el": Greek,
 	"en": English,
+	"es": Spanish,
 	"et": Estonian,
 	"fi": Finnish,
 	"fr": French,
-	"de": German,
-	"el": Greek,
-	"hu": Hungarian,
 	"ga": Irish,
+	"hr": Croatian,
+	"hu": Hungarian,
 	"it": Italian,
-	"lv": Latvian,
 	"lt": Lithuanian,
+	"lv": Latvian,
 	"mt": Maltese,
+	"nl": Dutch,
 	"pl": Polish,
 	"pt": Portuguese,
 	"ro": Romanian,
 	"sk": Slovak,
 	"sl": Slovene,
-	"es": Spanish,
 	"sv": Swedish,
 }
 
@@ -104,10 +119,38 @@ func (l *Language) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (l Language) String() string {
-	s := language2iso[l]
+var language2human = map[Language]string{
+	Bulgarian:  "Български",
+	Spanish:    "Español",
+	Czech:      "Čeština",
+	Danish:     "Dansk",
+	German:     "Deutsch",
+	Estonian:   "Eesti",
+	Greek:      "Ελληνικά",
+	English:    "English",
+	French:     "Français",
+	Irish:      "Gaeilge",
+	Croatian:   "Hrvatski",
+	Italian:    "Italiano",
+	Latvian:    "Latviešu",
+	Lithuanian: "Lietuvių",
+	Hungarian:  "Magyar",
+	Maltese:    "Malti",
+	Dutch:      "Nederlands",
+	Polish:     "Polski",
+	Portuguese: "Português",
+	Romanian:   "Română",
+	Slovak:     "Slovenčina",
+	Slovene:    "Slovenščina",
+	Finnish:    "Suomi",
+	Swedish:    "Svenska",
+}
+
+// The name of the langue in this langue.
+func (l Language) Human() string {
+	s := language2human[l]
 	if s == "" {
-		return "??"
+		return "_LANGUAGE_"
 	}
 	return s
 }
