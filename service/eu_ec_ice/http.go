@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/url"
 	"slices"
+	"sniffle/front/component"
 	"sniffle/tool"
 	"sniffle/tool/country"
 	"sniffle/tool/language"
@@ -60,7 +61,10 @@ func Do(ctx context.Context, t *tool.Tool) {
 		return
 	}
 
+	t.WriteFile("/eu/ec/ice/index.html", component.RedirectIndex(t.Languages))
+
 	for _, ice := range iceSlice {
+		t.WriteFile(fmt.Sprintf("/eu/ec/ice/%d/%d/index.html", ice.Year, ice.Number), component.RedirectIndex(t.Languages))
 		for _, l := range t.Languages {
 			renderOne(t, ice, l)
 		}
