@@ -37,6 +37,17 @@ header {
 	background: _colorA;
 }
 
+.headerLangs {
+	display: table;
+	margin-top: _sp;
+	background: _back1;
+}
+
+.headerOneLang {
+	display: inline-block;
+	padding: 0 _sp;
+}
+
 .summary {
 	border: dashed _line _colorA;
 	padding: _sp;
