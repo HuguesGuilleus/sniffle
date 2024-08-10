@@ -20,7 +20,6 @@ type Translation struct {
 	} `help:"Website about page"`
 
 	HOME struct {
-		ShortName       string `help:"home text link, in lowercase"`
 		Name            string `help:"Full Home text link"`
 		PageDescription string `help:"Website home page head description"`
 	} `help:"website home page"`
@@ -35,8 +34,11 @@ type Translation struct {
 
 	EU_EC_ECI struct {
 		Name  string `help:"Name of European Citizens' Initiative"`
-		INDEX struct{}
-		ONE   struct {
+		INDEX struct {
+			Name            string
+			PageDescription string
+		} `help:"ECI index page"`
+		ONE struct {
 			LastUpdate           render.H
 			LinkOfficial         render.H `help:"Official page link"`
 			LinkSupport          render.H `help:"Support page link"`

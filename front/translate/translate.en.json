@@ -18,7 +18,6 @@
 	},
 
 	"HOME": {
-		"ShortName": "home",
 		"Name": "Home page",
 		"PageDescription": "Website home page"
 	},
@@ -33,7 +32,10 @@
 
 	"EU_EC_ECI": {
 		"Name": "European Citizens' Initiative",
-		"INDEX": {},
+		"INDEX": {
+			"Name": "European Citizens' Initiative List",
+			"PageDescription": "The list of all european citizens' initiative"
+		},
 		"ONE": {
 			"LastUpdate": "Last update: ",
 			"LinkOfficial": "Official page",

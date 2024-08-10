@@ -46,6 +46,10 @@ func TestRender(t *testing.T) {
 func TestZ(t *testing.T) {
 	assert.Nil(t, Z.mergeSlice(nil))
 }
+func TestExclamation(t *testing.T) {
+	n := N("!", 1)
+	assert.Equal(t, `1`, string(n.mergeSlice(nil)))
+}
 
 func TestIf(t *testing.T) {
 	n := If(false, func() Node { return N("img") })

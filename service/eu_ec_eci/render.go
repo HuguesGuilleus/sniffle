@@ -1,7 +1,9 @@
 package eu_ec_eci
 
 import (
+	"cmp"
 	"fmt"
+	"slices"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
@@ -10,6 +12,50 @@ import (
 	"sniffle/tool/render"
 	"strings"
 )
+
+func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
+	slices.SortFunc(eciSlice, func(a, b *ECIOut) int {
+		return cmp.Or(
+			cmp.Compare(b.Year, a.Year),
+			cmp.Compare(b.Number, a.Number),
+		)
+	})
+
+	tr := translate.AllTranslation[l]
+	page := component.Page{
+		Language:    l,
+		AllLanguage: t.Languages,
+		Title:       tr.EU_EC_ECI.INDEX.Name,
+		Description: tr.EU_EC_ECI.INDEX.PageDescription,
+		BaseURL:     "/eu/ec/eci/",
+	}
+
+	page.Body = render.N("body",
+		component.TopHeader(l),
+		component.InDevHeader(l),
+		component.Header(t.Languages, l, idNamespace(l),
+			render.Z,
+			tr.EU_EC_ECI.INDEX.Name),
+		render.N("ul.w",
+			render.Slice(eciSlice, func(_ int, eci *ECIOut) render.Node {
+				return render.N("li",
+					render.No("a", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
+						eci.Year, "/", eci.Number,
+						" [", eci.Status, "] ",
+						render.IfElse(eci.Description[l] != nil, func() render.Node {
+							return render.N("span", eci.Description[l].Title)
+						}, func() render.Node {
+							return render.N("span", "???")
+						}),
+					),
+				)
+			}),
+		),
+		component.Footer(l),
+	)
+
+	component.Html(t, &page)
+}
 
 func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
@@ -31,25 +77,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	page.Body = render.N("body",
 		component.TopHeader(l),
 		component.InDevHeader(l),
-		component.Header(t.Languages, l,
-			render.N("div.headerId",
-				render.No("a",
-					render.A("href", "/"+l.String()+".html").A("title", tr.HOME.Name),
-					tr.HOME.ShortName),
-				" / ",
-				render.No("a",
-					render.A("href", "/eu/"+l.String()+".html").A("title", tr.EU.Name),
-					"eu"),
-				" / ",
-				render.No("a",
-					render.A("href", "/eu/ec/"+l.String()+".html").A("title", tr.EU_EC.Name),
-					"ec"),
-				" / ",
-				render.No("a",
-					render.A("href", "/eu/ec/eci/"+l.String()+".html").A("title", tr.EU_EC_ECI.Name),
-					"eci"),
-			),
-			render.N("div.headerId", eci.Year, "/", eci.Number), desc.Title),
+		component.Header(t.Languages, l, idNamespace(l),
+			render.N("div.headerId", eci.Year, "/", eci.Number),
+			desc.Title),
 
 		render.N("div.w",
 			render.N("div.summary",
@@ -91,4 +121,22 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	)
 
 	component.Html(t, &page)
+}
+
+func idNamespace(l language.Language) render.Node {
+	tr := translate.AllTranslation[l]
+	return render.N("div.headerId",
+		component.HomeAnchor(l),
+		render.No("a",
+			render.A("href", "/eu/"+l.String()+".html").A("title", tr.EU.Name),
+			"eu"),
+		" / ",
+		render.No("a",
+			render.A("href", "/eu/ec/"+l.String()+".html").A("title", tr.EU_EC.Name),
+			"ec"),
+		" / ",
+		render.No("a",
+			render.A("href", "/eu/ec/eci/"+l.String()+".html").A("title", tr.EU_EC_ECI.Name),
+			"eci"),
+	)
 }

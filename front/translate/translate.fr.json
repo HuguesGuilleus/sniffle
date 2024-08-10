@@ -18,7 +18,6 @@
 	},
 
 	"HOME": {
-		"ShortName": "accueil",
 		"Name": "Page d'accueil",
 		"PageDescription": "Page d'accueil du site web"
 	},
@@ -33,7 +32,10 @@
 
 	"EU_EC_ECI": {
 		"Name": "Initiative citoyenne européenne",
-		"INDEX": {},
+		"INDEX": {
+			"Name": "Liste des Initiative citoyenne européenne",
+			"PageDescription": "La liste complète de toute les initiative citoyenne européenne"
+		},
 		"ONE": {
 			"LastUpdate": "Dernière modification\u00A0: ",
 			"LinkOfficial": "Page officielle",

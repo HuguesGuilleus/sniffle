@@ -5,18 +5,31 @@ import (
 	"fmt"
 	"sniffle/front/component"
 	"sniffle/tool"
+	"sniffle/tool/render"
 )
 
 func Do(ctx context.Context, t *tool.Tool) {
 	eciSlice := fetchAll(ctx, t)
 
 	component.RedirectIndex(t, "/eu/ec/eci/")
+	for _, l := range t.Languages {
+		renderIndex(t, eciSlice, l)
+	}
 
+	years := make(map[int]bool)
 	for _, eci := range eciSlice {
+		years[eci.Year] = true
 		component.RedirectIndex(t, fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number))
 		for _, l := range t.Languages {
 			renderOne(t, eci, l)
 		}
+		if eci.ImageName != "" {
+			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s", eci.Year, eci.Number, eci.ImageName), eci.ImageData)
+		}
+	}
+
+	for y := range years {
+		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/index.html", y), render.Back)
 	}
 }
 

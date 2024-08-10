@@ -51,6 +51,7 @@ type Node struct {
 
 // Create a Node.
 // Tags pattern is: tagName.class1.class2.class3
+// If tags == "!", to print only the children without tag.
 func N(tags string, children ...any) Node { return Node{tags, nil, children} }
 
 // Create a Node with options.
@@ -87,6 +88,9 @@ func Merge(root Node) []byte {
 }
 func (node *Node) mergeSlice(h []byte) []byte {
 	if node.tags == "!" {
+		for _, child := range node.children {
+			h = renderChild(h, child)
+		}
 		return h
 	}
 
