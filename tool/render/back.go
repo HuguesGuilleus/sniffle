@@ -1,9 +1,9 @@
 package render
 
 // A static page to redirect to the parent
-const Back = `<!DOCTYPE html><html>` +
+var Back = []byte(`<!DOCTYPE html><html>` +
 	`<script>` +
 	`location=".."` +
 	`</script>` +
 	`<body>` +
-	`<a id=a href=..>Redirect</a>`
+	`<a id=a href=..>Redirect</a>`)

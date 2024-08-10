@@ -2,9 +2,7 @@
 	"PageTop": "This is not an official european website.",
 	"InDev": "This page is actualy on development",
 	"AboutTextLink": "About",
-	"HomeTitle": "Home page",
-	"HomeName": "home",
-	"FooterBuild": "Build: ",
+	"FooterBuild": "Last page build: ",
 
 	"ABOUT": {
 		"PageTitle": "About this website",
@@ -17,6 +15,12 @@
 			"<p class=noindent>Contact: ghugues[at]netc[dot]fr</p>",
 			"<p class=noindent>Host: OVH SAS; 2 rue Kellermann, 59100 Roubaix. France.</p>"
 		]
+	},
+
+	"HOME": {
+		"ShortName": "home",
+		"Name": "Home page",
+		"PageDescription": "Website home page"
 	},
 
 	"EU": {

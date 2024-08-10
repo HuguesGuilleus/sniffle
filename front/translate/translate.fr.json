@@ -2,9 +2,7 @@
 	"PageTop": "Ce n'est pas un site officiel de l'union europénne.",
 	"InDev": "Cette page est actuellement en dévelopement",
 	"AboutTextLink": "À propos",
-	"HomeTitle": "Page d'Accueil",
-	"HomeName": "accueil",
-	"FooterBuild": "Construction\u00A0: ",
+	"FooterBuild": "Dernière génération de la page\u00A0: ",
 
 	"ABOUT": {
 		"PageTitle": "À propos de ce site web",
@@ -17,6 +15,12 @@
 			"<p class=noindent>Contact\u00A0: ghugues[at]netc[dot]fr</p>",
 			"<p class=noindent>Hébergeur\u00A0: OVH SAS\u202F; 2 rue Kellermann, 59100 Roubaix. France.</p>"
 		]
+	},
+
+	"HOME": {
+		"ShortName": "accueil",
+		"Name": "Page d'accueil",
+		"PageDescription": "Page d'accueil du site web"
 	},
 
 	"EU": {

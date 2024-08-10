@@ -11,8 +11,6 @@ type Translation struct {
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
 	InDev         render.H `help:"This page is actualy on development"`
 	AboutTextLink render.H `help:"About text for link"`
-	HomeTitle     string   `help:"Home page link title"`
-	HomeName      render.H `help:"Home page link name"`
 	FooterBuild   render.H `help:"In Footer, before build date"`
 
 	ABOUT struct {
@@ -20,6 +18,12 @@ type Translation struct {
 		PageDescription string     `help:"head description"`
 		Text            []render.H `help:"page content"`
 	} `help:"Website about page"`
+
+	HOME struct {
+		ShortName       string `help:"home text link, in lowercase"`
+		Name            string `help:"Full Home text link"`
+		PageDescription string `help:"Website home page head description"`
+	} `help:"website home page"`
 
 	EU struct {
 		Name string `help:"Name of European Union"`
