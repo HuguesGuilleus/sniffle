@@ -2,10 +2,10 @@ package tool
 
 import (
 	"context"
-	"errors"
 	"io"
 	"log/slog"
 	"net/url"
+	"os"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/writefile"
@@ -87,11 +87,17 @@ func (t *Tool) Fetch(ctx context.Context, urlString string) io.ReadCloser {
 	return nil
 }
 
-// For dev transistion
-func (t *Tool) FetchGET(ctx context.Context, urlString string) ([]byte, error) {
-	reader := t.Fetch(ctx, urlString)
-	if reader == nil {
-		return nil, errors.New("fail")
-	}
-	return io.ReadAll(reader)
+func NewTestTool(fetcher fetch.TestFetcher) (writefile.T, *Tool) {
+	wf := writefile.T{}
+	return wf, New(&Config{
+		HostURL:   "https://example.com",
+		Languages: []language.Language{language.English, language.French},
+
+		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelWarn,
+		})),
+
+		Writefile: wf,
+		Fetcher:   []fetch.Fetcher{fetcher},
+	})
 }

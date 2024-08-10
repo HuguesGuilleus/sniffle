@@ -3,17 +3,18 @@ package eu_ec_eci
 import (
 	"context"
 	"net/url"
+	"sniffle/tool"
 	"sniffle/tool/country"
+	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
-	"sniffle/tool/testingtool"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var fetcher = testingtool.TestFetcher{
+var fetcher = fetch.TestFetcher{
 	indexURL: []byte(`{
 		"entries": [
 			{
@@ -93,8 +94,9 @@ var fetcher = testingtool.TestFetcher{
 }
 
 func TestFetchIndex(t *testing.T) {
-	items, err := fetchIndex(context.Background(), fetcher)
-	assert.NoError(t, err)
+	wf, to := tool.NewTestTool(fetcher)
+	items := fetchIndex(context.Background(), to)
+	assert.True(t, wf.NoCalled())
 	assert.Equal(t, []indexItem{
 		{year: 2024, number: 8},
 		{year: 2024, number: 9, logoID: 8846},
@@ -102,12 +104,13 @@ func TestFetchIndex(t *testing.T) {
 }
 
 func TestFetchDetail(t *testing.T) {
-	eci, err := fetchDetail(context.Background(), fetcher, indexItem{
+	wf, to := tool.NewTestTool(fetcher)
+	eci := fetchDetail(context.Background(), to, indexItem{
 		year:   2024,
 		number: 9,
 		logoID: 8846,
 	})
-	assert.NoError(t, err)
+	assert.True(t, wf.NoCalled())
 	assert.Equal(t, &ECIOut{
 		Year:       2024,
 		Number:     9,

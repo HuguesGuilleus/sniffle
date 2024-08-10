@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"net/url"
 	"slices"
-	"sniffle/front/component"
 	"sniffle/tool"
 	"sniffle/tool/country"
 	"sniffle/tool/language"
@@ -60,41 +59,6 @@ type Description struct {
 	Treaty      string
 }
 
-func Do(ctx context.Context, t *tool.Tool) {
-	eciSlice, err := Fetch(ctx, t)
-	if err != nil {
-		t.Error("err", "err", err.Error())
-		return
-	}
-
-	component.RedirectIndex(t, "/eu/ec/eci/")
-
-	for _, eci := range eciSlice {
-		component.RedirectIndex(t, fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number))
-		for _, l := range t.Languages {
-			renderOne(t, eci, l)
-		}
-	}
-}
-
-func Fetch(ctx context.Context, fetcher tool.Fetcher) ([]*ECIOut, error) {
-	items, err := fetchIndex(ctx, fetcher)
-	if err != nil {
-		return nil, err
-	}
-
-	eciSlice := make([]*ECIOut, 0, len(items))
-	for _, info := range items {
-		eci, err := fetchDetail(ctx, fetcher, info)
-		if err != nil {
-			return nil, err
-		}
-		eciSlice = append(eciSlice, eci)
-	}
-
-	return eciSlice, nil
-}
-
 type indexItem struct {
 	year   int
 	number int
@@ -102,7 +66,7 @@ type indexItem struct {
 }
 
 // Get all ECI item to after get all details.
-func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) {
+func fetchIndex(ctx context.Context, t *tool.Tool) []indexItem {
 	dto := struct {
 		Entries []struct {
 			Year   int `json:"year,string"`
@@ -112,8 +76,8 @@ func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) 
 			} `json:"logo"`
 		} `json:"entries"`
 	}{}
-	if err := tool.FetchGETJSON(ctx, fetcher, indexURL, &dto); err != nil {
-		return nil, err
+	if tool.FetchJSON(ctx, t, indexURL, &dto) {
+		return nil
 	}
 
 	items := make([]indexItem, len(dto.Entries))
@@ -130,17 +94,10 @@ func fetchIndex(ctx context.Context, fetcher tool.Fetcher) ([]indexItem, error) 
 
 	}
 
-	return items, nil
+	return items
 }
 
-func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*ECIOut, error) {
-	eci := &ECIOut{
-		Year:        info.year,
-		Number:      info.number,
-		Description: make(map[language.Language]*Description),
-		Signature:   make(map[country.Country]uint),
-	}
-
+func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	dto := &struct {
 		Status     string  `json:"status"`
 		LastUpdate dtoTime `json:"latestUpdateDate"`
@@ -165,12 +122,19 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 			} `json:"entry"`
 		} `json:"sosReport"`
 	}{}
-	if err := tool.FetchGETJSON(ctx, fetcher, fmt.Sprintf(detailURL, info.year, info.number), &dto); err != nil {
-		return nil, err
+
+	if tool.FetchJSON(ctx, t, fmt.Sprintf(detailURL, info.year, info.number), &dto) {
+		return nil
 	}
 
-	eci.LastUpdate = dto.LastUpdate.Time
-	eci.Status = dto.Status
+	eci := &ECIOut{
+		Year:        info.year,
+		Number:      info.number,
+		LastUpdate:  dto.LastUpdate.Time,
+		Status:      dto.Status,
+		Description: make(map[language.Language]*Description),
+		Signature:   make(map[country.Country]uint),
+	}
 
 	categories := make([]string, 0, len(dto.Categories))
 	for _, entry := range dto.Categories {
@@ -202,14 +166,13 @@ func fetchDetail(ctx context.Context, fetcher tool.Fetcher, info indexItem) (*EC
 
 	// Image
 	if info.logoID != 0 {
-		img, err := fetcher.FetchGET(ctx, fmt.Sprintf(logoURL, info.logoID))
-		if err != nil {
-			return nil, err
+		img := tool.FetchAll(ctx, t, fmt.Sprintf(logoURL, info.logoID))
+		if img != nil {
+			eci.Image = img
 		}
-		eci.Image = img
 	}
 
-	return eci, nil
+	return eci
 }
 
 func (eci *ECIOut) GetOriginalDescription() *Description {
