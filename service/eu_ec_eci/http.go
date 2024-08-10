@@ -1,9 +1,13 @@
 package eu_ec_eci
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"html/template"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"net/url"
 	"slices"
 	"sniffle/tool"
@@ -11,6 +15,7 @@ import (
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"sniffle/tool/securehtml"
+	"strconv"
 	"time"
 )
 
@@ -47,7 +52,10 @@ type ECIOut struct {
 	// Date of the last organisators signatures update.
 	SignaturesUpdate time.Time
 
-	Image []byte
+	ImageName   string
+	ImageWidth  string
+	ImageHeight string
+	ImageData   []byte
 }
 type Description struct {
 	Title       string
@@ -164,15 +172,39 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		eci.TotalSignature += entry.Total
 	}
 
-	// Image
-	if info.logoID != 0 {
-		img := tool.FetchAll(ctx, t, fmt.Sprintf(logoURL, info.logoID))
-		if img != nil {
-			eci.Image = img
-		}
-	}
+	eci.fetchImage(ctx, t, info.logoID)
 
 	return eci
+}
+
+func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
+	if logoID == 0 {
+		return
+	}
+
+	data := tool.FetchAll(ctx, t, fmt.Sprintf(logoURL, logoID))
+	if len(data) == 0 {
+		return
+	}
+
+	config, format, err := image.DecodeConfig(bytes.NewReader(data))
+	if err != nil || config.Width == 0 || config.Height == 0 {
+		return
+	}
+
+	switch format {
+	case "png":
+		eci.ImageName = "logo.png"
+	case "jpeg":
+		eci.ImageName = "logo.jpg"
+	default:
+		t.Warn("fetchImage", "err", "unknown format", "format", format)
+		return
+	}
+
+	eci.ImageWidth = strconv.Itoa(config.Width)
+	eci.ImageHeight = strconv.Itoa(config.Height)
+	eci.ImageData = data
 }
 
 func (eci *ECIOut) GetOriginalDescription() *Description {
