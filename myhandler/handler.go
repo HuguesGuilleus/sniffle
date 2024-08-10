@@ -21,8 +21,9 @@ type handler struct {
 	w io.Writer
 	m *sync.Mutex
 
-	attr  bytes.Buffer
-	group bytes.Buffer
+	service string
+	attr    bytes.Buffer
+	group   bytes.Buffer
 }
 
 func New(w io.Writer, level slog.Level) slog.Handler {
@@ -39,7 +40,11 @@ func (h *handler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	n := h.clone()
 	g := h.group.String()
 	for _, attr := range attrs {
-		printAttr(&n.attr, attr, g)
+		if attr.Key == "service" && attr.Value.Kind() == slog.KindString && n.service == "" {
+			n.service = attr.Value.String()
+		} else {
+			printAttr(&n.attr, attr, g)
+		}
 	}
 	return n
 }
@@ -56,6 +61,7 @@ func (h *handler) clone() (n *handler) {
 	n.level = h.level
 	n.w = h.w
 	n.m = h.m
+	n.service = h.service
 	if h.attr.Len() != 0 {
 		n.attr.Write(h.attr.Bytes())
 	}
@@ -67,10 +73,17 @@ func (h *handler) clone() (n *handler) {
 
 func (h *handler) Handle(_ context.Context, record slog.Record) error {
 	buff := bytes.Buffer{}
-	buff.WriteString(record.Time.UTC().Format("2006-01-02T15:04:05 "))
+	buff.WriteString(record.Time.UTC().Format("15:04:05 "))
 	buff.WriteString(record.Level.String())
+	for range 16 - buff.Len() {
+		buff.WriteByte('_')
+	}
 	buff.WriteByte(' ')
 	buff.WriteByte('[')
+	if h.service != "" {
+		quote(&buff, h.service)
+		buff.WriteByte('|')
+	}
 	quote(&buff, record.Message)
 	buff.WriteByte(']')
 
@@ -139,6 +152,5 @@ func quote(buff *bytes.Buffer, s string) {
 			return
 		}
 	}
-
 	buff.WriteString(s)
 }

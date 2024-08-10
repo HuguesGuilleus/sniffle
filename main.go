@@ -14,8 +14,9 @@ import (
 )
 
 func main() {
-	logger := slog.New(myhandler.New(os.Stdout, slog.LevelDebug))
-	// logger = slog.New(myhandler.New(os.Stdout, slog.LevelWarn))
+	logger := slog.New(myhandler.New(os.Stdout, tool.NoticeLevel))
+	// logger = slog.New(myhandler.New(os.Stdout, slog.LevelInfo))
+	// logger = slog.New(myhandler.New(os.Stdout, slog.LevelDebug))
 
 	config := tool.Config{
 		Logger:    logger,

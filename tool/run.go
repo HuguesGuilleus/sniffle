@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const NoticeLevel = slog.LevelInfo + 2
+
 type Service struct {
 	Name string
 	Do   func(context.Context, *Tool)
@@ -18,11 +20,11 @@ func Run(ctx context.Context, config *Config, services []Service) {
 		begin := time.Now()
 
 		t := New(config)
-		t.Logger = t.Logger.With(slog.Any("S", service.Name))
+		t.Logger = t.Logger.With(slog.Any("service", service.Name))
 		t.htmlFiles = htmlFiles
 		service.Do(ctx, t)
 
-		t.Info("duration", "duration", time.Since(begin))
+		t.Log(ctx, NoticeLevel, "end", "duration", time.Since(begin))
 		htmlFiles = t.htmlFiles
 	}
 
