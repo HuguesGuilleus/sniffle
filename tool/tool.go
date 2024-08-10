@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"log/slog"
@@ -8,8 +9,10 @@ import (
 	"os"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
+	"sniffle/tool/render"
 	"sniffle/tool/writefile"
 	"strings"
+	"sync"
 )
 
 type Config struct {
@@ -49,9 +52,21 @@ type Tool struct {
 
 	writefile writefile.WriteFile
 	fetcher   []fetch.Fetcher
+
+	// List of html files
+	// Do not include index.html, because it's a js redirect
+	// Do not include render.Back
+	htmlFiles     []string
+	htmlFileMutex sync.Mutex
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
+	if !bytes.Equal(data, render.Back) && strings.HasSuffix(path, ".html") {
+		t.htmlFileMutex.Lock()
+		t.htmlFiles = append(t.htmlFiles, path)
+		t.htmlFileMutex.Unlock()
+	}
+
 	err := t.writefile.WriteFile(path, data)
 	if err != nil {
 		t.Warn("out.fail", "path", path, "err", err.Error())
