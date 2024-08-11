@@ -11,6 +11,7 @@ type Translation struct {
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
 	InDev         render.H `help:"This page is actualy on development"`
 	AboutTextLink render.H `help:"About text for link"`
+	LogoTitle     string   `help:"Logo title and alt attribute"`
 	FooterBuild   render.H `help:"In Footer, before build date"`
 
 	ABOUT struct {

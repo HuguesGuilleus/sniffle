@@ -64,3 +64,12 @@ hr {
 	padding: 0 _spThin;
 	font-weight: bolder;
 }
+
+.logo {
+	width: 10rem;
+	height: auto;
+}
+
+.marginTop {
+	margin-top: _sp;
+}

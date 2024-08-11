@@ -47,6 +47,15 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 						}, func() render.Node {
 							return render.N("span", "???")
 						}),
+						render.N("br"),
+						render.If(eci.ImageName != "", func() render.Node {
+							return render.No("img.logo", render.
+								A("loading", "lazy").
+								A("src", fmt.Sprintf("%d/%d/%s", eci.Year, eci.Number, eci.ImageName)).
+								A("width", eci.ImageWidth).
+								A("height", eci.ImageHeight).
+								A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
+						}),
 					),
 				)
 			}),
@@ -98,6 +107,15 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					}),
 				),
 			),
+
+			render.If(eci.ImageName != "", func() render.Node {
+				return render.No("img.logo.marginTop", render.
+					A("loading", "lazy").
+					A("src", eci.ImageName).
+					A("width", eci.ImageWidth).
+					A("height", eci.ImageHeight).
+					A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
+			}),
 
 			render.N("h1", tr.EU_EC_ECI.ONE.H1DescriptionGeneral),
 			render.N("div.text", desc.Objective),
