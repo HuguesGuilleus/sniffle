@@ -117,7 +117,7 @@ func (node *Node) mergeSlice(h []byte) []byte {
 		h = append(h, attr[0]...)
 		if v := attr[1]; v == "" {
 			// Nothing
-		} else if !strings.ContainsAny(v, "<>=\"'` \t") {
+		} else if !strings.ContainsAny(v, "<>=\"'`& \t") {
 			h = append(h, '=')
 			h = append(h, v...)
 		} else {
@@ -125,6 +125,8 @@ func (node *Node) mergeSlice(h []byte) []byte {
 			for _, c := range []byte(v) {
 				if c == '"' {
 					h = append(h, `&#34;`...)
+				} else if c == '&' {
+					h = append(h, `&amp;`...)
 				} else {
 					h = append(h, c)
 				}

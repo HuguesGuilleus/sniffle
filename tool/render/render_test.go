@@ -10,7 +10,7 @@ import (
 func TestRender(t *testing.T) {
 	h := Merge(No("body.cl1.cl2.cl3",
 		A("hidden", "").
-			A("data-toescape", "<must' escape\">").
+			A("data-toescape", "<must' &escape\">").
 			A("data-normal", "yolo/"),
 		"Hello ",
 		N("i.cl", "World"),
@@ -27,7 +27,7 @@ func TestRender(t *testing.T) {
 	assert.Equal(t, `<!DOCTYPE html>`+
 		`<body class="cl1 cl2 cl3"`+
 		` hidden`+
-		` data-toescape="<must' escape&#34;>"`+
+		` data-toescape="<must' &amp;escape&#34;>"`+
 		` data-normal=yolo/`+
 		` >`+
 		`Hello `+
