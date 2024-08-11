@@ -14,7 +14,11 @@ type Service struct {
 }
 
 func Run(ctx context.Context, config *Config, services []Service) {
+	globalBegin := time.Now()
+
 	htmlFiles := make([]string, 0)
+
+	writeSum := uint64(0)
 
 	for _, service := range services {
 		begin := time.Now()
@@ -26,9 +30,15 @@ func Run(ctx context.Context, config *Config, services []Service) {
 
 		t.Log(ctx, NoticeLevel, "end", "duration", time.Since(begin))
 		htmlFiles = t.htmlFiles
+
+		writeSum += t.writeSum
 	}
 
-	New(config).writeSitemap(htmlFiles)
+	to := New(config)
+	to.writeSitemap(htmlFiles)
+	writeSum += to.writeSum
+
+	config.Logger.Log(ctx, NoticeLevel, "end", "duration", time.Since(globalBegin), "writeSum", writeSum)
 }
 
 func (t *Tool) writeSitemap(paths []string) {

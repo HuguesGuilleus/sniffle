@@ -13,6 +13,7 @@ import (
 	"sniffle/tool/writefile"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 type Config struct {
@@ -56,6 +57,7 @@ type Tool struct {
 	// It generated from Languages.
 	langRedirect []byte
 
+	writeSum  uint64
 	writefile writefile.WriteFile
 	fetcher   []fetch.Fetcher
 
@@ -72,6 +74,8 @@ func (t *Tool) WriteFile(path string, data []byte) {
 		t.htmlFiles = append(t.htmlFiles, path)
 		t.htmlFileMutex.Unlock()
 	}
+
+	atomic.AddUint64(&t.writeSum, uint64(len(data)))
 
 	err := t.writefile.WriteFile(path, data)
 	if err != nil {
