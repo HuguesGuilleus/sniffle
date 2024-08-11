@@ -39,6 +39,7 @@
 		},
 		"ONE": {
 			"Status": "Status: ",
+			"Categorie": "Categorie: ",
 			"LastUpdate": "Last update: ",
 			"LinkOfficial": "Official page",
 			"LinkSupport": "Support page",
@@ -56,6 +57,26 @@
 			"INSUFFICIENT_SUPPORT": "INSUFFICIENT SUPPORT",
 			"VERIFICATION": "VERIFICATION",
 			"ANSWERED": "ANSWERED"
+		},
+		"Categorie": {
+			"AGRI": "Agriculture",
+			"CULT": "Culture and media",
+			"DECO": "Digital economy and society",
+			"DEVCO": "Aid and development cooperation",
+			"EDU": "Education, youth and sport",
+			"EMPL": "Employment and social affairs",
+			"ENER": "Energy",
+			"ENV": "Environment and climate",
+			"EURO": "Business and economy",
+			"JUST": "Justice and fundamental rights",
+			"MARE": "Maritime affairs and fisheries",
+			"MIGR": "Migration and asylum",
+			"REGIO": "Regional development",
+			"RSH": "Research",
+			"SANTE": "Consumers and health",
+			"SEC": "Security",
+			"TRA": "Transport",
+			"TRADE": "External trade and relations"
 		}
 	}
 }

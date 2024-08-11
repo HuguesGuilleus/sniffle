@@ -58,7 +58,7 @@ hr {
 }
 
 .tag {
-	border: solid _line;
+	margin-right: _sp;
 	border: solid _line _colorA;
 	border-radius: _spThin;
 	padding: 0 _spThin;

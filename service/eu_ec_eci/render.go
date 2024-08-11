@@ -10,7 +10,6 @@ import (
 	"sniffle/tool/country"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
-	"strings"
 )
 
 func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
@@ -42,6 +41,10 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 					render.No("a", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
 						eci.Year, "/", eci.Number,
 						render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status]),
+						render.N("br"),
+						render.Slice(eci.Categorie, func(_ int, categorie string) render.Node {
+							return render.N("div", render.N("span.tag", tr.EU_EC_ECI.Categorie[categorie]))
+						}),
 						render.IfElse(eci.Description[l] != nil, func() render.Node {
 							return render.N("span", eci.Description[l].Title)
 						}, func() render.Node {
@@ -94,7 +97,13 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			render.N("div.summary",
 				render.N("div", tr.EU_EC_ECI.ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
 				render.N("div", tr.EU_EC_ECI.ONE.LastUpdate, eci.LastUpdate),
-				render.N("div", "Categories: ", strings.Join(eci.Categorie, ", ")),
+				render.N("div", tr.EU_EC_ECI.ONE.Categorie,
+					render.Slice(eci.Categorie, func(i int, categorie string) render.Node {
+						if i == 0 {
+							return render.N("!", tr.EU_EC_ECI.Categorie[categorie])
+						}
+						return render.N("!", ", "+tr.EU_EC_ECI.Categorie[categorie])
+					})),
 				render.N("div",
 					render.No("a.box", render.A("href", fmt.Sprintf(
 						"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
