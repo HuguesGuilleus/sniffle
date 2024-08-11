@@ -31,35 +31,38 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 
 	page.Body = render.N("body",
 		component.TopHeader(l),
-		component.InDevHeader(l),
-		component.Header(t.Languages, l, idNamespace(l),
+		component.Header(t.Languages, l,
+			idNamespace(l),
 			render.Z,
 			tr.EU_EC_ECI.INDEX.Name),
-		render.N("ul.w",
+		render.N("div.w",
+			render.N("div",
+				render.No("label", render.A("for", "s"), tr.SearchInside),
+				render.No("input", render.A("id", "s").A("hidden", "").A("type", "search")),
+			),
 			render.Slice(eciSlice, func(_ int, eci *ECIOut) render.Node {
-				return render.N("li",
-					render.No("a", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
-						eci.Year, "/", eci.Number,
-						render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status]),
-						render.N("br"),
-						render.Slice(eci.Categorie, func(_ int, categorie string) render.Node {
-							return render.N("div", render.N("span.tag", tr.EU_EC_ECI.Categorie[categorie]))
-						}),
-						render.IfElse(eci.Description[l] != nil, func() render.Node {
-							return render.N("span", eci.Description[l].Title)
-						}, func() render.Node {
-							return render.N("span", "???")
-						}),
-						render.N("br"),
-						render.If(eci.ImageName != "", func() render.Node {
-							return render.No("img.logo", render.
-								A("loading", "lazy").
-								A("src", fmt.Sprintf("%d/%d/%s", eci.Year, eci.Number, eci.ImageName)).
-								A("width", eci.ImageWidth).
-								A("height", eci.ImageHeight).
-								A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
-						}),
+				return render.No("a.si.bigItem", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
+					render.N("div",
+						render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
+						render.N("span.box",
+							render.N("span.st", eci.Year),
+							"/",
+							render.N("span.st", eci.Number),
+						),
 					),
+					render.N("div.itemTitle.st", eci.Description[l].Title),
+					render.N("div", render.SliceSeparator(eci.Categorie, ", ", func(_ int, categorie string) render.Node {
+						return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
+					})),
+					render.N("p.itemDesc", eci.Description[l].PlainDesc),
+					render.If(eci.ImageName != "", func() render.Node {
+						return render.No("img.logo", render.
+							A("loading", "lazy").
+							A("src", fmt.Sprintf("%d/%d/%s", eci.Year, eci.Number, eci.ImageName)).
+							A("width", eci.ImageWidth).
+							A("height", eci.ImageHeight).
+							A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
+					}),
 				)
 			}),
 		),
@@ -71,11 +74,6 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 
 func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
-
-	if desc == nil {
-		t.Error("data.err", "err", "eci.Description[] is nil", "lang", l.String(), "year", eci.Year, "nb", eci.Number)
-		return
-	}
 
 	page := component.Page{
 		Language:    l,

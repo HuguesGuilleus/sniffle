@@ -13,6 +13,7 @@ type Translation struct {
 	AboutTextLink render.H `help:"About text for link"`
 	LogoTitle     string   `help:"Logo title and alt attribute"`
 	FooterBuild   render.H `help:"In Footer, before build date"`
+	SearchInside  string
 
 	ABOUT struct {
 		PageTitle       string     `help:"Header title"`

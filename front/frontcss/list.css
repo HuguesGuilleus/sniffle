@@ -1,0 +1,49 @@
+input[type=search] {
+	display: block;
+	border: none;
+	padding: _spThin;
+	border: _line solid _back1;
+	font: inherit;
+	width: 100%;
+}
+
+.bigItem {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-gap: 0 _sp;
+	border: solid _line _colorA;
+	padding: _spThin;
+	margin-top: _sp;
+	text-decoration: none;
+}
+
+.bigItem:hover {
+	background: _back1;
+	color: _color;
+}
+
+@media screen and (max-width: 30rem) {
+	.bigItem {
+		display: block;
+	}
+}
+
+.itemTitle {
+	font-size: larger;
+	font-weight: bold;
+}
+
+.itemDesc {
+	font-size: smaller;
+	font-style: italic;
+}
+
+.bigItem>* {
+	grid-column: 1 / 2;
+}
+
+.bigItem>.logo {
+	grid-column: 2 / 3;
+	grid-row: 1 / 10;
+	margin-left: auto;
+}

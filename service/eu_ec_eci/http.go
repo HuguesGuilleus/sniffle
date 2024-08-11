@@ -166,6 +166,16 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 
+	if eci.DescriptionOriginalLangage == language.Invalid {
+		t.Warn("noDescription", "year", eci.Year, "nb", eci.Number)
+	} else {
+		for _, l := range t.Languages {
+			if eci.Description[l] == nil {
+				eci.Description[l] = eci.GetOriginalDescription()
+			}
+		}
+	}
+
 	eci.SignaturesUpdate = dto.Signatures.UpdateDate.Time
 	for _, entry := range dto.Signatures.Entry {
 		eci.Signature[entry.Country] = entry.Total

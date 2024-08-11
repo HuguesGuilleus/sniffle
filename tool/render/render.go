@@ -223,3 +223,14 @@ func Slice[V any](s []V, f func(i int, v V) Node) []Node {
 	}
 	return nodes
 }
+
+func SliceSeparator[V any](s []V, separator H, f func(i int, v V) Node) []Node {
+	nodes := make([]Node, 0, len(s)*2)
+	for i, v := range s {
+		if i != 0 {
+			nodes = append(nodes, N("!", separator))
+		}
+		nodes = append(nodes, f(i, v))
+	}
+	return nodes
+}

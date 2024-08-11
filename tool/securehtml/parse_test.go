@@ -22,7 +22,7 @@ func TestSecure(t *testing.T) {
 	assert.Equal(t, template.HTML(`<del>[file:///home/user/] Link</del>`), Secure(`<a href="file:///home/user/">Link`))
 }
 
-func TestHtml(t *testing.T) {
+func TestText(t *testing.T) {
 	assert.Equal(t, ``, Text(``, 10))
-	assert.Equal(t, `Titl`, Text(`<p><strong>Title</strong></p>`, 4))
+	assert.Equal(t, `Title 1`, Text(`<p> <strong>Title   1</strong>No</p>`, 7))
 }

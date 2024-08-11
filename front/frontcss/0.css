@@ -1,3 +1,7 @@
+*[hidden] {
+	display: none !important;
+}
+
 body {
 	display: flex;
 	flex-direction: column;
@@ -27,16 +31,15 @@ h1 {
 	border-style: solid none;
 }
 
-a {
-	color: inherit;
-}
-
-a.box {
+.box {
 	display: inline-block;
-	margin-top: _sp;
 	margin-right: _sp;
 	padding: _line _sp;
 	background: _colorA;
+}
+
+a {
+	color: inherit;
 }
 
 a:hover {
@@ -59,10 +62,10 @@ hr {
 
 .tag {
 	margin-right: _sp;
-	border: solid _line _colorA;
 	border-radius: _spThin;
 	padding: 0 _spThin;
 	font-weight: bolder;
+	background: _colorA;
 }
 
 .logo {

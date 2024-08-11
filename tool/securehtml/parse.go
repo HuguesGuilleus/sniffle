@@ -1,6 +1,7 @@
 package securehtml
 
 import (
+	"bytes"
 	"html/template"
 	"net/url"
 	"sniffle/tool/render"
@@ -80,19 +81,49 @@ func Text(src string, limit int) string {
 	if err != nil {
 		return src
 	}
-	buff := strings.Builder{}
-	plainText(root, &buff, limit)
-	if buff.Len() > limit {
-		return buff.String()[:limit]
+	buff := bytes.Buffer{}
+	plainText(root, &buff)
+
+	data := buff.Bytes()
+	whitespace := false
+	i := 0
+	for _, b := range data {
+		switch b {
+		case '\f', '\r', '\n', '\t', ' ':
+			whitespace = true
+		default:
+			if whitespace {
+				whitespace = false
+				data[i] = ' '
+				i++
+			}
+			data[i] = b
+			i++
+		}
 	}
-	return buff.String()
+
+	begin := 0
+	if len(data) > 0 && data[0] == ' ' {
+		begin = 1
+	}
+
+	s := string(data[begin:i])
+	nb := 0
+	for i := range s {
+		nb++
+		if nb > limit {
+			return s[:i]
+		}
+	}
+
+	return s
 }
-func plainText(node *html.Node, buff *strings.Builder, limit int) {
+func plainText(node *html.Node, buff *bytes.Buffer) {
 	if node.Type == html.TextNode {
 		buff.WriteString(node.Data)
 	}
-	for child := node.FirstChild; child != nil && buff.Len() < limit; child = child.NextSibling {
-		plainText(child, buff, limit)
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		plainText(child, buff)
 	}
 }
 

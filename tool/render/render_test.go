@@ -119,3 +119,16 @@ func TestSlice(t *testing.T) {
 			return N("code", b)
 		}))
 }
+
+func TestSliceSeparator(t *testing.T) {
+	s := []bool{true, false}
+	assert.Equal(t,
+		[]Node{
+			{"code", nil, []any{true}},
+			{"!", nil, []any{H("/")}},
+			{"code", nil, []any{false}},
+		},
+		SliceSeparator(s, "/", func(i int, b bool) Node {
+			return N("code", b)
+		}))
+}
