@@ -32,6 +32,8 @@ func New(config *Config) *Tool {
 		HostURL:   strings.TrimRight(config.HostURL, "/"),
 		Languages: config.Languages,
 
+		langRedirect: langRedirect(config.Languages),
+
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
 	}
@@ -49,6 +51,10 @@ type Tool struct {
 	// Ex: https://www.example.com
 	HostURL   string
 	Languages []language.Language
+
+	// A file, to be put as .../index.html to redirect user with js to .../[lang].html page.
+	// It generated from Languages.
+	langRedirect []byte
 
 	writefile writefile.WriteFile
 	fetcher   []fetch.Fetcher
@@ -116,3 +122,60 @@ func NewTestTool(fetcher fetch.TestFetcher) (writefile.T, *Tool) {
 		Fetcher:   []fetch.Fetcher{fetcher},
 	})
 }
+
+// Write a ".../index.html" file that redirect user with js.
+// Redirect will be ".../[lang].html".
+func (t *Tool) LangRedirect(path string) {
+	t.WriteFile(path, t.langRedirect)
+}
+
+func langRedirect(langs []language.Language) (h []byte) {
+	h = []byte(`<!DOCTYPE html>` +
+		`<html>` +
+		`<head>` +
+		`<meta charset=utf-8>` +
+		`<meta name=robots content=noindex>` +
+		`</head>` +
+		`<body>` +
+		`<p>Choose a language:</p>`)
+
+	for _, l := range langs {
+		h = append(h, `<a href=`...)
+		h = append(h, l.String()...)
+		h = append(h, `.html>`...)
+		h = append(h, l.Human()...)
+		h = append(h, `</a><br>`...)
+	}
+
+	h = append(h, `<script>`...)
+	h = append(h, langRedirectJS[0]...)
+	for i, l := range langs {
+		if i != 0 {
+			h = append(h, '/')
+		}
+		h = append(h, l.String()...)
+	}
+	h = append(h, langRedirectJS[1]...)
+	h = append(h, `</script>`...)
+
+	return
+}
+
+var langRedirectJS = func() [2]string {
+	s := strings.NewReplacer("\n", "", "\t", "").Replace(`
+		l="LANG".split('/'),
+			u=navigator.languages,
+			i=0,
+			l;
+
+		for(;i<u.length;i++){
+			l=u[i].replace(/-\w+/,"");
+			if(l.indexOf(l)+1){location=l+".html";break}
+		}
+
+		`)
+
+	before, after, _ := strings.Cut(s, "LANG")
+
+	return [2]string{before, after}
+}()

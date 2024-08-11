@@ -9,7 +9,7 @@ import (
 )
 
 func Do(_ context.Context, t *tool.Tool) {
-	component.RedirectIndex(t, "/")
+	t.LangRedirect("/index.html")
 	for _, l := range t.Languages {
 		tr := translate.AllTranslation[l]
 		component.Html(t, &component.Page{

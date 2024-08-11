@@ -3,7 +3,6 @@ package eu_ec_eci
 import (
 	"context"
 	"fmt"
-	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/language"
@@ -13,7 +12,7 @@ import (
 func Do(ctx context.Context, t *tool.Tool) {
 	eciSlice := fetchAll(ctx, t)
 
-	component.RedirectIndex(t, "/eu/ec/eci/")
+	t.LangRedirect("/eu/ec/eci/index.html")
 	for _, l := range t.Languages {
 		renderIndex(t, eciSlice, l)
 	}
@@ -21,7 +20,7 @@ func Do(ctx context.Context, t *tool.Tool) {
 	years := make(map[int]bool)
 	for _, eci := range eciSlice {
 		years[eci.Year] = true
-		component.RedirectIndex(t, fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number))
+		t.LangRedirect(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number))
 		for _, l := range t.Languages {
 			renderOne(t, eci, l)
 		}

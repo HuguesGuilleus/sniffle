@@ -11,7 +11,7 @@ import (
 // Write about pages.
 func Do(_ context.Context, t *tool.Tool) {
 	basePath := "/about/"
-	component.RedirectIndex(t, basePath)
+	t.LangRedirect("/about/index.html")
 
 	for _, l := range t.Languages {
 		tr := translate.AllTranslation[l]
