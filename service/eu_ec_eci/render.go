@@ -41,7 +41,7 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 				return render.N("li",
 					render.No("a", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
 						eci.Year, "/", eci.Number,
-						" [", eci.Status, "] ",
+						render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status]),
 						render.IfElse(eci.Description[l] != nil, func() render.Node {
 							return render.N("span", eci.Description[l].Title)
 						}, func() render.Node {
@@ -83,7 +83,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 
 		render.N("div.w",
 			render.N("div.summary",
-				render.N("div", "Status: ", render.N("span.tag", eci.Status)),
+				render.N("div", tr.EU_EC_ECI.ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
 				render.N("div", tr.EU_EC_ECI.ONE.LastUpdate, eci.LastUpdate),
 				render.N("div", "Categories: ", strings.Join(eci.Categorie, ", ")),
 				render.N("div",
@@ -100,7 +100,6 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			),
 
 			render.N("h1", tr.EU_EC_ECI.ONE.H1DescriptionGeneral),
-			// website
 			render.N("div.text", desc.Objective),
 			// image link
 

@@ -39,6 +39,7 @@ type Translation struct {
 			PageDescription string
 		} `help:"ECI index page"`
 		ONE struct {
+			Status               render.H
 			LastUpdate           render.H
 			LinkOfficial         render.H `help:"Official page link"`
 			LinkSupport          render.H `help:"Support page link"`
@@ -48,6 +49,7 @@ type Translation struct {
 			H1Treaty             render.H
 			H1Signature          render.H
 		}
+		Status map[string]render.H
 	}
 }
 

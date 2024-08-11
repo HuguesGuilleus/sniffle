@@ -37,6 +37,7 @@
 			"PageDescription": "La liste complète de toute les initiative citoyenne européenne"
 		},
 		"ONE": {
+			"Status": "Status\u00A0: ",
 			"LastUpdate": "Dernière modification\u00A0: ",
 			"LinkOfficial": "Page officielle",
 			"LinkSupport": "Page de soutien",
@@ -45,6 +46,15 @@
 			"H1DescriptionAnnex": "Annexe",
 			"H1Treaty": "Traité",
 			"H1Signature": "Signature"
+		},
+		"Status": {
+			"REGISTERED": "ENREGISTRÉ",
+			"WITHDRAWN": "RETIRÉ",
+			"ONGOING": "COLLECTE EN COURS",
+			"CLOSED": "FERMÉ",
+			"INSUFFICIENT_SUPPORT": "SOUTIENT INSUFFISANT",
+			"VERIFICATION": "VÉRIFICATION",
+			"ANSWERED": "RÉPONDU"
 		}
 	}
 }

@@ -37,6 +37,7 @@
 			"PageDescription": "The list of all european citizens' initiative"
 		},
 		"ONE": {
+			"Status": "Status: ",
 			"LastUpdate": "Last update: ",
 			"LinkOfficial": "Official page",
 			"LinkSupport": "Support page",
@@ -45,6 +46,15 @@
 			"H1DescriptionAnnex": "Description annex",
 			"H1Treaty": "Traité",
 			"H1Signature": "Signature"
+		},
+		"Status": {
+			"REGISTERED": "REGISTERED",
+			"WITHDRAWN": "WITHDRAWN",
+			"ONGOING": "ONGOING",
+			"CLOSED": "CLOSED",
+			"INSUFFICIENT_SUPPORT": "INSUFFICIENT SUPPORT",
+			"VERIFICATION": "VERIFICATION",
+			"ANSWERED": "ANSWERED"
 		}
 	}
 }
