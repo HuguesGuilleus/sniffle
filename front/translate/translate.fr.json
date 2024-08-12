@@ -1,9 +1,10 @@
 {
-	"PageTop": "Ce n'est pas un site officiel de l'union europénne.",
-	"InDev": "Cette page est actuellement en dévelopement",
 	"AboutTextLink": "À propos",
-	"LogoTitle": "Logo",
 	"FooterBuild": "Dernière génération de la page\u00A0: ",
+	"InDev": "Cette page est actuellement en dévelopement",
+	"LinkOfficial": "Page officielle",
+	"LogoTitle": "Logo",
+	"PageTop": "Ce n'est pas un site officiel de l'union europénne.",
 	"SearchInside": "Rechercher dans la page\u00A0:",
 
 	"ABOUT": {
@@ -42,7 +43,6 @@
 			"Status": "Status\u00A0: ",
 			"Categorie": "Catégorie\u00A0: ",
 			"LastUpdate": "Dernière modification\u00A0: ",
-			"LinkOfficial": "Page officielle",
 			"LinkSupport": "Page de soutien",
 			"LinkWebsite": "Site web des organisateurs",
 			"H1DescriptionGeneral": "Description générale",

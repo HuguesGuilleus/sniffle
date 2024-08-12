@@ -1,9 +1,10 @@
 {
-	"PageTop": "This is not an official european website.",
-	"InDev": "This page is actualy on development",
 	"AboutTextLink": "About",
-	"LogoTitle": "Logo",
 	"FooterBuild": "Last page build: ",
+	"InDev": "This page is actualy on development",
+	"LinkOfficial": "Official page",
+	"LogoTitle": "Logo",
+	"PageTop": "This is not an official european website.",
 	"SearchInside": "Search inside the page:",
 
 	"ABOUT": {
@@ -42,7 +43,6 @@
 			"Status": "Status: ",
 			"Categorie": "Categorie: ",
 			"LastUpdate": "Last update: ",
-			"LinkOfficial": "Official page",
 			"LinkSupport": "Support page",
 			"LinkWebsite": "Organisator website",
 			"H1DescriptionGeneral": "General description",

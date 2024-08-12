@@ -69,7 +69,7 @@ type Tool struct {
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
-	if !bytes.Equal(data, render.Back) && strings.HasSuffix(path, ".html") {
+	if strings.HasSuffix(path, ".html") && !(bytes.Equal(data, render.Back) || bytes.Equal(data, t.langRedirect)) {
 		t.htmlFileMutex.Lock()
 		t.htmlFiles = append(t.htmlFiles, path)
 		t.htmlFileMutex.Unlock()

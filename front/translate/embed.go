@@ -8,11 +8,12 @@ import (
 )
 
 type Translation struct {
-	PageTop       render.H `help:"Page header to indicated that this website is not official"`
-	InDev         render.H `help:"This page is actualy on development"`
 	AboutTextLink render.H `help:"About text for link"`
-	LogoTitle     string   `help:"Logo title and alt attribute"`
 	FooterBuild   render.H `help:"In Footer, before build date"`
+	InDev         render.H `help:"This page is actualy on development"`
+	LinkOfficial  render.H `help:"Official page link"`
+	LogoTitle     string   `help:"Logo title and alt attribute"`
+	PageTop       render.H `help:"Page header to indicated that this website is not official"`
 	SearchInside  string
 
 	ABOUT struct {
@@ -44,7 +45,6 @@ type Translation struct {
 			Status               render.H
 			Categorie            render.H
 			LastUpdate           render.H
-			LinkOfficial         render.H `help:"Official page link"`
 			LinkSupport          render.H `help:"Support page link"`
 			LinkWebsite          render.H `help:"Organisator website link"`
 			H1DescriptionGeneral render.H

@@ -36,7 +36,10 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 			render.Z,
 			tr.EU_EC_ECI.INDEX.Name),
 		render.N("div.w",
-			render.N("div",
+			render.N("div.summary",
+				render.No("a.box", render.A("href", "https://citizens-initiative.europa.eu/_"+l.String()), tr.LinkOfficial),
+			),
+			render.N("div.searchBlock",
 				render.No("label", render.A("for", "s"), tr.SearchInside),
 				render.No("input", render.A("id", "s").A("hidden", "").A("type", "search")),
 			),
@@ -105,7 +108,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.N("div",
 					render.No("a.box", render.A("href", fmt.Sprintf(
 						"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
-						tr.EU_EC_ECI.ONE.LinkOfficial),
+						tr.LinkOfficial),
 					render.If(desc.SupportLink != "", func() render.Node {
 						return render.No("a.box", render.A("href", desc.SupportLink), tr.EU_EC_ECI.ONE.LinkSupport)
 					}),

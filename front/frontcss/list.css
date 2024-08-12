@@ -1,3 +1,7 @@
+.searchBlock {
+	margin-top: _sp;
+}
+
 input[type=search] {
 	display: block;
 	border: none;
