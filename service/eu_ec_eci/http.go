@@ -2,6 +2,7 @@ package eu_ec_eci
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"fmt"
 	"html/template"
@@ -43,9 +44,9 @@ type ECIOut struct {
 	// The based language used to write the ECI text.
 	DescriptionOriginalLangage language.Language
 
-	// process
-
 	// Members
+
+	Timeline []Timeline
 
 	TotalSignature uint
 	Signature      map[country.Country]uint
@@ -65,6 +66,11 @@ type Description struct {
 	Objective   template.HTML
 	Annex       template.HTML
 	Treaty      string
+}
+type Timeline struct {
+	Date       time.Time
+	Status     string
+	EarlyClose bool
 }
 
 type indexItem struct {
@@ -122,6 +128,11 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Annex       string            `json:"annexText"`
 			Treaty      string            `json:"treaties"`
 		} `json:"linguisticVersions"`
+		Progress []struct {
+			Status string  `json:"Name"`
+			Date   dtoDate `json:"date"`
+			Note   string  `json:"footnoteType"`
+		} `json:"progress"`
 		Signatures struct {
 			UpdateDate dtoDate `json:"updateDate"`
 			Entry      []struct {
@@ -175,6 +186,24 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			}
 		}
 	}
+
+	for _, p := range dto.Progress {
+		timeline := Timeline{
+			Date:   p.Date.Time,
+			Status: p.Status,
+		}
+		switch p.Note {
+		case "":
+		case "COLLECTION_EARLY_CLOSURE":
+			timeline.EarlyClose = true
+		default:
+			t.Warn("unknwon.footnoteType", "year", info.year, "nb", info.number, "footnote", p.Note)
+		}
+		eci.Timeline = append(eci.Timeline, timeline)
+	}
+	slices.SortFunc(eci.Timeline, func(a, b Timeline) int {
+		return cmp.Compare(a.Date.Unix(), b.Date.Unix())
+	})
 
 	eci.SignaturesUpdate = dto.Signatures.UpdateDate.Time
 	for _, entry := range dto.Signatures.Entry {

@@ -101,6 +101,23 @@ var fetcher = fetch.TestFetcher{
 			{ "categoryType": "SANTE" },
 			{ "categoryType": "AGRI" }
 		],
+		"progress": [
+			{ "name": "REGISTERED", "active": false, "date": "16/03/2022" },
+			{ "name": "ANSWERED", "active": true, "date": "07/12/2023" },
+			{
+				"name": "CLOSED",
+				"active": false,
+				"date": "01/03/2023",
+				"footnoteType": "COLLECTION_EARLY_CLOSURE"
+			},
+			{ "name": "SUBMITTED", "active": false, "date": "14/06/2023" },
+			{ "name": "VERIFICATION", "active": false, "date": "13/03/2023" },
+			{
+				"name": "COLLECTION_START_DATE",
+				"active": false,
+				"date": "18/05/2022"
+			}
+		],
 		"sosReport": {
 			"updateDate": "24/07/2024",
 			"entry": [
@@ -147,6 +164,9 @@ func TestFetchIndex(t *testing.T) {
 }
 
 func TestFetchDetail(t *testing.T) {
+	newDate := func(year int, month time.Month, day int) time.Time {
+		return time.Date(year, month, day, 0, 0, 0, 0, render.DateZone)
+	}
 	wf, to := tool.NewTestTool(fetcher)
 	eci := fetchDetail(context.Background(), to, indexItem{
 		year:   2024,
@@ -184,6 +204,15 @@ func TestFetchDetail(t *testing.T) {
 			},
 		},
 		DescriptionOriginalLangage: language.English,
+
+		Timeline: []Timeline{
+			{Date: newDate(2022, time.March, 16), Status: "REGISTERED"},
+			{Date: newDate(2022, time.May, 18), Status: "COLLECTION_START_DATE"},
+			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true},
+			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
+			{Date: newDate(2023, time.June, 14), Status: "SUBMITTED"},
+			{Date: newDate(2023, time.December, 7), Status: "ANSWERED"},
+		},
 
 		TotalSignature:   76176,
 		SignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
