@@ -6,7 +6,6 @@ import (
 	"html"
 	"html/template"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -51,7 +50,7 @@ type Node struct {
 
 // Create a Node.
 // Tags pattern is: tagName.class1.class2.class3
-// If tags == "!", to print only the children without tag.
+// If tags == "", to print only the children without tag.
 func N(tags string, children ...any) Node { return Node{tags, nil, children} }
 
 // Create a Node with options.
@@ -60,7 +59,7 @@ func No(tags string, attr Attributes, children ...any) Node {
 }
 
 // Create a zero node, that production nothing.
-var Z = Node{"!", nil, nil}
+var Z = Node{"", nil, nil}
 
 // If b is true, return f call else return Z.
 func If(b bool, f func() Node) Node {
@@ -87,7 +86,7 @@ func Merge(root Node) []byte {
 	return root.mergeSlice(h)
 }
 func (node *Node) mergeSlice(h []byte) []byte {
-	if node.tags == "!" {
+	if node.tags == "" {
 		for _, child := range node.children {
 			h = renderChild(h, child)
 		}
@@ -175,9 +174,13 @@ func renderChild(h []byte, child any) []byte {
 	case string:
 		h = append(h, html.EscapeString(child)...)
 	case int:
-		h = append(h, strconv.Itoa(child)...)
+		if child < 0 {
+			h = append(h, '-')
+			child = -child
+		}
+		h = renderUint64(h, uint64(child))
 	case uint:
-		h = append(h, strconv.FormatUint(uint64(child), 10)...)
+		h = renderUint64(h, uint64(child))
 	case time.Time:
 		h = append(h, `<time datetime=`...)
 		if child.Location() == DateZone {
@@ -197,6 +200,26 @@ func renderChild(h []byte, child any) []byte {
 		}
 	default:
 		h = append(h, fmt.Sprint(child)...)
+	}
+	return h
+}
+func renderUint64(h []byte, u uint64) []byte {
+	if u > 1000 {
+		h = renderUint64(h, u/1000)
+		u %= 1000
+		h = append(h, ' ',
+			'0'+byte(u/100),
+			'0'+byte(u/10%10),
+			'0'+byte(u%10),
+		)
+	} else {
+		if u > 100 {
+			h = append(h, '0'+byte(u/100))
+		}
+		if u > 10 {
+			h = append(h, '0'+byte(u/10%10))
+		}
+		h = append(h, '0'+byte(u%10))
 	}
 	return h
 }
@@ -228,7 +251,7 @@ func SliceSeparator[V any](s []V, separator H, f func(i int, v V) Node) []Node {
 	nodes := make([]Node, 0, len(s)*2)
 	for i, v := range s {
 		if i != 0 {
-			nodes = append(nodes, N("!", separator))
+			nodes = append(nodes, N("", separator))
 		}
 		nodes = append(nodes, f(i, v))
 	}

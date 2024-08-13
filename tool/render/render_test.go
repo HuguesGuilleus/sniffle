@@ -47,7 +47,7 @@ func TestZ(t *testing.T) {
 	assert.Nil(t, Z.mergeSlice(nil))
 }
 func TestExclamation(t *testing.T) {
-	n := N("!", 1)
+	n := N("", 1)
 	assert.Equal(t, `1`, string(n.mergeSlice(nil)))
 }
 
@@ -65,14 +65,16 @@ func TestIfElse(t *testing.T) {
 }
 
 func TestTime(t *testing.T) {
-	n := N("b", time.Date(2024, time.February, 14, 20, 21, 32, 1, time.FixedZone("TEST", 10)))
-	assert.Equal(t, `<b><time datetime=2024-02-14T20:21:22Z>2024-02-14 20:21:22 UTC</time></b>`,
-		string(n.mergeSlice(nil)))
+	assert.Equal(t, `<time datetime=2024-02-14T20:21:22Z>2024-02-14 20:21:22 UTC</time>`,
+		string(renderChild(nil, time.Date(2024, time.February, 14, 20, 21, 32, 1, time.FixedZone("TEST", 10)))))
 }
 func TestDate(t *testing.T) {
-	n := N("b", time.Date(2024, time.February, 14, 0, 0, 0, 0, DateZone))
-	assert.Equal(t, `<b><time datetime=2024-02-14>2024-02-14</time></b>`,
-		string(n.mergeSlice(nil)))
+	assert.Equal(t, `<time datetime=2024-02-14>2024-02-14</time>`,
+		string(renderChild(nil, time.Date(2024, time.February, 14, 0, 0, 0, 0, DateZone))))
+}
+
+func TestNumber(t *testing.T) {
+	assert.Equal(t, `-123 456 789`, string(renderChild(nil, -123_456_789)))
 }
 
 func TestArray(t *testing.T) {
@@ -125,7 +127,7 @@ func TestSliceSeparator(t *testing.T) {
 	assert.Equal(t,
 		[]Node{
 			{"code", nil, []any{true}},
-			{"!", nil, []any{H("/")}},
+			{"", nil, []any{H("/")}},
 			{"code", nil, []any{false}},
 		},
 		SliceSeparator(s, "/", func(i int, b bool) Node {
