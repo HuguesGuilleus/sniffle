@@ -48,10 +48,12 @@ type ECIOut struct {
 
 	Timeline []Timeline
 
-	TotalSignature uint
-	Signature      map[country.Country]uint
+	TotalSignature     uint
+	ValidatedSignature bool
+	Signature          map[country.Country]uint
 	// Date of the last organisators signatures update.
 	SignaturesUpdate time.Time
+	Threshold        Threshold
 
 	ImageName   string
 	ImageWidth  string
@@ -72,6 +74,7 @@ type Timeline struct {
 	Status     string
 	EarlyClose bool
 }
+type Threshold = map[country.Country]uint
 
 type indexItem struct {
 	year   int
@@ -112,6 +115,10 @@ func fetchIndex(ctx context.Context, t *tool.Tool) []indexItem {
 }
 
 func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
+	type signatureDTO struct {
+		Country country.Country `json:"countryCodeType"`
+		Total   uint            `json:"total"`
+	}
 	dto := &struct {
 		Status     string  `json:"status"`
 		LastUpdate dtoTime `json:"latestUpdateDate"`
@@ -134,12 +141,12 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Note   string  `json:"footnoteType"`
 		} `json:"progress"`
 		Signatures struct {
-			UpdateDate dtoDate `json:"updateDate"`
-			Entry      []struct {
-				Country country.Country `json:"countryCodeType"`
-				Total   uint            `json:"total"`
-			} `json:"entry"`
+			UpdateDate dtoDate        `json:"updateDate"`
+			Entry      []signatureDTO `json:"entry"`
 		} `json:"sosReport"`
+		Submission struct {
+			Entry []signatureDTO `json:"entry"`
+		} `json:"submission"`
 	}{}
 
 	if tool.FetchJSON(ctx, t, fmt.Sprintf(detailURL, info.year, info.number), &dto) {
@@ -205,12 +212,41 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		return cmp.Compare(a.Date.Unix(), b.Date.Unix())
 	})
 
-	eci.SignaturesUpdate = dto.Signatures.UpdateDate.Time
-	for _, entry := range dto.Signatures.Entry {
-		eci.Signature[entry.Country] = entry.Total
-		eci.TotalSignature += entry.Total
+	// Set signature
+	setSignature := func(entrys []signatureDTO) {
+		for _, entry := range entrys {
+			eci.Signature[entry.Country] = entry.Total
+			eci.TotalSignature += entry.Total
+		}
+		date := time.Time{}
+		for _, t := range eci.Timeline {
+			if t.Status == "REGISTERED" {
+				date = t.Date
+			}
+		}
+		switch {
+		case date_2024_07_06.Before(date):
+			eci.Threshold = threshold_2024_07_06
+		case date_2020_02_01.Before(date):
+			eci.Threshold = threshold_2020_02_01
+		case date_2020_01_01.Before(date):
+			eci.Threshold = threshold_2020_01_01
+		case date_2014_07_01.Before(date):
+			eci.Threshold = threshold_2014_07_01
+		case date_2012_04_01.Before(date):
+			eci.Threshold = threshold_2012_04_01
+		default:
+			t.Warn("tooOldRegisterdate", "date", date, "year", info.year, "nb", info.number)
+		}
+	}
+	if len(dto.Signatures.Entry) > 0 {
+		eci.SignaturesUpdate = dto.Signatures.UpdateDate.Time
+		setSignature(dto.Signatures.Entry)
+	} else {
+		setSignature(dto.Submission.Entry)
 	}
 
+	// Set image
 	eci.fetchImage(ctx, t, info.logoID)
 
 	return eci
