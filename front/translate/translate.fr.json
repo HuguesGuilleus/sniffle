@@ -6,6 +6,38 @@
 	"LogoTitle": "Logo",
 	"PageTop": "Ce n'est pas un site officiel de l'union europénne.",
 	"SearchInside": "Rechercher dans la page\u00A0:",
+	"HELP": "AIDE",
+
+	"Country": {
+		"Belgium": "Belgique",
+		"Bulgaria": "Bulgarie",
+		"Czechia": "Tchéquie",
+		"Denmark": "Danemark",
+		"Germany": "Allemagne",
+		"Estonia": "Estonie",
+		"Ireland": "Irlande",
+		"Greece": "Grèce",
+		"Spain": "Espagne",
+		"France": "France",
+		"Croatia": "Croatie",
+		"Italy": "Italie",
+		"Cyprus": "Chypre",
+		"Latvia": "Lettonie",
+		"Lithuania": "Lituanie",
+		"Luxembourg": "Luxembourg",
+		"Hungary": "Hongrie",
+		"Malta": "Malte",
+		"Netherlands": "Pays-Bas",
+		"Austria": "Autriche",
+		"Poland": "Pologne",
+		"Portugal": "Portugal",
+		"Romania": "Roumanie",
+		"Slovenia": "Slovénie",
+		"Slovakia": "Slovaquie",
+		"Finland": "Finlande",
+		"Sweden": "Suède",
+		"UnitedKingdom": "Royaume-Uni"
+	},
 
 	"ABOUT": {
 		"PageTitle": "À propos de ce site web",
@@ -48,7 +80,15 @@
 			"H1DescriptionGeneral": "Description générale",
 			"H1DescriptionAnnex": "Annexe",
 			"H1Treaty": "Traité",
-			"H1Signature": "Signature"
+			"H1Timeline": "Chronologie",
+
+			"H1Signature": "Signature",
+			"SignatureSum": "Nombre total de signature",
+			"CountryOverThreshold": "Pays dépassant le seuil de signature",
+			"Country": "Pays",
+			"Signature": "Signature",
+			"Threshold": "Seuil",
+			"OverThreshold": "Seuil dépassé"
 		},
 		"Status": {
 			"REGISTERED": "ENREGISTRÉ",

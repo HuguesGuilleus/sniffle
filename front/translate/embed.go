@@ -3,6 +3,7 @@ package translate
 import (
 	_ "embed"
 	"encoding/json"
+	"sniffle/tool/country"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 )
@@ -15,6 +16,9 @@ type Translation struct {
 	LogoTitle     string   `help:"Logo title and alt attribute"`
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
 	SearchInside  string
+	HELP          render.H
+
+	Country map[country.Country]render.H
 
 	ABOUT struct {
 		PageTitle       string     `help:"Header title"`
@@ -50,7 +54,15 @@ type Translation struct {
 			H1DescriptionGeneral render.H
 			H1DescriptionAnnex   render.H
 			H1Treaty             render.H
+			H1Timeline           render.H
+
 			H1Signature          render.H
+			SignatureSum         render.H
+			CountryOverThreshold render.H
+			Country              render.H
+			Signature            render.H
+			Threshold            render.H
+			OverThreshold        string
 		}
 		Status    map[string]render.H
 		Categorie map[string]render.H

@@ -34,6 +34,8 @@ ex:
 https://register.eci.ec.europa.eu/core/api/register/details/2024/000001
 ```
 
+- thresholds data: https://citizens-initiative.europa.eu/thresholds_fr
+
 # Icon
 
 In the `logo` struct in index entry or in detail struct, take the field `id`

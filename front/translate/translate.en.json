@@ -6,6 +6,38 @@
 	"LogoTitle": "Logo",
 	"PageTop": "This is not an official european website.",
 	"SearchInside": "Search inside the page:",
+	"HELP": "HELP",
+
+	"Country": {
+		"Belgium": "Belgium",
+		"Bulgaria": "Bulgaria",
+		"Czechia": "Czechia",
+		"Denmark": "Denmark",
+		"Germany": "Germany",
+		"Estonia": "Estonia",
+		"Ireland": "Ireland",
+		"Greece": "Greece",
+		"Spain": "Spain",
+		"France": "France",
+		"Croatia": "Croatia",
+		"Italy": "Italy",
+		"Cyprus": "Cyprus",
+		"Latvia": "Latvia",
+		"Lithuania": "Lithuania",
+		"Luxembourg": "Luxembourg",
+		"Hungary": "Hungary",
+		"Malta": "Malta",
+		"Netherlands": "Netherlands",
+		"Austria": "Austria",
+		"Poland": "Poland",
+		"Portugal": "Portugal",
+		"Romania": "Romania",
+		"Slovenia": "Slovenia",
+		"Slovakia": "Slovakia",
+		"Finland": "Finland",
+		"Sweden": "Sweden",
+		"UnitedKingdom": "United Kingdom"
+	},
 
 	"ABOUT": {
 		"PageTitle": "About this website",
@@ -48,7 +80,15 @@
 			"H1DescriptionGeneral": "General description",
 			"H1DescriptionAnnex": "Description annex",
 			"H1Treaty": "Traité",
-			"H1Signature": "Signature"
+			"H1Timeline": "Timeline",
+
+			"H1Signature": "Signature",
+			"SignatureSum": "Signature total",
+			"CountryOverThreshold": "Country over the threshold",
+			"Country": "Country",
+			"Signature": "Signature",
+			"Threshold": "Threshold",
+			"OverThreshold": "Threshold pass"
 		},
 		"Status": {
 			"REGISTERED": "REGISTERED",

@@ -27,14 +27,38 @@ body {
 }
 
 h1 {
-	border: _colorA _line;
+	border: _colorA _line2;
 	border-style: solid none;
+}
+
+table {
+	width: 100%;
+	border: solid _line2 _color2;
+	border-collapse: collapse;
+}
+
+table.right {
+	text-align: right;
+}
+
+td,
+th {
+	border: solid _line1 white;
+	border: _line1 white;
+	border: _line1 _color2;
+	border-style: solid none;
+	padding: 0 _spThin;
+}
+
+
+tr:hover {
+	background: _back1;
 }
 
 .box {
 	display: inline-block;
 	margin-right: _sp;
-	padding: _line _sp;
+	padding: _line1 _sp;
 	background: _colorA;
 }
 
@@ -47,8 +71,9 @@ a:hover {
 	color: _color;
 }
 
+.text,
 p {
-	text-indent: _sp;
+	text-indent: 3em;
 	text-align: justify;
 }
 
@@ -65,6 +90,11 @@ hr {
 	border-radius: _spThin;
 	padding: 0 _spThin;
 	font-weight: bolder;
+	background: _colorA;
+}
+
+.active {
+	padding: 0 _spThin;
 	background: _colorA;
 }
 

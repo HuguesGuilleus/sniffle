@@ -1,0 +1,22 @@
+.bigInfo {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: _sp;
+	align-items: center;
+	margin-bottom: _sp;
+	border: solid _line2 _colorA;
+	padding: _spThin;
+	font-size: larger;
+	font-weight: bold;
+}
+
+.bigInfoMain {
+	font-size: xx-large;
+	color: _color2;
+	text-align: right;
+}
+
+
+.bigInfoData {
+	color: _colorA;
+}

@@ -20,7 +20,8 @@ var files embed.FS
 var Style = func() []byte {
 	r := regexp.MustCompile(`(_[\w\d]+)`)
 	m := map[string]string{
-		"_line":   ".1rem",
+		"_line1":  ".1rem",
+		"_line2":  ".2rem",
 		"_spThin": ".5rem",
 		"_sp":     "1rem",
 
@@ -28,6 +29,7 @@ var Style = func() []byte {
 		"_back1":  "#DDD",
 		"_color":  "black",
 		"_color1": "#222",
+		"_color2": "#555",
 
 		"_colorA":     "#2E98FF",
 		"_colorEdito": "orchid",

@@ -1,7 +1,6 @@
 package country
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -42,13 +41,9 @@ const (
 	UnitedKingdom
 )
 
-func (c *Country) UnmarshalJSON(data []byte) error {
-	s := ""
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("unmarshal country code string: %w", err)
-	}
-
-	*c = iso2Country[s]
+func (c *Country) UnmarshalText(data []byte) error {
+	s := string(data)
+	*c = fromJSON[s]
 	if *c == Invalid {
 		return fmt.Errorf("unknwon country: %q", s)
 	}
@@ -64,7 +59,7 @@ func (c Country) String() string {
 	return s
 }
 
-var iso2Country = map[string]Country{
+var fromJSON = map[string]Country{
 	"AT": Austria,
 	"BE": Belgium,
 	"BG": Bulgaria,
@@ -92,8 +87,36 @@ var iso2Country = map[string]Country{
 	"SE": Sweden,
 	"SI": Slovenia,
 	"SK": Slovakia,
-
 	"GB": UnitedKingdom,
+
+	"Austria":       Austria,
+	"Belgium":       Belgium,
+	"Bulgaria":      Bulgaria,
+	"Cyprus":        Cyprus,
+	"Czechia":       Czechia,
+	"Germany":       Germany,
+	"Denmark":       Denmark,
+	"Estonia":       Estonia,
+	"Spain":         Spain,
+	"Finland":       Finland,
+	"France":        France,
+	"Greece":        Greece,
+	"Croatia":       Croatia,
+	"Hungary":       Hungary,
+	"Ireland":       Ireland,
+	"Italy":         Italy,
+	"Lithuania":     Lithuania,
+	"Luxembourg":    Luxembourg,
+	"Latvia":        Latvia,
+	"Malta":         Malta,
+	"Netherlands":   Netherlands,
+	"Poland":        Poland,
+	"Portugal":      Portugal,
+	"Romania":       Romania,
+	"Sweden":        Sweden,
+	"Slovenia":      Slovenia,
+	"Slovakia":      Slovakia,
+	"UnitedKingdom": UnitedKingdom,
 }
 
 var country2iso = map[Country]string{

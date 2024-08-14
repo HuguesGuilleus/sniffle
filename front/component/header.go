@@ -45,7 +45,7 @@ func Header(langs []language.Language, pageLang language.Language, idNamespace, 
 
 func HomeAnchor(l language.Language) render.Node {
 	tr := translate.AllTranslation[l]
-	return render.N("!",
+	return render.N("",
 		render.No("a", render.A("href", "/"+l.String()+".html").A("title", tr.HOME.Name), "/////"),
 		" ")
 }

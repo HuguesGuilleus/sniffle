@@ -49,6 +49,6 @@ header {
 }
 
 .summary {
-	border: dashed _line _colorA;
+	border: dashed _line1 _colorA;
 	padding: _sp;
 }
