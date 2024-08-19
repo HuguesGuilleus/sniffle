@@ -64,7 +64,7 @@ type ECIOut struct {
 type Description struct {
 	Title       string
 	PlainDesc   string
-	SupportLink string
+	SupportLink *url.URL
 	Website     *url.URL
 	Objective   template.HTML
 	Annex       template.HTML
@@ -171,14 +171,20 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	eci.Categorie = slices.Compact(categories)
 
 	for _, desc := range dto.Description {
+		if desc.SupportLink == desc.Website {
+			desc.SupportLink = ""
+		}
 		eci.Description[desc.Language] = &Description{
 			Title:       desc.Title,
 			PlainDesc:   securehtml.Text(desc.Objective, 200),
-			SupportLink: desc.SupportLink,
+			SupportLink: securehtml.ParseURL(desc.SupportLink),
 			Website:     securehtml.ParseURL(desc.Website),
 			Objective:   securehtml.Secure(desc.Objective),
 			Annex:       securehtml.Secure(desc.Annex),
 			Treaty:      desc.Treaty,
+		}
+		if d := eci.Description[desc.Language]; d.SupportLink != nil && d.SupportLink.Host != "eci.ec.europa.eu" {
+			d.SupportLink = nil
 		}
 		if desc.Original {
 			eci.DescriptionOriginalLangage = desc.Language

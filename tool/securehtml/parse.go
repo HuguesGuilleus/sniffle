@@ -138,6 +138,8 @@ func ParseURL(s string) *url.URL {
 	switch u.Scheme {
 	case "https", "http":
 		return u
+	case "":
+		return ParseURL("https://" + s)
 	default:
 		return nil
 	}

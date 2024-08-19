@@ -183,8 +183,13 @@ func TestFetchDetail(t *testing.T) {
 
 		Description: map[language.Language]*Description{
 			language.English: {
-				Title:       "Title",
-				SupportLink: "https://eci.ec.europa.eu/043/public/?lg=fr",
+				Title: "Title",
+				SupportLink: &url.URL{
+					Scheme:   "https",
+					Host:     "eci.ec.europa.eu",
+					Path:     "/043/public/",
+					RawQuery: "lg=fr",
+				},
 				Website: &url.URL{
 					Scheme: "https",
 					Host:   "furfreeeurope.eu",
