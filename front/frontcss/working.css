@@ -1,0 +1,13 @@
+.working {
+	margin-top: _sp;
+	padding: _spThin;
+	background: repeating-linear-gradient(-45deg, #FA06 0 1ex, transparent 1ex 2ex);
+}
+
+.working::before {
+	content: "IN PROGRESS ...";
+	display: block;
+	background: #FA0;
+	padding: _spThin;
+	font-weight: 900;
+}

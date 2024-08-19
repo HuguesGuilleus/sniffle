@@ -146,11 +146,13 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				}),
 
 				// Timeline
-				render.N("h1", ONE.H1Timeline),
-				render.If(true, func() render.Node {
-					j, _ := json.MarshalIndent(eci.Timeline, "", "\t")
-					return render.N("pre", string(j))
-				}),
+				render.N("div.working",
+					render.N("h1", ONE.H1Timeline),
+					render.If(true, func() render.Node {
+						j, _ := json.MarshalIndent(eci.Timeline, "", "\t")
+						return render.N("pre", string(j))
+					}),
+				),
 
 				// Signature
 				render.If(len(eci.Signature) > 0, func() render.Node {
