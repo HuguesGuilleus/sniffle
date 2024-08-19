@@ -48,7 +48,7 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 				return render.No("a.si.bigItem", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
 					render.N("div",
 						render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
-						render.N("span.box.st", eci.Year, "/", eci.Number),
+						render.N("span.box.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
 					),
 					render.N("div.itemTitle.st", eci.Description[l].Title),
 					render.N("div", render.SliceSeparator(eci.Categorie, ", ", func(_ int, categorie string) render.Node {
@@ -89,7 +89,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 		component.TopHeader(l),
 		component.InDevHeader(l),
 		component.Header(t.Languages, l, idNamespace(l),
-			render.N("div.headerId", eci.Year, "/", eci.Number),
+			render.N("div.headerId", render.Int(eci.Year), "/", render.Int(eci.Number)),
 			desc.Title),
 
 		render.N("div.wt",

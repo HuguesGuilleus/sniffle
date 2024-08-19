@@ -6,12 +6,16 @@ import (
 	"html"
 	"html/template"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 )
 
 // Used to indicate that this string is already escaped, or the HTML content is safe.
 type H = template.HTML
+
+// A int display without space for thousand
+type Int int64
 
 // Render safe HTML.
 type HTML interface {
@@ -145,7 +149,7 @@ func (node *Node) mergeSlice(h []byte) []byte {
 
 	// End tag
 	switch tagName {
-	case "link", "img", "meta":
+	case "br", "img", "hr", "link", "meta":
 		// Do not close
 	default:
 		h = append(h, '<', '/')
@@ -173,6 +177,8 @@ func renderChild(h []byte, child any) []byte {
 		}
 	case string:
 		h = append(h, html.EscapeString(child)...)
+	case Int:
+		h = strconv.AppendInt(h, int64(child), 10)
 	case int:
 		if child < 0 {
 			h = append(h, '-')

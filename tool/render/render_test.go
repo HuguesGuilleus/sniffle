@@ -73,6 +73,9 @@ func TestDate(t *testing.T) {
 		string(renderChild(nil, time.Date(2024, time.February, 14, 0, 0, 0, 0, DateZone))))
 }
 
+func TestIntType(t *testing.T) {
+	assert.Equal(t, `-123456789`, string(renderChild(nil, Int(-123_456_789))))
+}
 func TestNumber(t *testing.T) {
 	assert.Equal(t, `-123 456 789`, string(renderChild(nil, -123_456_789)))
 }
