@@ -68,7 +68,7 @@
 			});
 
 		toc[INNERTEXT] = "";
-		qsa(".wc>*", (element) => {
+		qsa(".wc *", (element) => {
 			if (element.tagName == "H1") {
 				tocItemsPush(element, 1, currentTocElement1 = []);
 				currentTocElement2 = [];

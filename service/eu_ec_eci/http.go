@@ -51,9 +51,10 @@ type ECIOut struct {
 	TotalSignature     uint
 	ValidatedSignature bool
 	Signature          map[country.Country]uint
-	// Date of the last organisators signatures update.
-	SignaturesUpdate time.Time
-	Threshold        Threshold
+	// Date of the last organisators paper signatures update.
+	// Can be zero
+	PaperSignaturesUpdate time.Time
+	Threshold             Threshold
 
 	ImageName   string
 	ImageWidth  string
@@ -240,9 +241,10 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 	if len(dto.Signatures.Entry) > 0 {
-		eci.SignaturesUpdate = dto.Signatures.UpdateDate.Time
+		eci.PaperSignaturesUpdate = dto.Signatures.UpdateDate.Time
 		setSignature(dto.Signatures.Entry)
 	} else {
+		eci.ValidatedSignature = true
 		setSignature(dto.Submission.Entry)
 	}
 

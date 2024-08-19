@@ -51,4 +51,5 @@ header {
 .summary {
 	border: dashed _line1 _colorA;
 	padding: _sp;
+	margin-bottom: _sp;
 }

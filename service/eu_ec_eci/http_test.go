@@ -214,8 +214,8 @@ func TestFetchDetail(t *testing.T) {
 			{Date: newDate(2023, time.December, 7), Status: "ANSWERED"},
 		},
 
-		TotalSignature:   76176,
-		SignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
+		TotalSignature:        76176,
+		PaperSignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
 		Signature: map[country.Country]uint{
 			country.Finland:     2171,
 			country.Romania:     1362,

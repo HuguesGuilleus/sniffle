@@ -84,6 +84,8 @@
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Signature total",
+			"ValidatedSignature": "The signatures are validate.",
+			"PaperSignaturesUpdate": "Paper signature last update: ",
 			"CountryOverThreshold": "Country over the threshold",
 			"Country": "Country",
 			"Signature": "Signature",

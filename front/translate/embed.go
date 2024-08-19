@@ -56,13 +56,15 @@ type Translation struct {
 			H1Treaty             render.H
 			H1Timeline           render.H
 
-			H1Signature          render.H
-			SignatureSum         render.H
-			CountryOverThreshold render.H
-			Country              render.H
-			Signature            render.H
-			Threshold            render.H
-			OverThreshold        string
+			H1Signature           render.H
+			SignatureSum          render.H
+			ValidatedSignature    render.H
+			PaperSignaturesUpdate render.H
+			CountryOverThreshold  render.H
+			Country               render.H
+			Signature             render.H
+			Threshold             render.H
+			OverThreshold         string
 		}
 		Status    map[string]render.H
 		Categorie map[string]render.H

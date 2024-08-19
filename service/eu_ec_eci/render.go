@@ -164,12 +164,14 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					}
 					return render.N("",
 						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
-
-						// Last update
-						// validated?
-
+						render.If(eci.ValidatedSignature, func() render.Node {
+							return render.N("div.marginBottom", ONE.ValidatedSignature)
+						}),
+						render.If(!eci.PaperSignaturesUpdate.IsZero(), func() render.Node {
+							return render.N("div.marginBottom", ONE.PaperSignaturesUpdate, eci.PaperSignaturesUpdate)
+						}),
 						render.N("div.bigInfo",
-							render.N("div.bifInfoMeta", tr.EU_EC_ECI.ONE.SignatureSum),
+							render.N("div.bifInfoMeta", ONE.SignatureSum),
 							render.N("div.bigInfoMain",
 								render.N("span.bigInfoData", eci.TotalSignature),
 								" / 1 000 000",

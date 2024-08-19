@@ -84,6 +84,8 @@
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Nombre total de signature",
+			"ValidatedSignature": "Les signatures ont été validés.",
+			"PaperSignaturesUpdate": "Dernière mise à jour des signatures papiers\u00A0: ",
 			"CountryOverThreshold": "Pays dépassant le seuil de signature",
 			"Country": "Pays",
 			"Signature": "Signature",
