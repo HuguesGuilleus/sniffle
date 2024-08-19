@@ -20,15 +20,15 @@ body {
 	background: _colorEdito !important;
 }
 
-.w {
-	max-width: 40rem;
-	margin-left: max(0%, calc(calc(100vw - 40rem) * .3));
-	padding: _sp;
-}
-
 h1 {
 	border: _colorA _line2;
 	border-style: solid none;
+}
+
+h2 {
+	display: table;
+	border: _colorA _line2;
+	border-style: double none;
 }
 
 table {

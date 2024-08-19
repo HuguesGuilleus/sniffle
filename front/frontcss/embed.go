@@ -24,6 +24,7 @@ var Style = func() []byte {
 		"_line2":  ".2rem",
 		"_spThin": ".5rem",
 		"_sp":     "1rem",
+		"_sp1":    "1.5rem",
 
 		"_back":   "#EEE",
 		"_back1":  "#DDD",
@@ -32,6 +33,7 @@ var Style = func() []byte {
 		"_color2": "#555",
 
 		"_colorA":     "#2E98FF",
+		"_colorADark": "#006ad0",
 		"_colorEdito": "orchid",
 		// "_colorB":    "#FFCC00", // EU original yellow
 		// "_colorGrey": "lightgrey",

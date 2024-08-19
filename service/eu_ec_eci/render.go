@@ -92,128 +92,133 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			render.N("div.headerId", eci.Year, "/", eci.Number),
 			desc.Title),
 
-		render.N("div.w",
-			// Summary
-			render.N("div.summary",
-				render.N("div", ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
-				render.N("div", ONE.LastUpdate, eci.LastUpdate),
-				render.N("div", ONE.Categorie,
-					render.Slice(eci.Categorie, func(i int, categorie string) render.Node {
-						if i == 0 {
-							return render.N("", tr.EU_EC_ECI.Categorie[categorie])
-						}
-						return render.N("", ", "+tr.EU_EC_ECI.Categorie[categorie])
-					})),
-				render.N("div",
-					render.No("a.box", render.A("href", fmt.Sprintf(
-						"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
-						tr.LinkOfficial),
-					render.If(desc.SupportLink != "", func() render.Node {
-						return render.No("a.box", render.A("href", desc.SupportLink), ONE.LinkSupport)
-					}),
-					render.If(desc.Website != nil, func() render.Node {
-						return render.No("a.box", render.A("href", desc.Website.String()), ONE.LinkWebsite)
-					}),
-				),
-			),
+		render.N("div.wt",
+			render.N("div", render.No("div", render.A("id", "toc"))),
 
-			// Image
-			render.If(eci.ImageName != "", func() render.Node {
-				return render.No("img.logo.marginTop", render.
-					A("loading", "lazy").
-					A("src", eci.ImageName).
-					A("width", eci.ImageWidth).
-					A("height", eci.ImageHeight).
-					A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
-			}),
-
-			// Text information
-			render.N("h1", ONE.H1DescriptionGeneral),
-			render.N("div.text", desc.Objective),
-
-			render.N("h1", ONE.H1DescriptionAnnex),
-			render.N("div.text", desc.Annex),
-
-			render.If(desc.Treaty != "", func() render.Node {
-				return render.N("",
-					render.N("h1", ONE.H1Treaty),
-					render.N("div.text", desc.Treaty),
-				)
-			}),
-
-			// Timeline
-			render.N("h1", ONE.H1Timeline),
-			render.If(true, func() render.Node {
-				j, _ := json.MarshalIndent(eci.Timeline, "", "\t")
-				return render.N("pre", string(j))
-			}),
-
-			// Signature
-			render.If(len(eci.Signature) > 0, func() render.Node {
-				countryOverThreshold := 0
-				for c, v := range eci.Signature {
-					if eci.Threshold[c] <= v {
-						countryOverThreshold++
-					}
-				}
-				return render.N("",
-					render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
-
-					// Last update
-					// validated?
-
-					render.N("div.bigInfo",
-						render.N("div.bifInfoMeta", tr.EU_EC_ECI.ONE.SignatureSum),
-						render.N("div.bigInfoMain",
-							render.N("span.bigInfoData", eci.TotalSignature),
-							" / 1 000 000",
-						),
-					),
-					// render.N("div.edito",
-					// 	render.N("div.editoT", tr.HELP),
-					// 	render.N("p", "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par le nombre total de députés au Parlement européen.")),
-					render.N("div.bigInfo",
-						render.N("div.bifInfoMeta", ONE.CountryOverThreshold),
-						render.N("div.bigInfoMain",
-							render.N("span.bigInfoData", countryOverThreshold),
-							" / 7",
-						),
-					),
-
-					render.N("table.right",
-						render.N("tr",
-							render.N("th", ONE.Country),
-							render.N("th", ONE.Signature),
-							render.N("th", ONE.Threshold),
-						),
-						render.If(true, func() render.Node {
-							threshold := eci.Threshold
-							overtThreshol := render.No("span.tag", render.A("title", ONE.OverThreshold), "✔")
-
-							countrys := make([]country.Country, 0, len(eci.Signature))
-							for c := range eci.Signature {
-								countrys = append(countrys, c)
+			render.N("div.wc",
+				// Summary
+				render.N("div.summary",
+					render.N("div", ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
+					render.N("div", ONE.LastUpdate, eci.LastUpdate),
+					render.N("div", ONE.Categorie,
+						render.Slice(eci.Categorie, func(i int, categorie string) render.Node {
+							if i == 0 {
+								return render.N("", tr.EU_EC_ECI.Categorie[categorie])
 							}
-							slices.SortFunc(countrys, func(a, b country.Country) int {
-								return cmp.Compare(tr.Country[a], tr.Country[b])
-							})
-
-							nodes := make([]render.Node, len(countrys))
-							for i, c := range countrys {
-								sig := eci.Signature[c]
-								nodes[i] = render.N("tr",
-									render.N("td", tr.Country[c]),
-									render.N("td", sig),
-									render.N("td",
-										render.If(sig >= threshold[c], func() render.Node { return overtThreshol }),
-										threshold[c],
-									))
-							}
-							return render.N("", nodes)
+							return render.N("", ", "+tr.EU_EC_ECI.Categorie[categorie])
+						})),
+					render.N("div",
+						render.No("a.box", render.A("href", fmt.Sprintf(
+							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
+							tr.LinkOfficial),
+						render.If(desc.SupportLink != "", func() render.Node {
+							return render.No("a.box", render.A("href", desc.SupportLink), ONE.LinkSupport)
+						}),
+						render.If(desc.Website != nil, func() render.Node {
+							return render.No("a.box", render.A("href", desc.Website.String()), ONE.LinkWebsite)
 						}),
 					),
-				)
-			}),
+				),
+
+				// Image
+				render.If(eci.ImageName != "", func() render.Node {
+					return render.No("img.logo.marginTop", render.
+						A("loading", "lazy").
+						A("src", eci.ImageName).
+						A("width", eci.ImageWidth).
+						A("height", eci.ImageHeight).
+						A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
+				}),
+
+				// Text information
+				render.No("h1", render.A("id", "desc"), ONE.H1DescriptionGeneral),
+				render.N("h2", ONE.H1DescriptionGeneral),
+				render.N("div.text", desc.Objective),
+
+				render.N("h2", ONE.H1DescriptionAnnex),
+				render.N("div.text", desc.Annex),
+
+				render.If(desc.Treaty != "", func() render.Node {
+					return render.N("",
+						render.N("h2", ONE.H1Treaty),
+						render.N("div.text", desc.Treaty),
+					)
+				}),
+
+				// Timeline
+				render.N("h1", ONE.H1Timeline),
+				render.If(true, func() render.Node {
+					j, _ := json.MarshalIndent(eci.Timeline, "", "\t")
+					return render.N("pre", string(j))
+				}),
+
+				// Signature
+				render.If(len(eci.Signature) > 0, func() render.Node {
+					countryOverThreshold := 0
+					for c, v := range eci.Signature {
+						if eci.Threshold[c] <= v {
+							countryOverThreshold++
+						}
+					}
+					return render.N("",
+						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
+
+						// Last update
+						// validated?
+
+						render.N("div.bigInfo",
+							render.N("div.bifInfoMeta", tr.EU_EC_ECI.ONE.SignatureSum),
+							render.N("div.bigInfoMain",
+								render.N("span.bigInfoData", eci.TotalSignature),
+								" / 1 000 000",
+							),
+						),
+						// render.N("div.edito",
+						// 	render.N("div.editoT", tr.HELP),
+						// 	render.N("p", "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par le nombre total de députés au Parlement européen.")),
+						render.N("div.bigInfo",
+							render.N("div.bifInfoMeta", ONE.CountryOverThreshold),
+							render.N("div.bigInfoMain",
+								render.N("span.bigInfoData", countryOverThreshold),
+								" / 7",
+							),
+						),
+
+						render.N("table.right",
+							render.N("tr",
+								render.N("th", ONE.Country),
+								render.N("th", ONE.Signature),
+								render.N("th", ONE.Threshold),
+							),
+							render.If(true, func() render.Node {
+								threshold := eci.Threshold
+								overtThreshol := render.No("span.tag", render.A("title", ONE.OverThreshold), "✔")
+
+								countrys := make([]country.Country, 0, len(eci.Signature))
+								for c := range eci.Signature {
+									countrys = append(countrys, c)
+								}
+								slices.SortFunc(countrys, func(a, b country.Country) int {
+									return cmp.Compare(tr.Country[a], tr.Country[b])
+								})
+
+								nodes := make([]render.Node, len(countrys))
+								for i, c := range countrys {
+									sig := eci.Signature[c]
+									nodes[i] = render.N("tr",
+										render.N("td", tr.Country[c]),
+										render.N("td", sig),
+										render.N("td",
+											render.If(sig >= threshold[c], func() render.Node { return overtThreshol }),
+											threshold[c],
+										))
+								}
+								return render.N("", nodes)
+							}),
+						),
+					)
+				}),
+			),
 		),
 
 		component.Footer(l),

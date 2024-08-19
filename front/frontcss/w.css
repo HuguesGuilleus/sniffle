@@ -1,0 +1,53 @@
+.w {
+	max-width: 40rem;
+	margin-left: max(0%, calc(calc(100vw - 40rem) * .3));
+	padding: _sp;
+}
+
+.wt {
+	max-width: 40rem;
+	margin: 0 auto;
+	padding: _sp;
+}
+
+#toc {
+	margin-bottom: _sp;
+}
+
+@media screen and (min-width: 66rem) {
+	.wt {
+		width: 100%;
+		margin: 0;
+		display: grid;
+		grid-template-columns: 20rem 40rem;
+		gap: _sp;
+		padding: _sp;
+	}
+
+	#toc {
+		border-right: solid _line2 _back1;
+		padding-right: _spThin;
+		position: sticky;
+		margin: 0;
+		top: _sp;
+	}
+
+	a.wi[data-w=true] {
+		font-weight: bold;
+		background: _back1;
+	}
+}
+
+.wi {
+	display: block;
+	padding: _spThin;
+	text-decoration: none;
+}
+
+.wi:hover {
+	background: _colorA;
+}
+
+.wi2 {
+	padding-left: _sp1;
+}
