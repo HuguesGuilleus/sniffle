@@ -75,6 +75,7 @@ a:hover {
 p {
 	text-indent: 3em;
 	text-align: justify;
+	overflow-wrap: break-word;
 }
 
 p.noindent {

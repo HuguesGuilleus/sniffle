@@ -2,7 +2,6 @@ package eu_ec_eci
 
 import (
 	"cmp"
-	"encoding/json"
 	"fmt"
 	"slices"
 	"sniffle/front/component"
@@ -146,13 +145,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				}),
 
 				// Timeline
-				render.N("div.working",
-					render.N("h1", ONE.H1Timeline),
-					render.If(true, func() render.Node {
-						j, _ := json.MarshalIndent(eci.Timeline, "", "\t")
-						return render.N("pre", string(j))
-					}),
-				),
+				render.N("h1", ONE.H1Timeline),
+				component.Json(eci.Timeline),
 
 				// Signature
 				render.If(len(eci.Signature) > 0, func() render.Node {
