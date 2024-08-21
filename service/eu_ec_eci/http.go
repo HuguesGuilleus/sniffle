@@ -243,7 +243,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		case date_2012_04_01.Before(date):
 			eci.Threshold = threshold_2012_04_01
 		default:
-			t.Warn("tooOldRegisterdate", "date", date, "year", info.year, "nb", info.number)
+			t.Warn("tooOldRegisterdate", "date", date, "year", eci.Year, "nb", eci.Number)
 		}
 	}
 	if len(dto.Signatures.Entry) > 0 {
@@ -281,7 +281,7 @@ func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
 	case "jpeg":
 		eci.ImageName = "logo.jpg"
 	default:
-		t.Warn("fetchImage", "err", "unknown format", "format", format)
+		t.Warn("fetchImage", "err", "unknown format", "format", format, "logoID", logoID)
 		return
 	}
 

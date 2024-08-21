@@ -40,6 +40,7 @@ input[type=search] {
 .itemDesc {
 	font-size: smaller;
 	font-style: italic;
+	text-indent: 0;
 }
 
 .bigItem>* {
