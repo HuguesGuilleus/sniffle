@@ -97,6 +97,9 @@ func fetchIndex(ctx context.Context, t *tool.Tool) []indexItem {
 	if tool.FetchJSON(ctx, t, indexURL, &dto) {
 		return nil
 	}
+	if t.Dev() {
+		t.WriteFile("/eu/ec/eci/src.json", tool.FetchAll(ctx, t, indexURL))
+	}
 
 	items := make([]indexItem, len(dto.Entries))
 	for i, dtoEntry := range dto.Entries {
@@ -152,6 +155,10 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 
 	if tool.FetchJSON(ctx, t, fmt.Sprintf(detailURL, info.year, info.number), &dto) {
 		return nil
+	}
+	if t.Dev() {
+		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),
+			tool.FetchAll(ctx, t, fmt.Sprintf(detailURL, info.year, info.number)))
 	}
 
 	eci := &ECIOut{

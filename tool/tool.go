@@ -24,6 +24,8 @@ type Config struct {
 
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
+
+	Dev bool
 }
 
 func New(config *Config) *Tool {
@@ -37,6 +39,8 @@ func New(config *Config) *Tool {
 
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
+
+		dev: config.Dev,
 	}
 }
 
@@ -66,7 +70,12 @@ type Tool struct {
 	// Do not include render.Back
 	htmlFiles     []string
 	htmlFileMutex sync.Mutex
+
+	dev bool
 }
+
+// Is in dev mode or not?
+func (t *Tool) Dev() bool { return t.dev }
 
 func (t *Tool) WriteFile(path string, data []byte) {
 	if strings.HasSuffix(path, ".html") && !(bytes.Equal(data, render.Back) || bytes.Equal(data, t.langRedirect)) {
