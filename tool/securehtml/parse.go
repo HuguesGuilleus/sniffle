@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"regexp"
 	"sniffle/tool/render"
 	"strings"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
+
+var urlRegexp = regexp.MustCompile(`(https?\://\S+)`)
 
 type buffer struct {
 	buffer bytes.Buffer
@@ -93,6 +96,27 @@ func (buff *buffer) WriteString(s string) {
 	buff.spaceForbiden = space
 }
 
+func (buff *buffer) writeStringWithUrl(s string) {
+	loc := urlRegexp.FindStringIndex(s)
+	if loc == nil {
+		buff.WriteString(s)
+		return
+	}
+
+	buff.WriteString(s[:loc[0]])
+
+	sub := s[loc[0]:loc[1]]
+	if u, _ := url.Parse(sub); u == nil {
+		buff.WriteString(sub)
+	} else {
+		buff.addAnchor(u)
+		buff.WriteString(sub)
+		buff.end(atom.A)
+	}
+
+	buff.writeStringWithUrl(s[loc[1]:])
+}
+
 func (buff *buffer) addAnchor(href *url.URL) {
 	buff.buffer.WriteString(`<a href="`)
 	buff.WriteString(href.String())
@@ -127,7 +151,7 @@ func (buff *buffer) end(tag atom.Atom) {
 
 func (buff *buffer) walk(node *html.Node) {
 	if node.Type == html.TextNode {
-		buff.WriteString(node.Data)
+		buff.writeStringWithUrl(node.Data)
 		return
 	} else if node.Type == html.ElementNode {
 		if node.Namespace != "" {

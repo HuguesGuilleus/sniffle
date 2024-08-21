@@ -10,6 +10,7 @@ import (
 
 func TestSecure(t *testing.T) {
 	assert.Equal(t, template.HTML(``), Secure(``))
+	assert.Equal(t, template.HTML(`a <a href="https://google.com">https://google.com</a> b`), Secure(`a https://google.com b`))
 	assert.Equal(t, template.HTML(``), Secure(`<hr><script>alert("SECURITY!!!");</script><style>*{display:none!important}</style>`))
 	assert.Equal(t, template.HTML(`<p><b>Very</b> <i>Safe</i></p>`), Secure(`<div><p why=42><b>Very</b> <i>Safe</i></p>`))
 	assert.Equal(t, template.HTML(`<p><strong>Title</strong></p>`), Secure(`<h1>Title`))
