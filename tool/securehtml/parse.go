@@ -2,7 +2,7 @@ package securehtml
 
 import (
 	"bytes"
-	"html/template"
+	"fmt"
 	"net/url"
 	"sniffle/tool/render"
 	"strings"
@@ -11,136 +11,183 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-// Secure Secure by escape unknown markup and by removing attribute.
-func Secure(src string) render.H {
-	root, err := html.Parse(strings.NewReader(src))
-	if err != nil {
-		return template.HTML(html.EscapeString(src))
-	}
-	buff := strings.Builder{}
-	renderSecureHTML(root, &buff)
-	return template.HTML(buff.String())
+type buffer struct {
+	buffer bytes.Buffer
+	// Deep pre, code
+	keepSpace int
+
+	spaceForbiden bool
 }
-func renderSecureHTML(node *html.Node, buff *strings.Builder) {
+
+func isBlock(tag atom.Atom) bool {
+	switch tag {
+	case atom.P, atom.Br, atom.Blockquote, atom.Ul, atom.Ol, atom.Li, atom.Pre:
+		return true
+	default:
+		return false
+	}
+}
+
+func keepSpaceTag(tag atom.Atom) bool {
+	switch tag {
+	case atom.Pre, atom.Code:
+		return true
+	default:
+		return false
+	}
+}
+
+func isWiteSpace(b byte) bool {
+	switch b {
+	case '\x00', ' ', '\t', '\f', '\r', '\n':
+		return true
+	default:
+		return false
+	}
+}
+
+// Remove the whitespace at end of the buffer.
+func (buff *buffer) trimWhiteSpaceEnd() {
+	for buff.buffer.Len() > 0 {
+		if l := buff.buffer.Len(); isWiteSpace(buff.buffer.Bytes()[l-1]) {
+			buff.buffer.Truncate(l - 1)
+		} else {
+			return
+		}
+	}
+}
+
+func (buff *buffer) WriteString(s string) {
+	if buff.keepSpace > 0 {
+		buff.spaceForbiden = false
+		buff.buffer.WriteString(html.EscapeString(s))
+		return
+	}
+
+	space := buff.spaceForbiden
+	for _, b := range []byte(s) {
+		if isWiteSpace(b) {
+			if !space {
+				buff.buffer.WriteByte(' ')
+			}
+			space = true
+		} else {
+			space = false
+			switch b {
+			case '<':
+				buff.buffer.WriteString(`&gt;`)
+			case '>':
+				buff.buffer.WriteString(`&lt;`)
+			case '&':
+				buff.buffer.WriteString(`&amp;`)
+			case '"':
+				buff.buffer.WriteString(`&#34;`)
+			case '\'':
+				buff.buffer.WriteString(`&#39;`)
+			default:
+				buff.buffer.WriteByte(b)
+			}
+		}
+	}
+
+	buff.spaceForbiden = space
+}
+
+func (buff *buffer) addAnchor(href *url.URL) {
+	buff.buffer.WriteString(`<a href="`)
+	buff.WriteString(href.String())
+	buff.buffer.WriteString(`">`)
+}
+
+func (buff *buffer) add(tag atom.Atom) {
+	if keepSpaceTag(tag) {
+		buff.keepSpace++
+	}
+	if isBlock(tag) {
+		buff.trimWhiteSpaceEnd()
+		buff.spaceForbiden = true
+	}
+	buff.buffer.WriteByte('<')
+	buff.buffer.WriteString(tag.String())
+	buff.buffer.WriteByte('>')
+}
+
+func (buff *buffer) end(tag atom.Atom) {
+	if keepSpaceTag(tag) {
+		buff.keepSpace--
+	}
+	if isBlock(tag) {
+		buff.trimWhiteSpaceEnd()
+		buff.spaceForbiden = true
+	}
+	buff.buffer.WriteString("</")
+	buff.buffer.WriteString(tag.String())
+	buff.buffer.WriteByte('>')
+}
+
+func (buff *buffer) walk(node *html.Node) {
 	if node.Type == html.TextNode {
-		buff.WriteString(html.EscapeString(node.Data))
-	} else if node.Type == html.ElementNode && node.Namespace != "" {
+		buff.WriteString(node.Data)
 		return
 	} else if node.Type == html.ElementNode {
+		if node.Namespace != "" {
+			return
+		}
 		// Inspired from: https://docs.joinmastodon.org/spec/activitypub/#sanitization
 		switch node.DataAtom {
-		case atom.Br, atom.Script, atom.Style:
-			return // remove
-		case atom.P, atom.Span, atom.Del, atom.Pre, atom.Code, atom.Em, atom.Strong, atom.B, atom.I, atom.U, atom.Ul, atom.Ol, atom.Li, atom.Blockquote:
-			buff.WriteByte('<')
-			buff.WriteString(node.DataAtom.String())
-			buff.WriteByte('>')
-			defer func() {
-				buff.WriteString("</")
-				buff.WriteString(node.DataAtom.String())
-				buff.WriteByte('>')
-			}()
+		case atom.P, atom.Blockquote, atom.Del, atom.Pre, atom.Code, atom.Em, atom.Strong, atom.B, atom.I, atom.U, atom.Ul, atom.Ol, atom.Li, atom.Sub, atom.Sup:
+			buff.add(node.DataAtom)
+			defer buff.end(node.DataAtom)
 		case atom.A:
 			rawURL := ""
-			parsedURL := (*url.URL)(nil)
 			for _, attr := range node.Attr {
 				if attr.Key == "href" {
 					rawURL = attr.Val
-					parsedURL = ParseURL(attr.Val)
 					break
 				}
 			}
-
+			parsedURL := ParseURL(rawURL)
 			if rawURL != "" && parsedURL != nil {
-				buff.WriteString(`<a href="`)
-				buff.WriteString(html.EscapeString(parsedURL.String()))
-				buff.WriteString(`">`)
-				defer buff.WriteString("</a>")
+				buff.addAnchor(parsedURL)
+				defer buff.end(atom.A)
 			} else if rawURL != "" {
-				buff.WriteString(`<del>[`)
-				buff.WriteString(html.EscapeString(rawURL))
-				buff.WriteString("] ")
-				defer buff.WriteString("</del>")
+				buff.add(atom.Del)
+				defer buff.end(atom.Del)
+				buff.buffer.WriteString("[")
+				buff.WriteString(rawURL)
+				buff.buffer.WriteString("] ")
 			}
 
 		case atom.H1, atom.H2, atom.H3, atom.H4, atom.H5, atom.H6:
-			buff.WriteString("<p><strong>")
-			defer buff.WriteString("</strong></p>")
-		default:
+			buff.add(atom.P)
+			defer buff.end(atom.P)
+			buff.add(atom.Strong)
+			defer buff.end(atom.Strong)
+		case atom.Html, atom.Body, atom.Span, atom.Div:
 			// Ignore markup but render children.
+		case atom.Br:
+			buff.add(atom.Br)
+		case 0, atom.Hr, atom.Iframe, atom.Script, atom.Style, atom.Head:
+			return // remove
+		default:
+			fmt.Printf("securehtml.Secure(), unknown node type: %s (%q)\n", node.DataAtom.String(), node.Data)
+			return
 		}
 	}
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		renderSecureHTML(child, buff)
+		buff.walk(child)
 	}
 }
 
-func Text(src string, limit int) string {
+// Secure by escape unknown markup and by removing attribute.
+func Secure(src string) render.H {
 	root, err := html.Parse(strings.NewReader(src))
 	if err != nil {
-		return src
-	}
-	buff := bytes.Buffer{}
-	plainText(root, &buff)
-
-	data := buff.Bytes()
-	whitespace := false
-	i := 0
-	for _, b := range data {
-		switch b {
-		case '\f', '\r', '\n', '\t', ' ':
-			whitespace = true
-		default:
-			if whitespace {
-				whitespace = false
-				data[i] = ' '
-				i++
-			}
-			data[i] = b
-			i++
-		}
+		return render.H(html.EscapeString(src))
 	}
 
-	begin := 0
-	if len(data) > 0 && data[0] == ' ' {
-		begin = 1
-	}
-
-	s := string(data[begin:i])
-	nb := 0
-	for i := range s {
-		nb++
-		if nb > limit {
-			return s[:i]
-		}
-	}
-
-	return s
-}
-func plainText(node *html.Node, buff *bytes.Buffer) {
-	if node.Type == html.TextNode {
-		buff.WriteString(node.Data)
-	}
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		plainText(child, buff)
-	}
-}
-
-func ParseURL(s string) *url.URL {
-	if s == "" {
-		return nil
-	}
-	u, _ := url.Parse(s)
-	if u == nil {
-		return nil
-	}
-	switch u.Scheme {
-	case "https", "http":
-		return u
-	case "":
-		return ParseURL("https://" + s)
-	default:
-		return nil
-	}
+	buff := buffer{}
+	buff.walk(root)
+	return render.H(buff.buffer.String())
 }
