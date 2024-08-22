@@ -5,6 +5,7 @@ import (
 	"cmp"
 	"crypto/sha256"
 	"embed"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"io/fs"
@@ -69,7 +70,9 @@ var Style = func() []byte {
 	return out.Bytes()
 }()
 
-var StyleHash = func() string {
+var StyleHash, Integrity = func() (name string, integrity string) {
 	hash := sha256.Sum256(Style)
-	return hex.EncodeToString(hash[:4])
+	name = hex.EncodeToString(hash[:4])
+	integrity = "sha256-" + base64.StdEncoding.EncodeToString(hash[:])
+	return
 }()
