@@ -142,53 +142,29 @@ func (t *Tool) LangRedirect(path string) {
 	t.WriteFile(path, t.langRedirect)
 }
 
-func langRedirect(langs []language.Language) (h []byte) {
-	h = []byte(`<!DOCTYPE html>` +
+func langRedirect(langs []language.Language) []byte {
+	langsStrings := make([]string, len(langs))
+	for i, l := range langs {
+		langsStrings[i] = l.String()
+	}
+
+	s := `<!DOCTYPE html>` +
 		`<html>` +
 		`<head>` +
 		`<meta charset=utf-8>` +
 		`<meta name=robots content=noindex>` +
+		`<script>` +
+		`for(a of navigator.languages)` +
+		`if("` + strings.Join(langsStrings, "/") + `".split("/").includes(a=a.replace(/-\w+/,"")))` +
+		`{location=a+".html";break}` +
+		`</script>` +
 		`</head>` +
 		`<body>` +
-		`<p>Choose a language:</p>`)
+		`<p>Choose a language:</p>`
 
 	for _, l := range langs {
-		h = append(h, `<a href=`...)
-		h = append(h, l.String()...)
-		h = append(h, `.html>`...)
-		h = append(h, l.Human()...)
-		h = append(h, `</a><br>`...)
+		s += `<a href=` + l.String() + `.html>` + l.Human() + `</a><br>`
 	}
 
-	h = append(h, `<script>`...)
-	h = append(h, langRedirectJS[0]...)
-	for i, l := range langs {
-		if i != 0 {
-			h = append(h, '/')
-		}
-		h = append(h, l.String()...)
-	}
-	h = append(h, langRedirectJS[1]...)
-	h = append(h, `</script>`...)
-
-	return
+	return []byte(s)
 }
-
-var langRedirectJS = func() [2]string {
-	s := strings.NewReplacer("\n", "", "\t", "").Replace(`
-		l="LANG".split('/'),
-			u=navigator.languages,
-			i=0,
-			l;
-
-		for(;i<u.length;i++){
-			l=u[i].replace(/-\w+/,"");
-			if(l.indexOf(l)+1){location=l+".html";break}
-		}
-
-		`)
-
-	before, after, _ := strings.Cut(s, "LANG")
-
-	return [2]string{before, after}
-}()
