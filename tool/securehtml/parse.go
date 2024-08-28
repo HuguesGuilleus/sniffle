@@ -119,7 +119,7 @@ func (buff *buffer) writeStringWithUrl(s string) {
 
 func (buff *buffer) addAnchor(href *url.URL) {
 	buff.buffer.WriteString(`<a href="`)
-	buff.WriteString(href.String())
+	buff.buffer.WriteString(html.EscapeString(href.String()))
 	buff.buffer.WriteString(`">`)
 }
 

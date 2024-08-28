@@ -3,6 +3,7 @@ package securehtml
 import (
 	"bytes"
 	"net/url"
+	"sniffle/tool/render"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -75,4 +76,10 @@ func plainText(node *html.Node, buff *bytes.Buffer) {
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		plainText(child, buff)
 	}
+}
+
+func TextWithURL(s string) render.H {
+	buff := buffer{}
+	buff.writeStringWithUrl(s)
+	return render.H(buff.buffer.String())
 }

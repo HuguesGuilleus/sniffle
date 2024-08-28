@@ -3,6 +3,7 @@ package eu_ec_eci
 import (
 	"cmp"
 	"fmt"
+	"maps"
 	"slices"
 	"sniffle/front/component"
 	"sniffle/front/translate"
@@ -73,6 +74,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
 	tr := translate.AllTranslation[l]
 	ONE := tr.EU_EC_ECI.ONE
+	countrysByName := slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
+		return cmp.Compare(tr.Country[a], tr.Country[b])
+	})
 
 	page := component.Page{
 		Language:    l,
@@ -96,13 +100,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.N("div.summary",
 					render.N("div", ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
 					render.N("div", ONE.LastUpdate, eci.LastUpdate),
-					render.N("div", ONE.Categorie,
-						render.Slice(eci.Categorie, func(i int, categorie string) render.Node {
-							if i == 0 {
-								return render.N("", tr.EU_EC_ECI.Categorie[categorie])
-							}
-							return render.N("", ", "+tr.EU_EC_ECI.Categorie[categorie])
-						})),
+					render.N("div", ONE.Categorie, render.SliceSeparator(eci.Categorie, ", ", func(_ int, categorie string) render.Node {
+						return render.N("", tr.EU_EC_ECI.Categorie[categorie])
+					})),
 					render.N("div",
 						render.No("a.box", render.A("href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
@@ -123,21 +123,22 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						A("src", eci.ImageName).
 						A("width", eci.ImageWidth).
 						A("height", eci.ImageHeight).
-						A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
+						A("title", tr.LogoTitle))
 				}),
 
 				// Text information
-				render.No("h1", render.A("id", "desc"), ONE.H1DescriptionGeneral),
-				render.N("h2", ONE.H1DescriptionGeneral),
+				render.N("h1", ONE.H1Description),
 				render.N("div.text", desc.Objective),
-
-				render.N("h2", ONE.H1DescriptionAnnex),
-				render.N("div.text", desc.Annex),
-
+				render.If(desc.Annex != "", func() render.Node {
+					return render.N("",
+						render.N("h2", ONE.H1DescriptionAnnex),
+						render.N("div.text", desc.Annex),
+					)
+				}),
 				render.If(desc.Treaty != "", func() render.Node {
 					return render.N("",
 						render.N("h2", ONE.H1Treaty),
-						render.N("div.text", desc.Treaty),
+						render.N("p.noindent", desc.Treaty),
 					)
 				}),
 
@@ -146,13 +147,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				component.Json(eci.Timeline),
 
 				// Signature
-				render.If(len(eci.Signature) > 0, func() render.Node {
-					countryOverThreshold := 0
-					for c, v := range eci.Signature {
-						if eci.Threshold[c] <= v {
-							countryOverThreshold++
-						}
-					}
+				render.If(len(eci.Signature) != 0, func() render.Node {
 					return render.N("",
 						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
 						render.If(eci.ValidatedSignature, func() render.Node {
@@ -174,7 +169,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						render.N("div.bigInfo",
 							render.N("div.bifInfoMeta", ONE.CountryOverThreshold),
 							render.N("div.bigInfoMain",
-								render.N("span.bigInfoData", countryOverThreshold),
+								render.N("span.bigInfoData", eci.ThresholdPassed),
 								" / 7",
 							),
 						),
@@ -185,30 +180,17 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								render.N("th", ONE.Signature),
 								render.N("th", ONE.Threshold),
 							),
-							render.If(true, func() render.Node {
-								threshold := eci.Threshold
-								overtThreshol := render.No("span.tag", render.A("title", ONE.OverThreshold), "✔")
-
-								countrys := make([]country.Country, 0, len(eci.Signature))
-								for c := range eci.Signature {
-									countrys = append(countrys, c)
-								}
-								slices.SortFunc(countrys, func(a, b country.Country) int {
-									return cmp.Compare(tr.Country[a], tr.Country[b])
-								})
-
-								nodes := make([]render.Node, len(countrys))
-								for i, c := range countrys {
-									sig := eci.Signature[c]
-									nodes[i] = render.N("tr",
-										render.N("td", tr.Country[c]),
-										render.N("td", sig),
-										render.N("td",
-											render.If(sig >= threshold[c], func() render.Node { return overtThreshol }),
-											threshold[c],
-										))
-								}
-								return render.N("", nodes)
+							render.Slice(countrysByName, func(_ int, c country.Country) render.Node {
+								sig := eci.Signature[c]
+								return render.N("tr",
+									render.N("td", tr.Country[c]),
+									render.N("td", sig),
+									render.N("td",
+										render.If(sig >= eci.Threshold[c], func() render.Node {
+											return render.No("span.tag", render.A("title", ONE.OverThreshold), "✔")
+										}),
+										eci.Threshold[c],
+									))
 							}),
 						),
 					)

@@ -5,7 +5,6 @@ import (
 	"cmp"
 	"context"
 	"fmt"
-	"html/template"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -44,8 +43,6 @@ type ECIOut struct {
 	// The based language used to write the ECI text.
 	DescriptionOriginalLangage language.Language
 
-	// Members
-
 	Timeline []Timeline
 
 	TotalSignature     uint
@@ -55,6 +52,7 @@ type ECIOut struct {
 	// Can be zero
 	PaperSignaturesUpdate time.Time
 	Threshold             Threshold
+	ThresholdPassed       uint
 
 	ImageName   string
 	ImageWidth  string
@@ -66,9 +64,9 @@ type Description struct {
 	PlainDesc   string
 	SupportLink *url.URL
 	Website     *url.URL
-	Objective   template.HTML
-	Annex       template.HTML
-	Treaty      string
+	Objective   render.H
+	Annex       render.H
+	Treaty      render.H
 }
 type Timeline struct {
 	Date       time.Time
@@ -84,7 +82,7 @@ type indexItem struct {
 }
 
 // Get all ECI item to after get all details.
-func fetchIndex(ctx context.Context, t *tool.Tool) []indexItem {
+func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
 	dto := struct {
 		Entries []struct {
 			Year   int `json:"year,string"`
@@ -101,7 +99,7 @@ func fetchIndex(ctx context.Context, t *tool.Tool) []indexItem {
 		t.WriteFile("/eu/ec/eci/src.json", tool.FetchAll(ctx, t, indexURL))
 	}
 
-	items := make([]indexItem, len(dto.Entries))
+	items = make([]indexItem, len(dto.Entries))
 	for i, dtoEntry := range dto.Entries {
 		logoID := 0
 		if dtoEntry.Logo != nil {
@@ -112,32 +110,29 @@ func fetchIndex(ctx context.Context, t *tool.Tool) []indexItem {
 			number: dtoEntry.Number,
 			logoID: logoID,
 		}
-
 	}
 
-	return items
+	return
 }
 
 func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	type signatureDTO struct {
 		Country country.Country `json:"countryCodeType"`
-		Total   uint            `json:"total"`
+		Total   uint
 	}
 	dto := &struct {
-		Status     string  `json:"status"`
-		LastUpdate dtoTime `json:"latestUpdateDate"`
-		Categories []struct {
-			CategoryType string `json:"categoryType"`
-		} `json:"categories"`
+		Status      string
+		LastUpdate  dtoTime `json:"latestUpdateDate"`
+		Categories  []struct{ CategoryType string }
 		Description []struct {
-			Original    bool              `json:"original"`
+			Original    bool
 			Language    language.Language `json:"languageCode"`
-			Title       string            `json:"title"`
-			SupportLink string            `json:"supportLink"`
-			Website     string            `json:"website"`
-			Objective   string            `json:"objectives"`
-			Annex       string            `json:"annexText"`
-			Treaty      string            `json:"treaties"`
+			Title       string
+			SupportLink string
+			Website     string
+			Objective   string `json:"objectives"`
+			Annex       string `json:"annexText"`
+			Treaty      string `json:"treaties"`
 		} `json:"linguisticVersions"`
 		Progress []struct {
 			Status string  `json:"Name"`
@@ -145,38 +140,40 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Note   string  `json:"footnoteType"`
 		} `json:"progress"`
 		Signatures struct {
-			UpdateDate dtoDate        `json:"updateDate"`
-			Entry      []signatureDTO `json:"entry"`
+			UpdateDate dtoDate `json:"updateDate"`
+			Entry      []signatureDTO
 		} `json:"sosReport"`
 		Submission struct {
-			Entry []signatureDTO `json:"entry"`
-		} `json:"submission"`
+			Entry []signatureDTO
+		}
 	}{}
-
-	if tool.FetchJSON(ctx, t, fmt.Sprintf(detailURL, info.year, info.number), &dto) {
-		return nil
-	}
+	fetchURL := fmt.Sprintf(detailURL, info.year, info.number)
 	if t.Dev() {
 		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),
-			tool.FetchAll(ctx, t, fmt.Sprintf(detailURL, info.year, info.number)))
+			tool.FetchAll(ctx, t, fetchURL))
+	}
+	if tool.FetchJSON(ctx, t, fetchURL, &dto) {
+		return nil
 	}
 
 	eci := &ECIOut{
 		Year:        info.year,
 		Number:      info.number,
 		LastUpdate:  dto.LastUpdate.Time,
+		Categorie:   make([]string, 0, len(dto.Categories)),
 		Status:      dto.Status,
 		Description: make(map[language.Language]*Description),
 		Signature:   make(map[country.Country]uint),
 	}
 
-	categories := make([]string, 0, len(dto.Categories))
+	// Categorie
 	for _, entry := range dto.Categories {
-		categories = append(categories, entry.CategoryType)
+		eci.Categorie = append(eci.Categorie, entry.CategoryType)
 	}
-	slices.Sort(categories)
-	eci.Categorie = slices.Compact(categories)
+	slices.Sort(eci.Categorie)
+	eci.Categorie = slices.Compact(eci.Categorie)
 
+	// Description
 	for _, desc := range dto.Description {
 		if desc.SupportLink == desc.Website {
 			desc.SupportLink = ""
@@ -188,9 +185,9 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Website:     securehtml.ParseURL(desc.Website),
 			Objective:   securehtml.Secure(desc.Objective),
 			Annex:       securehtml.Secure(desc.Annex),
-			Treaty:      desc.Treaty,
+			Treaty:      securehtml.TextWithURL(desc.Treaty),
 		}
-		if d := eci.Description[desc.Language]; d.SupportLink != nil && d.SupportLink.Host != "eci.ec.europa.eu" {
+		if d := eci.Description[desc.Language]; d.SupportLink != nil && d.SupportLink.Host == "ec.europa.eu" {
 			d.SupportLink = nil
 		}
 		if desc.Original {
@@ -208,6 +205,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 
+	// Timeline
 	for _, p := range dto.Progress {
 		timeline := Timeline{
 			Date:   p.Date.Time,
@@ -251,6 +249,11 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			eci.Threshold = threshold_2012_04_01
 		default:
 			t.Warn("tooOldRegisterdate", "date", date, "year", eci.Year, "nb", eci.Number)
+		}
+		for c, sig := range eci.Signature {
+			if eci.Threshold[c] <= sig {
+				eci.ThresholdPassed++
+			}
 		}
 	}
 	if len(dto.Signatures.Entry) > 0 {

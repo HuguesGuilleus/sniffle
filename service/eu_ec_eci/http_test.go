@@ -121,7 +121,7 @@ var fetcher = fetch.TestFetcher{
 		"sosReport": {
 			"updateDate": "24/07/2024",
 			"entry": [
-				{ "countryCodeType": "FI", "total": 2171 },
+				{ "countryCodeType": "FI", "total": 10000 },
 				{ "countryCodeType": "RO", "total": 1362 },
 				{ "countryCodeType": "CY", "total": 60 },
 				{ "countryCodeType": "LU", "total": 354 },
@@ -219,10 +219,10 @@ func TestFetchDetail(t *testing.T) {
 			{Date: newDate(2023, time.December, 7), Status: "ANSWERED"},
 		},
 
-		TotalSignature:        76176,
+		TotalSignature:        84005,
 		PaperSignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
 		Signature: map[country.Country]uint{
-			country.Finland:     2171,
+			country.Finland:     10_000,
 			country.Romania:     1362,
 			country.Cyprus:      60,
 			country.Luxembourg:  354,
@@ -250,7 +250,8 @@ func TestFetchDetail(t *testing.T) {
 			country.Estonia:     244,
 			country.Malta:       61,
 		},
-		Threshold: threshold_2020_02_01,
+		Threshold:       threshold_2020_02_01,
+		ThresholdPassed: 1,
 
 		ImageName:   "logo.png",
 		ImageWidth:  "3",

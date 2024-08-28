@@ -3,6 +3,7 @@ package securehtml
 import (
 	"html"
 	"html/template"
+	"sniffle/tool/render"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -39,4 +40,8 @@ func TestURL(t *testing.T) {
 	assert.Nil(t, ParseURL(":x/"))
 	assert.Nil(t, ParseURL("file://root"))
 	assert.Equal(t, "https://google.com", ParseURL("google.com").String())
+}
+
+func TestTextWithURL(t *testing.T) {
+	assert.Equal(t, render.H(`hello <a href="https://go.dev">https://go.dev</a>`), TextWithURL(`hello https://go.dev`))
 }
