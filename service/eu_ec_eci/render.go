@@ -66,7 +66,7 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 				)
 			}),
 		),
-		component.Footer(l),
+		component.Footer(l, component.JsSearch),
 	))
 }
 
@@ -199,7 +199,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			),
 		),
 
-		component.Footer(l),
+		component.Footer(l, component.JsToc),
 	))
 }
 

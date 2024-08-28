@@ -26,7 +26,7 @@ func Do(_ context.Context, t *tool.Tool) {
 				render.N("div.headerId", component.HomeAnchor(l)),
 				render.Z, tr.ABOUT.PageTitle),
 			render.N("div.w", tr.ABOUT.Text),
-			component.Footer(l),
+			component.Footer(l, 0),
 		))
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"sniffle/front/translate"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
-	"time"
 )
 
 func TopHeader(l language.Language) render.Node {
@@ -48,17 +47,4 @@ func HomeAnchor(l language.Language) render.Node {
 	return render.N("",
 		render.No("a", render.A("href", "/"+l.String()+".html").A("title", tr.HOME.Name), "/////"),
 		" ")
-}
-
-// A footer node. It should be the last element in the page.
-// It contain in the end, so the DOM is complete when it's executed.
-func Footer(l language.Language) render.Node {
-	return render.N("footer",
-		translate.AllTranslation[l].FooterBuild,
-		time.Now(),
-		render.H("<br>"),
-		render.No("a", render.A("href", "/about/"+l.String()+".html"),
-			translate.AllTranslation[l].AboutTextLink),
-		End,
-	)
 }

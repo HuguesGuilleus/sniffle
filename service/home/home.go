@@ -25,7 +25,7 @@ func Do(_ context.Context, t *tool.Tool) {
 				render.N("li", render.No("a", render.A("href", "/about/"+l.String()+".html"), tr.ABOUT.PageTitle)),
 				render.N("li", render.No("a", render.A("href", "/eu/ec/eci/"+l.String()+".html"), tr.EU_EC_ECI.Name)),
 			),
-			component.Footer(l),
+			component.Footer(l, 0),
 		))
 	}
 }
