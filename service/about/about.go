@@ -15,22 +15,18 @@ func Do(_ context.Context, t *tool.Tool) {
 
 	for _, l := range t.Languages {
 		tr := translate.AllTranslation[l]
-		page := component.Page{
+		component.HTML(t, &component.Page{
 			Language:    l,
-			AllLanguage: t.Languages,
 			Title:       tr.ABOUT.PageTitle,
 			Description: tr.ABOUT.PageDescription,
 			BaseURL:     basePath,
-			Body: render.N("body.edito",
-				component.TopHeader(l),
-				component.Header(t.Languages, l,
-					render.N("div.headerId", component.HomeAnchor(l)),
-					render.Z, tr.ABOUT.PageTitle),
-				render.N("div.w", tr.ABOUT.Text),
-				component.Footer(l),
-			),
-		}
-
-		component.Html(t, &page)
+		}, render.N("body.edito",
+			component.TopHeader(l),
+			component.Header(t.Languages, l,
+				render.N("div.headerId", component.HomeAnchor(l)),
+				render.Z, tr.ABOUT.PageTitle),
+			render.N("div.w", tr.ABOUT.Text),
+			component.Footer(l),
+		))
 	}
 }

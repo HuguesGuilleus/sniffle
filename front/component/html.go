@@ -7,9 +7,9 @@ import (
 	"sniffle/tool/render"
 )
 
+// Meta information about the page
 type Page struct {
-	Language    language.Language
-	AllLanguage []language.Language
+	Language language.Language
 
 	// <head> informations
 	Title       string
@@ -18,8 +18,6 @@ type Page struct {
 	// The base URL of the page, without the lang.
 	// Ex: /eu/ec/
 	BaseURL string
-
-	Body render.Node
 }
 
 var htmlHeadBegin = `<meta charset=utf-8>` +
@@ -28,15 +26,15 @@ var htmlHeadBegin = `<meta charset=utf-8>` +
 	`<link rel=icon href=/favicon.ico>`
 
 // Render the page in
-func Html(t *tool.Tool, page *Page) {
+func HTML(t *tool.Tool, page *Page, body render.Node) {
 	data := render.Merge(render.No("html", render.A("lang", page.Language.String()),
 		render.N("head",
 			render.H(htmlHeadBegin),
 			render.N("title", page.Title),
 			render.No("meta", render.A("name", "description").A("content", page.Description)),
-			langAlternate(t.HostURL+page.BaseURL, page.Language, page.AllLanguage),
+			langAlternate(t.HostURL+page.BaseURL, page.Language, t.Languages),
 		),
-		page.Body,
+		body,
 	))
 	t.WriteFile(page.BaseURL+page.Language.String()+".html", data)
 }

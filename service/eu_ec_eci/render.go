@@ -21,15 +21,15 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 	})
 
 	tr := translate.AllTranslation[l]
+
 	page := component.Page{
 		Language:    l,
-		AllLanguage: t.Languages,
 		Title:       tr.EU_EC_ECI.INDEX.Name,
 		Description: tr.EU_EC_ECI.INDEX.PageDescription,
 		BaseURL:     "/eu/ec/eci/",
 	}
 
-	page.Body = render.N("body",
+	component.HTML(t, &page, render.N("body",
 		component.TopHeader(l),
 		component.Header(t.Languages, l,
 			idNamespace(l),
@@ -37,7 +37,7 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 			tr.EU_EC_ECI.INDEX.Name),
 		render.N("div.w",
 			render.N("div.summary",
-				render.No("a.box", render.A("href", "https://citizens-initiative.europa.eu/_"+l.String()), tr.LinkOfficial),
+				render.No("a.box", render.A("href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()), tr.LinkOfficial),
 			),
 			render.N("div.searchBlock",
 				render.No("label", render.A("for", "s"), tr.SearchInside),
@@ -60,31 +60,28 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 							A("src", fmt.Sprintf("%d/%d/%s", eci.Year, eci.Number, eci.ImageName)).
 							A("width", eci.ImageWidth).
 							A("height", eci.ImageHeight).
-							A("alt", tr.LogoTitle).A("title", tr.LogoTitle))
+							A("title", tr.LogoTitle))
 					}),
 				)
 			}),
 		),
 		component.Footer(l),
-	)
-
-	component.Html(t, &page)
+	))
 }
 
 func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
+	tr := translate.AllTranslation[l]
+	ONE := tr.EU_EC_ECI.ONE
 
 	page := component.Page{
 		Language:    l,
-		AllLanguage: t.Languages,
 		Title:       desc.Title,
 		Description: desc.PlainDesc,
 		BaseURL:     fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number),
 	}
 
-	tr := translate.AllTranslation[l]
-	ONE := tr.EU_EC_ECI.ONE
-	page.Body = render.N("body",
+	component.HTML(t, &page, render.N("body",
 		component.TopHeader(l),
 		component.InDevHeader(l),
 		component.Header(t.Languages, l, idNamespace(l),
@@ -220,9 +217,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 		),
 
 		component.Footer(l),
-	)
-
-	component.Html(t, &page)
+	))
 }
 
 func idNamespace(l language.Language) render.Node {
