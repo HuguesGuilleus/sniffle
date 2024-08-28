@@ -78,6 +78,13 @@ func TestIntType(t *testing.T) {
 }
 func TestNumber(t *testing.T) {
 	assert.Equal(t, `-123 456 789`, string(renderChild(nil, -123_456_789)))
+	assert.Equal(t, `-23 456 789`, string(renderChild(nil, -23_456_789)))
+	assert.Equal(t, `-3 456 789`, string(renderChild(nil, -3_456_789)))
+	assert.Equal(t, `-3 056 789`, string(renderChild(nil, -3_056_789)))
+	assert.Equal(t, `-789`, string(renderChild(nil, -789)))
+	assert.Equal(t, `-89`, string(renderChild(nil, -89)))
+	assert.Equal(t, `-9`, string(renderChild(nil, -9)))
+	assert.Equal(t, `0`, string(renderChild(nil, 0)))
 }
 
 func TestArray(t *testing.T) {
