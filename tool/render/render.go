@@ -149,7 +149,8 @@ func (node *Node) mergeSlice(h []byte) []byte {
 
 	// End tag
 	switch tagName {
-	case "br", "img", "hr", "link", "meta":
+	// Source: https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+	case "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr":
 		// Do not close
 	default:
 		h = append(h, '<', '/')
