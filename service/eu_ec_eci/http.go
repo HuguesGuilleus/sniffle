@@ -200,7 +200,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	} else {
 		for _, l := range t.Languages {
 			if eci.Description[l] == nil {
-				eci.Description[l] = eci.GetOriginalDescription()
+				eci.Description[l] = eci.Description[eci.DescriptionOriginalLangage]
 			}
 		}
 	}
@@ -298,10 +298,6 @@ func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
 	eci.ImageWidth = strconv.Itoa(config.Width)
 	eci.ImageHeight = strconv.Itoa(config.Height)
 	eci.ImageData = data
-}
-
-func (eci *ECIOut) GetOriginalDescription() *Description {
-	return eci.Description[eci.DescriptionOriginalLangage]
 }
 
 type dtoDate struct {

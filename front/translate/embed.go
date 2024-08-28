@@ -47,15 +47,16 @@ type Translation struct {
 			PageDescription string
 		} `help:"ECI index page"`
 		ONE struct {
-			Status             render.H
-			Categorie          render.H
-			LastUpdate         render.H
-			LinkSupport        render.H `help:"Support page link"`
-			LinkWebsite        render.H `help:"Organisator website link"`
-			H1Description      render.H
-			H1DescriptionAnnex render.H
-			H1Treaty           render.H
-			H1Timeline         render.H
+			Status                     render.H
+			Categorie                  render.H
+			LastUpdate                 render.H
+			DescriptionOriginalLangage render.H
+			LinkSupport                render.H `help:"Support page link"`
+			LinkWebsite                render.H `help:"Organisator website link"`
+			H1Description              render.H
+			H1DescriptionAnnex         render.H
+			H1Treaty                   render.H
+			H1Timeline                 render.H
 
 			H1Signature           render.H
 			SignatureSum          render.H

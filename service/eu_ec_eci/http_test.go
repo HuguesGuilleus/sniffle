@@ -258,7 +258,6 @@ func TestFetchDetail(t *testing.T) {
 		ImageHeight: "1",
 		ImageData:   image3x1PNG,
 	}, eci)
-	assert.Same(t, eci.Description[language.English], eci.GetOriginalDescription())
 }
 
 func TestFetchImageJPEG(t *testing.T) {

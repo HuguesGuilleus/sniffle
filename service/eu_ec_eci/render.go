@@ -103,6 +103,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					render.N("div", ONE.Categorie, render.SliceSeparator(eci.Categorie, ", ", func(_ int, categorie string) render.Node {
 						return render.N("", tr.EU_EC_ECI.Categorie[categorie])
 					})),
+					render.N("div", ONE.DescriptionOriginalLangage, tr.Langage[eci.DescriptionOriginalLangage]),
 					render.N("div",
 						render.No("a.box", render.A("href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
