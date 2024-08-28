@@ -18,7 +18,8 @@ type Translation struct {
 	SearchInside  string
 	HELP          render.H
 
-	Country map[country.Country]render.H
+	Country [country.Len]render.H  `json:"-"`
+	Langage [language.Len]render.H `json:"-"`
 
 	ABOUT struct {
 		PageTitle       string     `help:"Header title"`
@@ -83,9 +84,23 @@ var (
 	fileFR []byte
 )
 
-func load(data []byte) (t Translation) {
-	if err := json.Unmarshal(data, &t); err != nil {
+func load(data []byte) Translation {
+	dto := struct {
+		Translation
+		Country map[country.Country]render.H   `json:"$Country"`
+		Langage map[language.Language]render.H `json:"$Langage"`
+	}{}
+	if err := json.Unmarshal(data, &dto); err != nil {
 		panic(err)
 	}
-	return
+
+	for c, html := range dto.Country {
+		dto.Translation.Country[c] = html
+	}
+
+	for l, html := range dto.Langage {
+		dto.Translation.Langage[l] = html
+	}
+
+	return dto.Translation
 }

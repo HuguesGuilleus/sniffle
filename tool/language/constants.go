@@ -1,7 +1,6 @@
 package language
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -38,6 +37,9 @@ const (
 	Slovene
 	Finnish
 	Swedish
+
+	// The length for a array of language codes.
+	Len = Swedish + 1
 )
 
 // https://en.wikipedia.org/wiki/Languages_of_the_European_Union#Official_EU_languages
@@ -105,17 +107,12 @@ var iso2language = map[string]Language{
 	"sv": Swedish,
 }
 
-func (l *Language) UnmarshalJSON(data []byte) error {
-	s := ""
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("unmarshal langage code string: %w", err)
-	}
-
+func (l *Language) UnmarshalText(data []byte) error {
+	s := string(data)
 	*l = iso2language[strings.ToLower(s)]
 	if *l == Invalid {
 		return fmt.Errorf("unknwon langage %q", s)
 	}
-
 	return nil
 }
 

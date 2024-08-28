@@ -8,7 +8,7 @@
 	"SearchInside": "Rechercher dans la page\u00A0:",
 	"HELP": "AIDE",
 
-	"Country": {
+	"$Country": {
 		"Belgium": "Belgique",
 		"Bulgaria": "Bulgarie",
 		"Czechia": "Tchéquie",
@@ -37,6 +37,33 @@
 		"Finland": "Finlande",
 		"Sweden": "Suède",
 		"UnitedKingdom": "Royaume-Uni"
+	},
+
+	"$Langage": {
+		"bg": "Bulgare",
+		"cs": "Tchèque",
+		"da": "Danois",
+		"de": "Allemand",
+		"et": "Estonien",
+		"el": "Grec",
+		"en": "Anglais",
+		"es": "Espagnol",
+		"fr": "Français",
+		"ga": "Irlandais",
+		"hr": "Croate",
+		"it": "Italien",
+		"lv": "Letton",
+		"lt": "Lituanien",
+		"hu": "Hongrois",
+		"mt": "Maltais",
+		"nl": "Néerlandais",
+		"pl": "Polonais",
+		"pt": "Portugais",
+		"ro": "Roumain",
+		"sk": "Slovaque",
+		"sl": "Slovène",
+		"fi": "Finnois",
+		"sv": "Suédois"
 	},
 
 	"ABOUT": {

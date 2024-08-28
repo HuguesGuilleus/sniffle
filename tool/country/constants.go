@@ -39,6 +39,9 @@ const (
 	Slovenia
 	Slovakia
 	UnitedKingdom
+
+	// The length for a array of coutrie codes.
+	Len = UnitedKingdom + 1
 )
 
 func (c *Country) UnmarshalText(data []byte) error {
