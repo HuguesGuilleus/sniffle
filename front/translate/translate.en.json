@@ -7,6 +7,7 @@
 	"PageTop": "This is not an official european website.",
 	"SearchInside": "Search inside the page:",
 	"HELP": "HELP",
+	"Byte": "byte",
 
 	"$Country": {
 		"Belgium": "Belgium",
@@ -107,6 +108,7 @@
 			"LinkWebsite": "Organisator website",
 			"H1Description": "Description",
 			"H1DescriptionAnnex": "Description annex",
+			"AnnexDocument": "Annex document",
 			"H1Treaty": "Traité",
 			"H1Timeline": "Timeline",
 

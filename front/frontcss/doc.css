@@ -1,0 +1,24 @@
+.doc {
+	display: block;
+	margin: 1rem 0;
+	border: solid _line2;
+	border-radius: 0 _sp1 _sp1 0 / 0 50% 50% 0;
+	padding: _spThin;
+	text-decoration: none;
+	background: _back1;
+}
+
+.doc:hover {
+	background: _colorA;
+	border-color: _colorA;
+	text-decoration: underline;
+}
+
+.docName {
+	font-style: italic;
+}
+
+.docT {
+	font-size: larger;
+	font-weight: bold;
+}

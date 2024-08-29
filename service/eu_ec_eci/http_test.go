@@ -87,6 +87,12 @@ var fetcher = fetch.TestFetcher{
 				"website": "https://furfreeeurope.eu/",
 				"commissionDecision": {
 					"url": "http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN"
+				},
+				"additionalDocument": {
+					"id": 6729,
+					"name": "Fur Free Europe- additional info.pdf",
+					"mimeType": "application/pdf",
+					"size": 144933
 				}
 			},
 			{
@@ -208,24 +214,39 @@ func TestFetchDetail(t *testing.T) {
 				},
 				PlainDesc: "objectives",
 				Objective: "<p>objectives</p>",
-				Annex:     "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
-				Treaty:    "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+				AnnexDoc: &Document{
+					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/6729"),
+					Language: language.English,
+					Name:     "Fur Free Europe- additional info.pdf",
+					Size:     144933,
+					MimeType: "application/pdf",
+				},
+				Annex:  "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
+				Treaty: "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
 			},
 			language.French: {
 				Title:     "Titre",
 				PlainDesc: "Objectifs",
 				Objective: "<p>Objectifs</p>",
-				Annex:     "<ul><li>arg 1: PARCE QUE!!!</li><li>arg 2 ...</li></ul>",
-				Treaty:    "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+				AnnexDoc: &Document{
+					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/6729"),
+					Language: language.English,
+					Name:     "Fur Free Europe- additional info.pdf",
+					Size:     144933,
+					MimeType: "application/pdf",
+				},
+				Annex:  "<ul><li>arg 1: PARCE QUE!!!</li><li>arg 2 ...</li></ul>",
+				Treaty: "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
 			},
 		},
 		DescriptionOriginalLangage: language.English,
 
 		Timeline: []Timeline{
-			{Date: newDate(2022, time.March, 16), Status: "REGISTERED", Register: &[language.Len]Document{
+			{Date: newDate(2022, time.March, 16), Status: "REGISTERED", Register: &[language.Len]*Document{
 				language.English: {URL: parseURL("http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN")},
 				language.French: {
 					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8600"),
+					Language: language.French,
 					Name:     "CDD-2012000002.pdf",
 					MimeType: "application/pdf",
 					Size:     15325,

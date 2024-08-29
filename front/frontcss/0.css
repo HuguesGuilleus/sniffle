@@ -87,6 +87,12 @@ hr {
 	border-color: _colorA;
 }
 
+pre {
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	white-space: pre-wrap;
+}
+
 .tag {
 	margin-right: _sp;
 	border-radius: _spThin;

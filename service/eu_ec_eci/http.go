@@ -66,6 +66,7 @@ type Description struct {
 	SupportLink *url.URL
 	Website     *url.URL
 	Objective   render.H
+	AnnexDoc    *Document
 	Annex       render.H
 	Treaty      render.H
 }
@@ -73,11 +74,12 @@ type Timeline struct {
 	Date       time.Time
 	Status     string
 	EarlyClose bool
-	Register   *[language.Len]Document
+	Register   *[language.Len]*Document
 }
 type Threshold = map[country.Country]uint
 type Document struct {
 	URL      *url.URL
+	Language language.Language
 	Name     string
 	Size     int
 	MimeType string
@@ -128,12 +130,6 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		Country country.Country `json:"countryCodeType"`
 		Total   uint
 	}
-	type docDTO struct {
-		Id       int
-		Name     string
-		Size     int
-		MimeType mimeTypeDTO
-	}
 	dto := &struct {
 		Status      string
 		LastUpdate  dtoTime `json:"latestUpdateDate"`
@@ -144,9 +140,10 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Title       string
 			SupportLink string
 			Website     string
-			Objective   string `json:"objectives"`
-			Annex       string `json:"annexText"`
-			Treaty      string `json:"treaties"`
+			Objective   string  `json:"objectives"`
+			AnnexDoc    *docDTO `json:"additionalDocument"`
+			Annex       string  `json:"annexText"`
+			Treaty      string  `json:"treaties"`
 			Register    struct {
 				Url      string
 				Document *docDTO
@@ -192,50 +189,54 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	eci.Categorie = slices.Compact(eci.Categorie)
 
 	// Description
-	registrationDoc := new([language.Len]Document)
+	registrationDoc := new([language.Len]*Document)
+	defaultAnnexDoc := (*Document)(nil)
 	for _, desc := range dto.Description {
 		if desc.SupportLink == desc.Website {
 			desc.SupportLink = ""
 		}
+		supportLink := securehtml.ParseURL(desc.SupportLink)
+		if supportLink != nil && supportLink.Host == "ec.europa.eu" {
+			supportLink = nil
+		}
+		annexDoc := desc.AnnexDoc.Document(desc.Language)
 		eci.Description[desc.Language] = &Description{
 			Title:       desc.Title,
 			PlainDesc:   securehtml.Text(desc.Objective, 200),
-			SupportLink: securehtml.ParseURL(desc.SupportLink),
+			SupportLink: supportLink,
 			Website:     securehtml.ParseURL(desc.Website),
 			Objective:   securehtml.Secure(desc.Objective),
+			AnnexDoc:    annexDoc,
 			Annex:       securehtml.Secure(desc.Annex),
 			Treaty:      securehtml.TextWithURL(desc.Treaty),
 		}
-		if d := eci.Description[desc.Language]; d.SupportLink != nil && d.SupportLink.Host == "ec.europa.eu" {
-			d.SupportLink = nil
-		}
 		if desc.Original {
 			eci.DescriptionOriginalLangage = desc.Language
+			defaultAnnexDoc = annexDoc
 		}
 		if u := securehtml.ParseURL(desc.Register.Url); u != nil {
-			registrationDoc[desc.Language] = Document{URL: u}
+			registrationDoc[desc.Language] = &Document{URL: u}
 		} else if desc.Register.Document != nil {
-			registrationDoc[desc.Language] = Document{
-				URL: &url.URL{
-					Scheme: "https",
-					Host:   "register.eci.ec.europa.eu",
-					Path:   "/core/api/register/document/" + strconv.Itoa(desc.Register.Document.Id),
-				},
-				Name:     desc.Register.Document.Name,
-				MimeType: string(desc.Register.Document.MimeType),
-				Size:     desc.Register.Document.Size,
-			}
+			registrationDoc[desc.Language] = desc.Register.Document.Document(desc.Language)
 		} else {
 			t.Warn("noRegistrationDoc", "year", eci.Year, "nb", eci.Number)
 		}
 	}
+	for _, desc := range eci.Description {
+		if desc.AnnexDoc == nil {
+			desc.AnnexDoc = defaultAnnexDoc
+		}
+	}
 
-	if eci.DescriptionOriginalLangage == language.Invalid {
+	if o := eci.DescriptionOriginalLangage; o == language.Invalid {
 		t.Warn("noDescription", "year", eci.Year, "nb", eci.Number)
 	} else {
 		for _, l := range t.Languages {
 			if eci.Description[l] == nil {
-				eci.Description[l] = eci.Description[eci.DescriptionOriginalLangage]
+				eci.Description[l] = eci.Description[o]
+			}
+			if registrationDoc[l] == nil {
+				registrationDoc[l] = registrationDoc[o]
 			}
 		}
 	}
@@ -369,14 +370,38 @@ func (dto *dtoTime) UnmarshalText(data []byte) error {
 	return nil
 }
 
+type docDTO struct {
+	Id       int
+	Name     string
+	Size     int
+	MimeType mimeTypeDTO
+}
+
+func (doc *docDTO) Document(lang language.Language) *Document {
+	if doc == nil {
+		return nil
+	}
+	return &Document{
+		URL: &url.URL{
+			Scheme: "https",
+			Host:   "register.eci.ec.europa.eu",
+			Path:   "/core/api/register/document/" + strconv.Itoa(doc.Id),
+		},
+		Language: lang,
+		Name:     doc.Name,
+		MimeType: string(doc.MimeType),
+		Size:     doc.Size,
+	}
+}
+
 type mimeTypeDTO string
 
 func (m *mimeTypeDTO) UnmarshalText(data []byte) error {
 	s := string(data)
-	_, _, err := mime.ParseMediaType(s)
+	mediatype, _, err := mime.ParseMediaType(s)
 	if err != nil {
 		return fmt.Errorf("mimeTypeDTO: %w", err)
 	}
-	*m = mimeTypeDTO(s)
+	*m = mimeTypeDTO(mediatype)
 	return nil
 }

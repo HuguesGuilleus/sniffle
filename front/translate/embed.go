@@ -17,6 +17,7 @@ type Translation struct {
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
 	SearchInside  string
 	HELP          render.H
+	Byte          render.H
 
 	Country [country.Len]render.H  `json:"-"`
 	Langage [language.Len]render.H `json:"-"`
@@ -55,6 +56,7 @@ type Translation struct {
 			LinkWebsite                render.H `help:"Organisator website link"`
 			H1Description              render.H
 			H1DescriptionAnnex         render.H
+			AnnexDocument              render.H
 			H1Treaty                   render.H
 			H1Timeline                 render.H
 
@@ -73,7 +75,7 @@ type Translation struct {
 	}
 }
 
-var AllTranslation = map[language.Language]Translation{
+var AllTranslation = [...]Translation{
 	language.English: load(fileEn),
 	language.French:  load(fileFR),
 }

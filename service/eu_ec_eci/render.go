@@ -130,11 +130,10 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Text information
 				render.N("h1", ONE.H1Description),
 				render.N("div.text", desc.Objective),
-				render.If(desc.Annex != "", func() render.Node {
-					return render.N("",
-						render.N("h2", ONE.H1DescriptionAnnex),
-						render.N("div.text", desc.Annex),
-					)
+				render.IfS(desc.Annex != "" || desc.AnnexDoc != nil, render.N("h2", ONE.H1DescriptionAnnex)),
+				render.IfS(desc.Annex != "", render.N("div.text", desc.Annex)),
+				render.If(desc.AnnexDoc != nil, func() render.Node {
+					return desc.AnnexDoc.render(l, ONE.AnnexDocument)
 				}),
 				render.If(desc.Treaty != "", func() render.Node {
 					return render.N("",
@@ -218,5 +217,17 @@ func idNamespace(l language.Language) render.Node {
 		render.No("a",
 			render.A("href", "/eu/ec/eci/"+l.String()+".html").A("title", tr.EU_EC_ECI.Name),
 			"eci"),
+	)
+}
+
+func (doc *Document) render(lang language.Language, name render.H) render.Node {
+	return render.No("a.doc", render.A("href", doc.URL.String()),
+		render.N("div.docT", name, render.H(" &gt;&gt;&gt;")),
+		render.If(doc.Size != 0, func() render.Node {
+			tr := translate.AllTranslation[lang]
+			return render.N("",
+				tr.Langage[doc.Language], " (", doc.Size, " ", tr.Byte, ") ", doc.MimeType,
+				render.N("div.docName", doc.Name))
+		}),
 	)
 }
