@@ -25,7 +25,9 @@ var Style = func() []byte {
 		"_line2":  ".2rem",
 		"_spThin": ".5rem",
 		"_sp":     "1rem",
+		"_spsp":   "2rem",
 		"_sp1":    "1.5rem",
+		"_sp2":    "2.5rem",
 
 		"_back":   "#EEE",
 		"_back1":  "#DDD",

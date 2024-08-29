@@ -111,6 +111,7 @@
 			"AnnexDocument": "Document annexe",
 			"H1Treaty": "Traité",
 			"H1Timeline": "Chronologie",
+			"CollectionEarlyClosure": "Collecte clôturée de manière anticipée par les organisateurs.",
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Nombre total de signature",
@@ -123,13 +124,15 @@
 			"OverThreshold": "Seuil dépassé"
 		},
 		"Status": {
-			"REGISTERED": "ENREGISTRÉ",
-			"WITHDRAWN": "RETIRÉ",
-			"ONGOING": "COLLECTE EN COURS",
+			"ANSWERED": "RÉPONDU",
 			"CLOSED": "FERMÉ",
 			"INSUFFICIENT_SUPPORT": "SOUTIENT INSUFFISANT",
+			"ONGOING": "COLLECTE EN COURS",
+			"REGISTERED": "ENREGISTRÉ",
+			"REJECTED": "ENREGISTREMENT REFUSÉ",
+			"SUBMITTED": "INITIATIVE VALIDE",
 			"VERIFICATION": "VÉRIFICATION",
-			"ANSWERED": "RÉPONDU"
+			"WITHDRAWN": "RETIRÉ"
 		},
 		"Categorie": {
 			"AGRI": "Agriculture",

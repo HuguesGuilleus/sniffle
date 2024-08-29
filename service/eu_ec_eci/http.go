@@ -247,7 +247,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Date:   p.Date.Time,
 			Status: p.Status,
 		}
-		switch p.Status {
+		switch timeline.Status {
 		case "REGISTERED":
 			timeline.Register = registrationDoc
 		case "CLOSED":
@@ -257,7 +257,9 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 				t.Warn("unknwon.footnoteType", "year", info.year, "nb", info.number, "footnote", p.Note)
 			}
 		case "ANSWERED":
-		case "COLLECTION_START_DATE", "INSUFFICIENT_SUPPORT", "ONGOING", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN":
+		case "COLLECTION_START_DATE":
+			timeline.Status = "ONGOING"
+		case "INSUFFICIENT_SUPPORT", "ONGOING", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN":
 			// ok
 		default:
 			t.Warn("unknwon.status", "year", info.year, "nb", info.number, "status", p.Status)

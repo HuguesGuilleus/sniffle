@@ -59,6 +59,7 @@ type Translation struct {
 			AnnexDocument              render.H
 			H1Treaty                   render.H
 			H1Timeline                 render.H
+			CollectionEarlyClosure     render.H
 
 			H1Signature           render.H
 			SignatureSum          render.H

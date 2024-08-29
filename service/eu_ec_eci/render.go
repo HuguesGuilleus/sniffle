@@ -144,7 +144,22 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 
 				// Timeline
 				render.N("h1", ONE.H1Timeline),
-				component.Json(eci.Timeline),
+				render.N("ol.timeLine",
+					render.Slice(eci.Timeline, func(_ int, t Timeline) render.Node {
+						child := render.Z
+						switch t.Status {
+						case "REGISTERED":
+							child = t.Register[l].render(l, "Enregistrement")
+						case "CLOSED":
+							child = render.IfS(t.EarlyClose, render.N("div", ONE.CollectionEarlyClosure))
+						case "ANSWERED":
+							// TODO: answer document
+						}
+						return render.N("li.timePoint",
+							render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date,
+							child)
+					}),
+				),
 
 				// Signature
 				render.If(len(eci.Signature) != 0, func() render.Node {

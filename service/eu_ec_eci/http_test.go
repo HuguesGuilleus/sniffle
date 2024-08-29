@@ -252,7 +252,7 @@ func TestFetchDetail(t *testing.T) {
 					Size:     15325,
 				},
 			}},
-			{Date: newDate(2022, time.May, 18), Status: "COLLECTION_START_DATE"},
+			{Date: newDate(2022, time.May, 18), Status: "ONGOING"},
 			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true},
 			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
 			{Date: newDate(2023, time.June, 14), Status: "SUBMITTED"},

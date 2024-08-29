@@ -1,0 +1,12 @@
+.timeLine {
+	list-style: none;
+	padding: 0;
+	background: linear-gradient(90deg, _back 0 1rem, _colorA 1rem 1.2rem, _back 1.2rem);
+}
+
+.timePoint {
+	margin-bottom: _sp1;
+	padding: _spThin;
+	border: solid .2rem _colorA;
+	background: repeating-linear-gradient(45deg, _back 0 _sp, _back1 _sp _spsp);
+}
