@@ -154,6 +154,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							child = render.IfS(t.EarlyClose, render.N("div", ONE.CollectionEarlyClosure))
 						case "ANSWERED":
 							// TODO: answer document
+						case "DEADLINE":
+							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date)
 						}
 						return render.N("li.timePoint",
 							render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date,

@@ -133,6 +133,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	dto := &struct {
 		Status      string
 		LastUpdate  dtoTime `json:"latestUpdateDate"`
+		Deadline    dtoDate
 		Categories  []struct{ CategoryType string }
 		Description []struct {
 			Original    bool
@@ -266,6 +267,12 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 		eci.Timeline = append(eci.Timeline, timeline)
 	}
+	if !dto.Deadline.Time.IsZero() {
+		eci.Timeline = append(eci.Timeline, Timeline{
+			Date:   dto.Deadline.Time,
+			Status: "DEADLINE",
+		})
+	}
 	slices.SortFunc(eci.Timeline, func(a, b Timeline) int {
 		return cmp.Compare(a.Date.Unix(), b.Date.Unix())
 	})
@@ -351,6 +358,9 @@ type dtoDate struct {
 }
 
 func (dto *dtoDate) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
 	t, err := time.ParseInLocation("02/01/2006", string(data), render.DateZone)
 	if err != nil {
 		return err

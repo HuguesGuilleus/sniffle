@@ -10,3 +10,8 @@
 	border: solid .2rem _colorA;
 	background: repeating-linear-gradient(45deg, _back 0 _sp, _back1 _sp _spsp);
 }
+
+.timePoint.future {
+	border-style: dotted;
+	background: _back;
+}

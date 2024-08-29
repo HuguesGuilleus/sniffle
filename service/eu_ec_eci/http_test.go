@@ -75,6 +75,7 @@ var fetcher = fetch.TestFetcher{
 	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000009": []byte(`{
 		"status": "ONGOING",
 		"latestUpdateDate": "24/07/2024 13:52",
+		"deadline": "17/05/2025",
 		"linguisticVersions": [
 			{
 				"original": true,
@@ -257,6 +258,7 @@ func TestFetchDetail(t *testing.T) {
 			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
 			{Date: newDate(2023, time.June, 14), Status: "SUBMITTED"},
 			{Date: newDate(2023, time.December, 7), Status: "ANSWERED"},
+			{Date: newDate(2025, time.May, 17), Status: "DEADLINE"},
 		},
 
 		TotalSignature:        84005,
