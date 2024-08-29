@@ -84,7 +84,10 @@ var fetcher = fetch.TestFetcher{
 				"annexText": "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
 				"treaties": "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
 				"supportLink": "https://eci.ec.europa.eu/043/public/?lg=fr",
-				"website": "https://furfreeeurope.eu/"
+				"website": "https://furfreeeurope.eu/",
+				"commissionDecision": {
+					"url": "http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN"
+				}
 			},
 			{
 				"original": false,
@@ -92,7 +95,15 @@ var fetcher = fetch.TestFetcher{
 				"title": "Titre",
 				"objectives": "<p>Objectifs</p>",
 				"annexText": "<ul><li>arg 1: PARCE QUE!!!</li><li>arg 2 ...</li></ul>",
-				"treaties": "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE"
+				"treaties": "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
+				"commissionDecision": {
+					"document": {
+						"id": 8600,
+						"name": "CDD-2012000002.pdf",
+						"mimeType": "application/pdf",
+						"size": 15325
+					}
+				}
 			}
 		],
 		"categories": [
@@ -211,7 +222,15 @@ func TestFetchDetail(t *testing.T) {
 		DescriptionOriginalLangage: language.English,
 
 		Timeline: []Timeline{
-			{Date: newDate(2022, time.March, 16), Status: "REGISTERED"},
+			{Date: newDate(2022, time.March, 16), Status: "REGISTERED", Register: &[language.Len]Document{
+				language.English: {URL: parseURL("http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN")},
+				language.French: {
+					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8600"),
+					Name:     "CDD-2012000002.pdf",
+					MimeType: "application/pdf",
+					Size:     15325,
+				},
+			}},
 			{Date: newDate(2022, time.May, 18), Status: "COLLECTION_START_DATE"},
 			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true},
 			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
@@ -271,4 +290,12 @@ func TestFetchImageJPEG(t *testing.T) {
 		ImageHeight: "1",
 		ImageData:   image3x1JPG,
 	}, eci)
+}
+
+func parseURL(s string) *url.URL {
+	u, err := url.Parse(s)
+	if err != nil {
+		panic(err)
+	}
+	return u
 }

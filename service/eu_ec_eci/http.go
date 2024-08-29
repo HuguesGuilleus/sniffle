@@ -8,6 +8,7 @@ import (
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
+	"mime"
 	"net/url"
 	"slices"
 	"sniffle/tool"
@@ -72,8 +73,15 @@ type Timeline struct {
 	Date       time.Time
 	Status     string
 	EarlyClose bool
+	Register   *[language.Len]Document
 }
 type Threshold = map[country.Country]uint
+type Document struct {
+	URL      *url.URL
+	Name     string
+	Size     int
+	MimeType string
+}
 
 type indexItem struct {
 	year   int
@@ -120,6 +128,12 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		Country country.Country `json:"countryCodeType"`
 		Total   uint
 	}
+	type docDTO struct {
+		Id       int
+		Name     string
+		Size     int
+		MimeType mimeTypeDTO
+	}
 	dto := &struct {
 		Status      string
 		LastUpdate  dtoTime `json:"latestUpdateDate"`
@@ -133,6 +147,10 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Objective   string `json:"objectives"`
 			Annex       string `json:"annexText"`
 			Treaty      string `json:"treaties"`
+			Register    struct {
+				Url      string
+				Document *docDTO
+			} `json:"commissionDecision"`
 		} `json:"linguisticVersions"`
 		Progress []struct {
 			Status string  `json:"Name"`
@@ -174,6 +192,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	eci.Categorie = slices.Compact(eci.Categorie)
 
 	// Description
+	registrationDoc := new([language.Len]Document)
 	for _, desc := range dto.Description {
 		if desc.SupportLink == desc.Website {
 			desc.SupportLink = ""
@@ -193,6 +212,22 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		if desc.Original {
 			eci.DescriptionOriginalLangage = desc.Language
 		}
+		if u := securehtml.ParseURL(desc.Register.Url); u != nil {
+			registrationDoc[desc.Language] = Document{URL: u}
+		} else if desc.Register.Document != nil {
+			registrationDoc[desc.Language] = Document{
+				URL: &url.URL{
+					Scheme: "https",
+					Host:   "register.eci.ec.europa.eu",
+					Path:   "/core/api/register/document/" + strconv.Itoa(desc.Register.Document.Id),
+				},
+				Name:     desc.Register.Document.Name,
+				MimeType: string(desc.Register.Document.MimeType),
+				Size:     desc.Register.Document.Size,
+			}
+		} else {
+			t.Warn("noRegistrationDoc", "year", eci.Year, "nb", eci.Number)
+		}
 	}
 
 	if eci.DescriptionOriginalLangage == language.Invalid {
@@ -211,12 +246,20 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			Date:   p.Date.Time,
 			Status: p.Status,
 		}
-		switch p.Note {
-		case "":
-		case "COLLECTION_EARLY_CLOSURE":
-			timeline.EarlyClose = true
+		switch p.Status {
+		case "REGISTERED":
+			timeline.Register = registrationDoc
+		case "CLOSED":
+			if p.Note == "COLLECTION_EARLY_CLOSURE" {
+				timeline.EarlyClose = true
+			} else if p.Note != "" {
+				t.Warn("unknwon.footnoteType", "year", info.year, "nb", info.number, "footnote", p.Note)
+			}
+		case "ANSWERED":
+		case "COLLECTION_START_DATE", "INSUFFICIENT_SUPPORT", "ONGOING", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN":
+			// ok
 		default:
-			t.Warn("unknwon.footnoteType", "year", info.year, "nb", info.number, "footnote", p.Note)
+			t.Warn("unknwon.status", "year", info.year, "nb", info.number, "status", p.Status)
 		}
 		eci.Timeline = append(eci.Timeline, timeline)
 	}
@@ -323,5 +366,17 @@ func (dto *dtoTime) UnmarshalText(data []byte) error {
 		return err
 	}
 	dto.Time = t
+	return nil
+}
+
+type mimeTypeDTO string
+
+func (m *mimeTypeDTO) UnmarshalText(data []byte) error {
+	s := string(data)
+	_, _, err := mime.ParseMediaType(s)
+	if err != nil {
+		return fmt.Errorf("mimeTypeDTO: %w", err)
+	}
+	*m = mimeTypeDTO(s)
 	return nil
 }
