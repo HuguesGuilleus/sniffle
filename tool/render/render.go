@@ -73,6 +73,14 @@ func If(b bool, f func() Node) Node {
 	return Z
 }
 
+// Return b if b is true, else return Z.
+func IfS(b bool, n Node) Node {
+	if b {
+		return n
+	}
+	return Z
+}
+
 // If b is true, return yes call else return no call.
 func IfElse(b bool, yes, no func() Node) Node {
 	if b {

@@ -57,6 +57,12 @@ func TestIf(t *testing.T) {
 	n = If(true, func() Node { return N("img") })
 	assert.Equal(t, `<img>`, string(n.mergeSlice(nil)))
 }
+func TestIfS(t *testing.T) {
+	n := IfS(false, N("img"))
+	assert.Nil(t, n.mergeSlice(nil))
+	n = IfS(true, N("img"))
+	assert.Equal(t, `<img>`, string(n.mergeSlice(nil)))
+}
 func TestIfElse(t *testing.T) {
 	n := IfElse(true, func() Node { return N("a") }, func() Node { return N("b") })
 	assert.Equal(t, `<a></a>`, string(n.mergeSlice(nil)))
