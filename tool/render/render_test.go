@@ -91,6 +91,8 @@ func TestNumber(t *testing.T) {
 	assert.Equal(t, `-89`, string(renderChild(nil, -89)))
 	assert.Equal(t, `-9`, string(renderChild(nil, -9)))
 	assert.Equal(t, `0`, string(renderChild(nil, 0)))
+	assert.Equal(t, `100`, string(renderChild(nil, 100)))
+	assert.Equal(t, `10`, string(renderChild(nil, 10)))
 }
 
 func TestArray(t *testing.T) {
