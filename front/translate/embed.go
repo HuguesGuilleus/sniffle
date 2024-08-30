@@ -18,6 +18,7 @@ type Translation struct {
 	SearchInside  string
 	HELP          render.H
 	Byte          render.H
+	Source        render.H
 
 	Country [country.Len]render.H  `json:"-"`
 	Langage [language.Len]render.H `json:"-"`
@@ -71,8 +72,9 @@ type Translation struct {
 			Threshold             render.H
 			OverThreshold         string
 		}
-		Status    map[string]render.H
-		Categorie map[string]render.H
+		Status        map[string]render.H
+		Categorie     map[string]render.H
+		ThresholdRule map[string]render.H
 	}
 }
 

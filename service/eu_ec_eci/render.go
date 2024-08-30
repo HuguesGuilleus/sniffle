@@ -3,7 +3,6 @@ package eu_ec_eci
 import (
 	"cmp"
 	"fmt"
-	"maps"
 	"slices"
 	"sniffle/front/component"
 	"sniffle/front/translate"
@@ -74,9 +73,6 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
 	tr := translate.AllTranslation[l]
 	ONE := tr.EU_EC_ECI.ONE
-	countrysByName := slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
-		return cmp.Compare(tr.Country[a], tr.Country[b])
-	})
 
 	page := component.Page{
 		Language:    l,
@@ -180,13 +176,17 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								" / 1 000 000",
 							),
 						),
-						// render.N("div.edito",
-						// 	render.N("div.editoT", tr.HELP),
-						// 	render.N("p", "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par le nombre total de députés au Parlement européen.")),
+
+						render.N("div.edito",
+							render.N("div.editoT", tr.HELP),
+							tr.EU_EC_ECI.ThresholdRule[eci.ThresholdRule],
+							" ",
+							render.No("a", render.A("href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()), tr.Source),
+						),
 						render.N("div.bigInfo",
 							render.N("div.bifInfoMeta", ONE.CountryOverThreshold),
 							render.N("div.bigInfoMain",
-								render.N("span.bigInfoData", eci.ThresholdPassed),
+								render.N("span.bigInfoData", eci.ThresholdPassTotal),
 								" / 7",
 							),
 						),
@@ -197,13 +197,12 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								render.N("th", ONE.Signature),
 								render.N("th", ONE.Threshold),
 							),
-							render.Slice(countrysByName, func(_ int, c country.Country) render.Node {
-								sig := eci.Signature[c]
+							render.Slice(eci.countryByName(l), func(_ int, c country.Country) render.Node {
 								return render.N("tr",
 									render.N("td", tr.Country[c]),
-									render.N("td", sig),
+									render.N("td", eci.Signature[c]),
 									render.N("td",
-										render.If(sig >= eci.Threshold[c], func() render.Node {
+										render.If(eci.ThresholdPass[c], func() render.Node {
 											return render.No("span.tag", render.A("title", ONE.OverThreshold), "✔")
 										}),
 										eci.Threshold[c],

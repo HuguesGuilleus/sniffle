@@ -8,9 +8,11 @@ import (
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
+	"maps"
 	"mime"
 	"net/url"
 	"slices"
+	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/country"
 	"sniffle/tool/language"
@@ -52,8 +54,10 @@ type ECIOut struct {
 	// Date of the last organisators paper signatures update.
 	// Can be zero
 	PaperSignaturesUpdate time.Time
-	Threshold             Threshold
-	ThresholdPassed       uint
+	Threshold             *Threshold
+	ThresholdRule         string
+	ThresholdPass         [country.Len]bool
+	ThresholdPassTotal    uint
 
 	ImageName   string
 	ImageWidth  string
@@ -76,7 +80,7 @@ type Timeline struct {
 	EarlyClose bool
 	Register   *[language.Len]*Document
 }
-type Threshold = map[country.Country]uint
+type Threshold = [country.Len]uint
 type Document struct {
 	URL      *url.URL
 	Language language.Language
@@ -283,29 +287,35 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			eci.Signature[entry.Country] = entry.Total
 			eci.TotalSignature += entry.Total
 		}
-		date := time.Time{}
+		registerDate := time.Time{}
 		for _, t := range eci.Timeline {
 			if t.Status == "REGISTERED" {
-				date = t.Date
+				registerDate = t.Date
 			}
 		}
 		switch {
-		case date_2024_07_06.Before(date):
-			eci.Threshold = threshold_2024_07_06
-		case date_2020_02_01.Before(date):
-			eci.Threshold = threshold_2020_02_01
-		case date_2020_01_01.Before(date):
-			eci.Threshold = threshold_2020_01_01
-		case date_2014_07_01.Before(date):
-			eci.Threshold = threshold_2014_07_01
-		case date_2012_04_01.Before(date):
-			eci.Threshold = threshold_2012_04_01
+		case date_2024_07_06.Before(registerDate):
+			eci.ThresholdRule = rule_since_2020_01_01
+			eci.Threshold = &threshold_2024_07_06
+		case date_2020_02_01.Before(registerDate):
+			eci.ThresholdRule = rule_since_2020_01_01
+			eci.Threshold = &threshold_2020_02_01
+		case date_2020_01_01.Before(registerDate):
+			eci.ThresholdRule = rule_since_2020_01_01
+			eci.Threshold = &threshold_2020_01_01
+		case date_2014_07_01.Before(registerDate):
+			eci.ThresholdRule = rule_since_2012_04_01
+			eci.Threshold = &threshold_2014_07_01
+		case date_2012_04_01.Before(registerDate):
+			eci.ThresholdRule = rule_since_2012_04_01
+			eci.Threshold = &threshold_2012_04_01
 		default:
-			t.Warn("tooOldRegisterdate", "date", date, "year", eci.Year, "nb", eci.Number)
+			t.Warn("tooOldRegisterdate", "date", registerDate, "year", eci.Year, "nb", eci.Number)
 		}
 		for c, sig := range eci.Signature {
 			if eci.Threshold[c] <= sig {
-				eci.ThresholdPassed++
+				eci.ThresholdPass[c] = true
+				eci.ThresholdPassTotal++
 			}
 		}
 	}
@@ -351,6 +361,13 @@ func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
 	eci.ImageWidth = strconv.Itoa(config.Width)
 	eci.ImageHeight = strconv.Itoa(config.Height)
 	eci.ImageData = data
+}
+
+func (eci *ECIOut) countryByName(lang language.Language) []country.Country {
+	name := translate.AllTranslation[lang].Country
+	return slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
+		return cmp.Compare(name[a], name[b])
+	})
 }
 
 type dtoDate struct {

@@ -3,10 +3,11 @@ div.edito {
 	margin-bottom: _sp;
 	padding: 0 _spThin _spThin;
 	font-style: italic;
+	text-align: justify;
 }
 
 .editoT {
-	margin: 0 -_spThin;
+	margin: 0 -_spThin _spThin;
 	padding: 0 _spThin;
 	font-size: small;
 	font-weight: bold;

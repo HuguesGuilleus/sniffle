@@ -6,6 +6,9 @@ import (
 )
 
 var (
+	rule_since_2012_04_01 = "2012-04-01"
+	rule_since_2020_01_01 = "2020-01-01"
+
 	date_2024_07_06      = time.Date(2024, 7, 6, 0, 0, 0, 0, time.UTC)
 	threshold_2024_07_06 = Threshold{
 		country.Belgium:     15_840,

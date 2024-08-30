@@ -292,8 +292,10 @@ func TestFetchDetail(t *testing.T) {
 			country.Estonia:     244,
 			country.Malta:       61,
 		},
-		Threshold:       threshold_2020_02_01,
-		ThresholdPassed: 1,
+		Threshold:          &threshold_2020_02_01,
+		ThresholdRule:      "2020-01-01",
+		ThresholdPass:      [country.Len]bool{country.Finland: true},
+		ThresholdPassTotal: 1,
 
 		ImageName:   "logo.png",
 		ImageWidth:  "3",

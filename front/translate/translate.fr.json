@@ -8,6 +8,7 @@
 	"SearchInside": "Rechercher dans la page\u00A0:",
 	"HELP": "AIDE",
 	"Byte": "octet",
+	"Source": "Source",
 
 	"$Country": {
 		"Belgium": "Belgique",
@@ -154,6 +155,10 @@
 			"SEC": "Sécurité",
 			"TRA": "Transports",
 			"TRADE": "Commerce extérieur et relations extérieures"
+		},
+		"ThresholdRule": {
+			"2012-04-01": "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par 750.",
+			"2020-01-01": "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par le nombre total de députés au Parlement européen."
 		}
 	}
 }

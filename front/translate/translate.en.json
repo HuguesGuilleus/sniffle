@@ -8,6 +8,7 @@
 	"SearchInside": "Search inside the page:",
 	"HELP": "HELP",
 	"Byte": "byte",
+	"Source": "Source",
 
 	"$Country": {
 		"Belgium": "Belgium",
@@ -154,6 +155,10 @@
 			"SEC": "Security",
 			"TRA": "Transport",
 			"TRADE": "External trade and relations"
+		},
+		"ThresholdRule": {
+			"2012-04-01": "The thresholds correspond to the number of the Members of the European Parliament elected in each Member State, multiplied by 750.",
+			"2020-01-01": "The thresholds correspond to the number of the Members of the European Parliament elected in each Member State, multiplied by the total number of Members of the European Parliament."
 		}
 	}
 }
