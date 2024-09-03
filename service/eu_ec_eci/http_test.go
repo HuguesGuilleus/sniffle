@@ -167,6 +167,50 @@ var fetcher = fetch.TestFetcher{
 				{ "countryCodeType": "EE", "total": 244 },
 				{ "countryCodeType": "MT", "total": 61 }
 			]
+		},
+		"answer": {
+			"links": [
+				{
+					"defaultLanguageCode": "EN",
+					"defaultName": "COMMUNICATION",
+					"defaultLink": "https://citizens-initiative.europa.eu/sites/default/files/2023-12/C_2023_8362_EN.pdf ",
+					"link": [
+						{
+							"languageCode": "FR",
+							"link": "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:52023XC01559"
+						},
+						{
+							"languageCode": "EN",
+							"link": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52023XC01559"
+						}
+					]
+				},
+				{
+					"defaultLanguageCode": "EN",
+					"defaultName": "ANNEX",
+					"defaultLink": "https://ec.europa.eu/transparency/documents-register/detail?ref=C(2023)4489&lang=en",
+					"link": [
+						{
+							"languageCode": "EN",
+							"link": "https://ec.europa.eu/transparency/documents-register/detail?ref=C(2023)4489&lang=en"
+						},
+						{
+							"languageCode": "FR",
+							"link": "https://ec.europa.eu/transparency/documents-register/detail?ref=C(2023)4489&lang=fr"
+						}
+					]
+				},
+				{
+					"defaultLanguageCode": "EN",
+					"defaultName": "PRESS_RELEASE",
+					"defaultLink": "https://ec.europa.eu/commission/presscorner/detail/en/ip_23_6251"
+				},
+				{
+					"defaultLanguageCode": "EN",
+					"defaultName": "FOLLOW_UP",
+					"defaultLink": "https://citizens-initiative.europa.eu/fur-free-europe"
+				}
+			]
 		}
 	}`),
 }
@@ -182,9 +226,6 @@ func TestFetchIndex(t *testing.T) {
 }
 
 func TestFetchDetail(t *testing.T) {
-	newDate := func(year int, month time.Month, day int) time.Time {
-		return time.Date(year, month, day, 0, 0, 0, 0, render.DateZone)
-	}
 	wf, to := tool.NewTestTool(fetcher)
 	eci := fetchDetail(context.Background(), to, indexItem{
 		year:   2024,
@@ -213,6 +254,7 @@ func TestFetchDetail(t *testing.T) {
 					Host:   "furfreeeurope.eu",
 					Path:   "/",
 				},
+				FollowUp:  parseURL("https://citizens-initiative.europa.eu/fur-free-europe_en"),
 				PlainDesc: "objectives",
 				Objective: "<p>objectives</p>",
 				AnnexDoc: &Document{
@@ -227,6 +269,7 @@ func TestFetchDetail(t *testing.T) {
 			},
 			language.French: {
 				Title:     "Titre",
+				FollowUp:  parseURL("https://citizens-initiative.europa.eu/fur-free-europe_fr"),
 				PlainDesc: "Objectifs",
 				Objective: "<p>Objectifs</p>",
 				AnnexDoc: &Document{
@@ -257,7 +300,30 @@ func TestFetchDetail(t *testing.T) {
 			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true},
 			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
 			{Date: newDate(2023, time.June, 14), Status: "SUBMITTED"},
-			{Date: newDate(2023, time.December, 7), Status: "ANSWERED"},
+			{
+				Date: newDate(2023, time.December, 7), Status: "ANSWERED",
+				AnswerPressRelease: docs(&Document{
+					Language: language.English,
+					URL:      parseURL("https://ec.europa.eu/commission/presscorner/detail/en/ip_23_6251"),
+				}),
+				AnswerResponse: docs(&Document{
+					Language: language.English,
+					URL:      parseURL("https://citizens-initiative.europa.eu/sites/default/files/2023-12/C_2023_8362_EN.pdf"),
+				}, &Document{
+					Language: language.French,
+					URL:      parseURL("https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:52023XC01559"),
+				}, &Document{
+					Language: language.English,
+					URL:      parseURL("https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52023XC01559"),
+				}),
+				AnswerAnnex: docs(&Document{
+					Language: language.English,
+					URL:      parseURL("https://ec.europa.eu/transparency/documents-register/detail?ref=C(2023)4489&lang=en"),
+				}, &Document{
+					Language: language.French,
+					URL:      parseURL("https://ec.europa.eu/transparency/documents-register/detail?ref=C(2023)4489&lang=fr"),
+				}),
+			},
 			{Date: newDate(2025, time.May, 17), Status: "DEADLINE"},
 		},
 
@@ -317,10 +383,25 @@ func TestFetchImageJPEG(t *testing.T) {
 	}, eci)
 }
 
+func newDate(year int, month time.Month, day int) time.Time {
+	return time.Date(year, month, day, 0, 0, 0, 0, render.DateZone)
+}
+
 func parseURL(s string) *url.URL {
 	u, err := url.Parse(s)
 	if err != nil {
 		panic(err)
 	}
 	return u
+}
+
+func docs(base *Document, specific ...*Document) *[language.Len]*Document {
+	slice := new([language.Len]*Document)
+	for i := range slice {
+		slice[i] = base
+	}
+	for _, doc := range specific {
+		slice[doc.Language] = doc
+	}
+	return slice
 }

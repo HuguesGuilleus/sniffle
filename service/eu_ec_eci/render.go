@@ -104,7 +104,10 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						render.No("a.box", render.A("href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
 							tr.LinkOfficial),
-						render.If(desc.SupportLink != nil, func() render.Node {
+						render.If(desc.FollowUp != nil, func() render.Node {
+							return render.No("a.box", render.A("href", desc.FollowUp.String()), ONE.LinkFollowUp)
+						}),
+						render.If(desc.FollowUp == nil && desc.SupportLink != nil, func() render.Node {
 							return render.No("a.box", render.A("href", desc.SupportLink.String()), ONE.LinkSupport)
 						}),
 						render.If(desc.Website != nil, func() render.Node {
@@ -149,7 +152,11 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						case "CLOSED":
 							child = render.IfS(t.EarlyClose, render.N("div", ONE.CollectionEarlyClosure))
 						case "ANSWERED":
-							// TODO: answer document
+							child = render.N("",
+								render.If(t.AnswerPressRelease != nil, func() render.Node { return t.AnswerPressRelease[l].render(l, ONE.AnswerKind.PressRelease) }),
+								render.If(t.AnswerResponse != nil, func() render.Node { return t.AnswerResponse[l].render(l, ONE.AnswerKind.Response) }),
+								render.If(t.AnswerAnnex != nil, func() render.Node { return t.AnswerAnnex[l].render(l, ONE.AnswerKind.Annex) }),
+							)
 						case "DEADLINE":
 							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date)
 						}
@@ -237,12 +244,15 @@ func idNamespace(l language.Language) render.Node {
 }
 
 func (doc *Document) render(lang language.Language, name render.H) render.Node {
+	tr := translate.AllTranslation[lang]
 	return render.No("a.doc", render.A("href", doc.URL.String()),
 		render.N("div.docT", name, render.H(" &gt;&gt;&gt;")),
+		render.If(doc.Language != 0 && doc.Language != lang, func() render.Node {
+			return render.N("", " ["+tr.Langage[doc.Language]+"]")
+		}),
 		render.If(doc.Size != 0, func() render.Node {
-			tr := translate.AllTranslation[lang]
 			return render.N("",
-				tr.Langage[doc.Language], " (", doc.Size, " ", tr.Byte, ") ", doc.MimeType,
+				" (", doc.Size, " ", tr.Byte, ") ", doc.MimeType,
 				render.N("div.docName", doc.Name))
 		}),
 	)

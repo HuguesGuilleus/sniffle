@@ -97,8 +97,8 @@
 	"EU_EC_ECI": {
 		"Name": "European Citizens' Initiative",
 		"INDEX": {
-			"Name": "European Citizens' Initiative List",
-			"PageDescription": "The list of all european citizens' initiative"
+			"Name": "European Citizens' Initiative index",
+			"PageDescription": "The index of all european citizens' initiative"
 		},
 		"ONE": {
 			"Status": "Status: ",
@@ -106,12 +106,14 @@
 			"LastUpdate": "Last update: ",
 			"DescriptionOriginalLangage": "Description original langage: ",
 			"LinkSupport": "Support page",
+			"LinkFollowUp": "Follow up page",
 			"LinkWebsite": "Organisator website",
 			"H1Description": "Description",
 			"H1DescriptionAnnex": "Description annex",
 			"AnnexDocument": "Annex document",
 			"H1Treaty": "Traité",
 			"H1Timeline": "Timeline",
+			"Registration": "Registration",
 			"CollectionEarlyClosure": "Collection closed earlier by organizer.",
 
 			"H1Signature": "Signature",
@@ -122,7 +124,13 @@
 			"Country": "Country",
 			"Signature": "Signature",
 			"Threshold": "Threshold",
-			"OverThreshold": "Threshold pass"
+			"OverThreshold": "Threshold pass",
+
+			"AnswerKind": {
+				"Annex": "Annex",
+				"Response": "Response",
+				"PressRelease": "Press release"
+			}
 		},
 		"Status": {
 			"ANSWERED": "ANSWERED",

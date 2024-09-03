@@ -106,12 +106,14 @@
 			"LastUpdate": "Dernière modification\u00A0: ",
 			"DescriptionOriginalLangage": "Langue de la description initiale\u00A0: ",
 			"LinkSupport": "Page de soutien",
+			"LinkFollowUp": "Page de suivi",
 			"LinkWebsite": "Site web des organisateurs",
 			"H1Description": "Description",
 			"H1DescriptionAnnex": "Annexe",
 			"AnnexDocument": "Document annexe",
 			"H1Treaty": "Traité",
 			"H1Timeline": "Chronologie",
+			"Registration": "Entregisytrement",
 			"CollectionEarlyClosure": "Collecte clôturée de manière anticipée par les organisateurs.",
 
 			"H1Signature": "Signature",
@@ -122,7 +124,13 @@
 			"Country": "Pays",
 			"Signature": "Signature",
 			"Threshold": "Seuil",
-			"OverThreshold": "Seuil dépassé"
+			"OverThreshold": "Seuil dépassé",
+
+			"AnswerKind": {
+				"Annex": "Annexe",
+				"Response": "Réponse",
+				"PressRelease": "Communiqué de presse"
+			}
 		},
 		"Status": {
 			"ANSWERED": "RÉPONDU",

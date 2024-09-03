@@ -54,12 +54,14 @@ type Translation struct {
 			LastUpdate                 render.H
 			DescriptionOriginalLangage render.H
 			LinkSupport                render.H `help:"Support page link"`
+			LinkFollowUp               render.H
 			LinkWebsite                render.H `help:"Organisator website link"`
 			H1Description              render.H
 			H1DescriptionAnnex         render.H
 			AnnexDocument              render.H
 			H1Treaty                   render.H
 			H1Timeline                 render.H
+			Registration               render.H
 			CollectionEarlyClosure     render.H
 
 			H1Signature           render.H
@@ -71,6 +73,12 @@ type Translation struct {
 			Signature             render.H
 			Threshold             render.H
 			OverThreshold         string
+
+			AnswerKind struct {
+				Annex        render.H
+				Response     render.H
+				PressRelease render.H
+			}
 		}
 		Status        map[string]render.H
 		Categorie     map[string]render.H

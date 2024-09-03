@@ -69,6 +69,7 @@ type Description struct {
 	PlainDesc   string
 	SupportLink *url.URL
 	Website     *url.URL
+	FollowUp    *url.URL
 	Objective   render.H
 	AnnexDoc    *Document
 	Annex       render.H
@@ -79,6 +80,10 @@ type Timeline struct {
 	Status     string
 	EarlyClose bool
 	Register   *[language.Len]*Document
+	// Answer documents
+	AnswerAnnex        *[language.Len]*Document
+	AnswerResponse     *[language.Len]*Document
+	AnswerPressRelease *[language.Len]*Document
 }
 type Threshold = [country.Len]uint
 type Document struct {
@@ -166,6 +171,17 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		Submission struct {
 			Entry []signatureDTO
 		}
+		Answer struct {
+			Links []struct {
+				DefaultLanguageCode language.Language
+				DefaultName         string
+				DefaultLink         string
+				Link                []struct {
+					LanguageCode language.Language
+					Link         string
+				}
+			}
+		}
 	}{}
 	fetchURL := fmt.Sprintf(detailURL, info.year, info.number)
 	if t.Dev() {
@@ -246,6 +262,44 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 
+	answer := Timeline{}
+	for _, link := range dto.Answer.Links {
+		def := &Document{
+			URL:      securehtml.ParseURL(link.DefaultLink),
+			Language: link.DefaultLanguageCode,
+		}
+
+		translation := &[language.Len]*Document{}
+		for l := range translation {
+			translation[l] = def
+		}
+		for _, t := range link.Link {
+			u := securehtml.ParseURL(t.Link)
+			if u == nil {
+				continue
+			}
+			translation[t.LanguageCode] = &Document{URL: u, Language: t.LanguageCode}
+		}
+
+		switch link.DefaultName {
+		case "ANNEX":
+			answer.AnswerAnnex = translation
+		case "COMMUNICATION":
+			answer.AnswerResponse = translation
+		case "FOLLOW_UP":
+			for l, desc := range eci.Description {
+				u := translation[l].URL
+				if u.Scheme == "https" && u.Host == "citizens-initiative.europa.eu" {
+					u = u.JoinPath() // clone the url
+					u.Path += "_" + l.String()
+				}
+				desc.FollowUp = u
+			}
+		case "PRESS_RELEASE":
+			answer.AnswerPressRelease = translation
+		}
+	}
+
 	// Timeline
 	for _, p := range dto.Progress {
 		timeline := Timeline{
@@ -255,6 +309,8 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		switch timeline.Status {
 		case "REGISTERED":
 			timeline.Register = registrationDoc
+		case "COLLECTION_START_DATE":
+			timeline.Status = "ONGOING"
 		case "CLOSED":
 			if p.Note == "COLLECTION_EARLY_CLOSURE" {
 				timeline.EarlyClose = true
@@ -262,8 +318,9 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 				t.Warn("unknwon.footnoteType", "year", info.year, "nb", info.number, "footnote", p.Note)
 			}
 		case "ANSWERED":
-		case "COLLECTION_START_DATE":
-			timeline.Status = "ONGOING"
+			timeline.AnswerAnnex = answer.AnswerAnnex
+			timeline.AnswerResponse = answer.AnswerResponse
+			timeline.AnswerPressRelease = answer.AnswerPressRelease
 		case "INSUFFICIENT_SUPPORT", "ONGOING", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN":
 			// ok
 		default:

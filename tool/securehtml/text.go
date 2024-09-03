@@ -10,6 +10,7 @@ import (
 )
 
 func ParseURL(s string) *url.URL {
+	s = strings.TrimSpace(s)
 	if s == "" {
 		return nil
 	}
