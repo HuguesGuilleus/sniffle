@@ -111,11 +111,11 @@ func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
 			} `json:"logo"`
 		} `json:"entries"`
 	}{}
-	if tool.FetchJSON(ctx, t, indexURL, &dto) {
-		return nil
-	}
 	if tool.DevMode {
 		t.WriteFile("/eu/ec/eci/src.json", tool.FetchAll(ctx, t, indexURL))
+	}
+	if tool.FetchJSON(ctx, t, indexURL, &dto) {
+		return nil
 	}
 
 	items = make([]indexItem, len(dto.Entries))
@@ -135,61 +135,18 @@ func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
 }
 
 func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
-	type signatureDTO struct {
-		Country country.Country `json:"countryCodeType"`
-		Total   uint
-	}
-	dto := &struct {
-		Status      string
-		LastUpdate  dtoTime `json:"latestUpdateDate"`
-		Deadline    dtoDate
-		Categories  []struct{ CategoryType string }
-		Description []struct {
-			Original    bool
-			Language    language.Language `json:"languageCode"`
-			Title       string
-			SupportLink string
-			Website     string
-			Objective   string  `json:"objectives"`
-			AnnexDoc    *docDTO `json:"additionalDocument"`
-			Annex       string  `json:"annexText"`
-			Treaty      string  `json:"treaties"`
-			Register    struct {
-				Url      string
-				Document *docDTO
-			} `json:"commissionDecision"`
-		} `json:"linguisticVersions"`
-		Progress []struct {
-			Status string  `json:"Name"`
-			Date   dtoDate `json:"date"`
-			Note   string  `json:"footnoteType"`
-		} `json:"progress"`
-		Signatures struct {
-			UpdateDate dtoDate `json:"updateDate"`
-			Entry      []signatureDTO
-		} `json:"sosReport"`
-		Submission struct {
-			Entry []signatureDTO
-		}
-		Answer struct {
-			Links []struct {
-				DefaultLanguageCode language.Language
-				DefaultName         string
-				DefaultLink         string
-				Link                []struct {
-					LanguageCode language.Language
-					Link         string
-				}
-			}
-		}
-	}{}
+	dto := detailDTO{}
 	fetchURL := fmt.Sprintf(detailURL, info.year, info.number)
 	if tool.DevMode {
 		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),
 			tool.FetchAll(ctx, t, fetchURL))
+
 	}
 	if tool.FetchJSON(ctx, t, fetchURL, &dto) {
 		return nil
+	}
+	if tool.DevMode {
+		dto.check(t.With("year", info.year, "nb", info.number))
 	}
 
 	eci := &ECIOut{
@@ -239,8 +196,6 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 			registrationDoc[desc.Language] = &Document{URL: u}
 		} else if desc.Register.Document != nil {
 			registrationDoc[desc.Language] = desc.Register.Document.Document(desc.Language)
-		} else {
-			t.Warn("noRegistrationDoc", "year", eci.Year, "nb", eci.Number)
 		}
 	}
 	for _, desc := range eci.Description {
@@ -249,16 +204,12 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 
-	if o := eci.DescriptionOriginalLangage; o == language.Invalid {
-		t.Warn("noDescription", "year", eci.Year, "nb", eci.Number)
-	} else {
-		for _, l := range t.Languages {
-			if eci.Description[l] == nil {
-				eci.Description[l] = eci.Description[o]
-			}
-			if registrationDoc[l] == nil {
-				registrationDoc[l] = registrationDoc[o]
-			}
+	for _, l := range t.Languages {
+		if eci.Description[l] == nil {
+			eci.Description[l] = eci.Description[eci.DescriptionOriginalLangage]
+		}
+		if registrationDoc[l] == nil {
+			registrationDoc[l] = registrationDoc[eci.DescriptionOriginalLangage]
 		}
 	}
 
@@ -302,6 +253,9 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 
 	// Timeline
 	for _, p := range dto.Progress {
+		if p.Date.Time.IsZero() {
+			continue
+		}
 		timeline := Timeline{
 			Date:   p.Date.Time,
 			Status: p.Status,
@@ -314,17 +268,11 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		case "CLOSED":
 			if p.Note == "COLLECTION_EARLY_CLOSURE" {
 				timeline.EarlyClose = true
-			} else if p.Note != "" {
-				t.Warn("unknwon.footnoteType", "year", info.year, "nb", info.number, "footnote", p.Note)
 			}
 		case "ANSWERED":
 			timeline.AnswerAnnex = answer.AnswerAnnex
 			timeline.AnswerResponse = answer.AnswerResponse
 			timeline.AnswerPressRelease = answer.AnswerPressRelease
-		case "INSUFFICIENT_SUPPORT", "ONGOING", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN":
-			// ok
-		default:
-			t.Warn("unknwon.status", "year", info.year, "nb", info.number, "status", p.Status)
 		}
 		eci.Timeline = append(eci.Timeline, timeline)
 	}
@@ -366,8 +314,6 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		case date_2012_04_01.Before(registerDate):
 			eci.ThresholdRule = rule_since_2012_04_01
 			eci.Threshold = &threshold_2012_04_01
-		default:
-			t.Warn("tooOldRegisterdate", "date", registerDate, "year", eci.Year, "nb", eci.Number)
 		}
 		for c, sig := range eci.Signature {
 			if eci.Threshold[c] <= sig {
