@@ -114,7 +114,7 @@ func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
 	if tool.FetchJSON(ctx, t, indexURL, &dto) {
 		return nil
 	}
-	if t.Dev() {
+	if tool.DevMode {
 		t.WriteFile("/eu/ec/eci/src.json", tool.FetchAll(ctx, t, indexURL))
 	}
 
@@ -184,7 +184,7 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}{}
 	fetchURL := fmt.Sprintf(detailURL, info.year, info.number)
-	if t.Dev() {
+	if tool.DevMode {
 		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),
 			tool.FetchAll(ctx, t, fetchURL))
 	}

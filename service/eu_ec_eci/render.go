@@ -246,7 +246,7 @@ func idNamespace(l language.Language) render.Node {
 func (doc *Document) render(lang language.Language, name render.H) render.Node {
 	tr := translate.AllTranslation[lang]
 	return render.No("a.doc", render.A("href", doc.URL.String()),
-		render.N("div.docT", name, render.H(" &gt;&gt;&gt;")),
+		render.N("div.docT", name),
 		render.If(doc.Language != 0 && doc.Language != lang, func() render.Node {
 			return render.N("", " ["+tr.Langage[doc.Language]+"]")
 		}),

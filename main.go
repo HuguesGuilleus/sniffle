@@ -22,7 +22,6 @@ func main() {
 	out := flag.String("out", "public", "The output directory")
 	cache := flag.String("cache", "cache", "The cache directory")
 	host := flag.String("host", "https://sniffle.eu/", "The host absolute URL")
-	dev := flag.Bool("dev", false, "Dev mode")
 	flag.Parse()
 
 	logFile := os.Stderr
@@ -49,7 +48,6 @@ func main() {
 			fetch.CacheOnly(*cache),
 			fetch.Net(nil, *cache, 1, time.Millisecond*100),
 		},
-		Dev: *dev,
 	}
 
 	tool.Run(context.Background(), &config, service.List)
