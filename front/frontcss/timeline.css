@@ -8,10 +8,11 @@
 	margin-bottom: _sp1;
 	padding: _spThin;
 	border: solid .2rem _colorA;
-	background: repeating-linear-gradient(45deg, _back 0 _sp, _back1 _sp _spsp);
+	background:
+		repeating-linear-gradient(30deg, _back 0 .2rem, transparent 0 .4rem),
+		repeating-linear-gradient(90deg, _back 0 .2rem, _back1 0 .4rem);
 }
 
 .timePoint.future {
 	border-style: dotted;
-	background: _back;
 }

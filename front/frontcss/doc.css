@@ -1,9 +1,11 @@
 .doc {
 	display: block;
+	clip-path: polygon(0 0, calc(100% - _sp) 0, 100% 50%, calc(100% - _sp) 100%, 0 100%);
 	margin: 1rem 0;
-	border: solid _line2;
-	border-radius: 0 _sp1 _sp1 0 / 0 50% 50% 0;
+	border: solid  ;
+	border-width: _line2 _sp1 _line2 _spThin;
 	padding: _spThin;
+	padding-right: _sp2;
 	text-decoration: none;
 	background: _back1;
 }
