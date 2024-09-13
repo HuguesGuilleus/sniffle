@@ -5,6 +5,7 @@ import (
 	"sniffle/front"
 	"sniffle/service/about"
 	"sniffle/service/eu_ec_eci"
+	"sniffle/service/eu_eca"
 	"sniffle/service/home"
 	"sniffle/tool"
 	"sniffle/tool/render"
@@ -16,6 +17,7 @@ var List = []tool.Service{
 	{Name: "about", Do: about.Do},
 	{Name: "home", Do: home.Do},
 	{Name: "eu_ec_eci", Do: eu_ec_eci.Do},
+	{Name: "eu_eca", Do: eu_eca.Do},
 	{Name: "front", Do: front.Do},
 }
 
