@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"net/http"
 )
 
-func FetchJSON(ctx context.Context, t *Tool, url string, v any) (fail bool) {
-	reader := t.Fetch(ctx, url)
+func FetchJSON(ctx context.Context, t *Tool, method, url string, headers http.Header, body []byte, v any) (fail bool) {
+	reader := t.Fetch(ctx, method, url, headers, body)
 	if reader == nil {
 		return true
 	}
@@ -21,8 +22,8 @@ func FetchJSON(ctx context.Context, t *Tool, url string, v any) (fail bool) {
 	return false
 }
 
-func FetchAll(ctx context.Context, t *Tool, url string) []byte {
-	reader := t.Fetch(ctx, url)
+func FetchAll(ctx context.Context, t *Tool, method, url string, headers http.Header, body []byte) []byte {
+	reader := t.Fetch(ctx, method, url, headers, body)
 	if reader == nil {
 		return nil
 	}

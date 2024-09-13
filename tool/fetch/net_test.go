@@ -18,9 +18,14 @@ func TestNet(t *testing.T) {
 	u, err := url.Parse("https://example.com/file?b=2&a=1")
 	assert.NoError(t, err)
 
-	body, id, err := Net(fakeRoudnTrip{}, "cache", 0, 0).Fetch(context.Background(), u)
+	body, id, err := Net(fakeRoundTrip{}, "cache", 0, 0).Fetch(
+		context.Background(),
+		"PATCH",
+		u,
+		http.Header{"H": []string{"42"}},
+		[]byte("body"))
 	assert.NoError(t, err)
-	assert.Equal(t, "62caa69659", id)
+	assert.Equal(t, "7be54c1355", id)
 	defer body.Close()
 
 	data, err := io.ReadAll(body)
@@ -31,9 +36,20 @@ func TestNet(t *testing.T) {
 	assert.NoError(t, os.RemoveAll("cache"))
 }
 
-type fakeRoudnTrip struct{}
+type fakeRoundTrip struct{}
 
-func (fakeRoudnTrip) RoundTrip(*http.Request) (*http.Response, error) {
+func (fakeRoundTrip) RoundTrip(r *http.Request) (*http.Response, error) {
+	if r.Method != "PATCH" {
+		panic("not PATCH method")
+	}
+	if r.Header.Get("H") != "42" {
+		panic("wrong headear")
+	}
+	if body, err := io.ReadAll(r.Body); err != nil {
+		panic("fail to read body: " + err.Error())
+	} else if string(body) != "body" {
+		panic("wrong body")
+	}
 	return &http.Response{
 		StatusCode: http.StatusOK,
 		Header:     http.Header{"yolo": []string{"v1", "v2"}},

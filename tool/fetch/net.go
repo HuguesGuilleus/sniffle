@@ -1,6 +1,7 @@
 package fetch
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -35,13 +36,21 @@ func Net(roundTripper http.RoundTripper, cacheBase string, limit uint, sleep tim
 
 func (netFetcher) Name() string { return "net" }
 
-func (fetcher netFetcher) Fetch(ctx context.Context, u *url.URL) (io.ReadCloser, string, error) {
-	request, _ := http.NewRequestWithContext(ctx, http.MethodGet, "", nil)
-	request.URL = u
-
-	logId, fileID := GetFileID(fetcher.cacheBase, request.URL)
-	if err := os.MkdirAll(filepath.Dir(fileID), 0o775); err != nil {
+func (fetcher netFetcher) Fetch(ctx context.Context, method string, u *url.URL, headers http.Header, body []byte) (io.ReadCloser, string, error) {
+	logId, filePath := GeneratePath(fetcher.cacheBase, method, u, headers, body)
+	if err := os.MkdirAll(filepath.Dir(filePath), 0o775); err != nil {
 		return nil, logId, err
+	}
+
+	request, err := http.NewRequestWithContext(ctx, method, "", bytes.NewReader(body))
+	if err != nil {
+		return nil, logId, err
+	}
+	request.URL = u
+	for k, vv := range headers {
+		for _, v := range vv {
+			request.Header.Add(k, v)
+		}
 	}
 
 	<-fetcher.limit
@@ -55,13 +64,13 @@ func (fetcher netFetcher) Fetch(ctx context.Context, u *url.URL) (io.ReadCloser,
 		return nil, logId, err
 	}
 	defer response.Body.Close()
-	saveMeta(fileID, &meta{u.String(), response.Status, time.Now(), response.Header})
+	saveMeta(filePath, &meta{u.String(), response.Status, time.Now(), string(body), request.Header, response.Header})
 
 	if response.StatusCode/100 != 2 {
 		return nil, logId, fmt.Errorf("wrong status: %q", response.Status)
 	}
 
-	f, err := os.OpenFile(fileID, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0o664)
+	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0o664)
 	if err != nil {
 		return nil, logId, err
 	} else if _, err := io.Copy(f, response.Body); err != nil {
@@ -79,10 +88,12 @@ type meta struct {
 	URL            string      `json:"url"`
 	Status         string      `json:"status"`
 	Time           time.Time   `json:"time"`
+	Body           string      `json:"body"`
+	RequestHeader  http.Header `json:"requestHeader"`
 	ResponseHeader http.Header `json:"responseHeader"`
 }
 
-func saveMeta(fileID string, m *meta) {
+func saveMeta(filePath string, m *meta) {
 	j, _ := json.MarshalIndent(m, "", "\t")
-	os.WriteFile(fileID+".json", j, 0o664)
+	os.WriteFile(filePath+".json", j, 0o664)
 }

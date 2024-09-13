@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 	"log/slog"
+	"net/http"
 	"net/url"
 	"os"
 	"sniffle/tool/fetch"
@@ -91,7 +92,7 @@ func (t *Tool) WriteFile(path string, data []byte) {
 // Logs results and errors.
 //
 // If all internal fetchers return and error, return nil.
-func (t *Tool) Fetch(ctx context.Context, urlString string) io.ReadCloser {
+func (t *Tool) Fetch(ctx context.Context, method, urlString string, headers http.Header, body []byte) io.ReadCloser {
 	u, err := url.Parse(urlString)
 	if err != nil {
 		t.Warn("http.failParseURL", "url", urlString, "err", err.Error())
@@ -99,7 +100,7 @@ func (t *Tool) Fetch(ctx context.Context, urlString string) io.ReadCloser {
 	}
 
 	for _, f := range t.fetcher {
-		r, id, err := f.Fetch(ctx, u)
+		r, id, err := f.Fetch(ctx, method, u, headers, body)
 		if err != nil {
 			t.Debug("http.fail", "fetcher", f.Name(), "id", id, "url", urlString, "err", err.Error())
 			continue
@@ -108,7 +109,7 @@ func (t *Tool) Fetch(ctx context.Context, urlString string) io.ReadCloser {
 		return r
 	}
 
-	t.Debug("http.fatal", "url", urlString)
+	t.Warn("http.fatal", "url", urlString)
 	return nil
 }
 

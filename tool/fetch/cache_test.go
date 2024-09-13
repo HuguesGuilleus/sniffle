@@ -15,13 +15,13 @@ func TestCache(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, os.MkdirAll("cache/https/example.com/ ", 0o775))
-	assert.NoError(t, os.WriteFile("cache/https/example.com/62caa696594967cb5cd8957da8eb44fbced0b6b9acd0b2ad306ab70b05385fd5", []byte(`body`), 0o664))
+	assert.NoError(t, os.WriteFile("cache/https/example.com/498f07ec77e6610d3d5d527a9dda3dbcf81ae934b1a937afa5117ed5a21542b6", []byte(`body`), 0o664))
 
 	fetcher := CacheOnly("cache")
 	assert.Equal(t, "cache", fetcher.Name())
-	body, id, err := fetcher.Fetch(context.Background(), u)
+	body, id, err := fetcher.Fetch(context.Background(), "", u, nil, nil)
 	assert.NoError(t, err)
-	assert.Equal(t, "62caa69659", id)
+	assert.Equal(t, "498f07ec77", id)
 	defer body.Close()
 
 	data, err := io.ReadAll(body)
