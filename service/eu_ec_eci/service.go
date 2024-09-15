@@ -25,6 +25,9 @@ func Do(ctx context.Context, t *tool.Tool) {
 		if eci.ImageName != "" {
 			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s", eci.Year, eci.Number, eci.ImageName), eci.ImageData)
 		}
+		if eci.ImageResizedName != "" {
+			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s", eci.Year, eci.Number, eci.ImageResizedName), eci.ImageResizedData)
+		}
 	}
 
 	for y := range years {

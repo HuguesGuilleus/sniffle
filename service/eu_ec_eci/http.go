@@ -12,6 +12,7 @@ import (
 	"mime"
 	"net/url"
 	"slices"
+	"sniffle/common/resize0"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/country"
@@ -63,6 +64,11 @@ type ECIOut struct {
 	ImageWidth  string
 	ImageHeight string
 	ImageData   []byte
+
+	ImageResizedName   string
+	ImageResizedWidth  string
+	ImageResizedHeight string
+	ImageResizedData   []byte
 }
 type Description struct {
 	Title       string
@@ -340,7 +346,8 @@ func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
 		return
 	}
 
-	data := tool.FetchAll(ctx, t, "", fmt.Sprintf(logoURL, logoID), nil, nil)
+	u := fmt.Sprintf(logoURL, logoID)
+	data := tool.FetchAll(ctx, t, "", u, nil, nil)
 	if len(data) == 0 {
 		return
 	}
@@ -363,6 +370,14 @@ func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
 	eci.ImageWidth = strconv.Itoa(config.Width)
 	eci.ImageHeight = strconv.Itoa(config.Height)
 	eci.ImageData = data
+
+	if resized := t.LongTask(resize0.Name, u, data); len(resized) != 0 {
+		eci.ImageResizedName = "logo" + resize0.Extension
+		eci.ImageResizedData = resized
+		width, height := resize0.NewDimension(config.Width, config.Height)
+		eci.ImageResizedWidth = strconv.Itoa(width)
+		eci.ImageResizedHeight = strconv.Itoa(height)
+	}
 }
 
 func (eci *ECIOut) countryByName(lang language.Language) []country.Country {

@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"sniffle/common/resize0"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
@@ -54,14 +55,7 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 						return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
 					})),
 					render.N("p.itemDesc", eci.Description[l].PlainDesc),
-					render.If(eci.ImageName != "", func() render.Node {
-						return render.No("img.logo", render.
-							A("loading", "lazy").
-							A("src", fmt.Sprintf("%d/%d/%s", eci.Year, eci.Number, eci.ImageName)).
-							A("width", eci.ImageWidth).
-							A("height", eci.ImageHeight).
-							A("title", tr.LogoTitle))
-					}),
+					renderImage(eci, true, tr.LogoTitle),
 				)
 			}),
 		),
@@ -117,14 +111,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				),
 
 				// Image
-				render.If(eci.ImageName != "", func() render.Node {
-					return render.No("img.logo.marginTop", render.
-						A("loading", "lazy").
-						A("src", eci.ImageName).
-						A("width", eci.ImageWidth).
-						A("height", eci.ImageHeight).
-						A("title", tr.LogoTitle))
-				}),
+				renderImage(eci, false, tr.LogoTitle),
 
 				// Text information
 				render.N("h1", ONE.H1Description),
@@ -256,4 +243,34 @@ func (doc *Document) render(lang language.Language, name render.H) render.Node {
 				render.N("div.docName", doc.Name))
 		}),
 	)
+}
+
+func renderImage(eci *ECIOut, needBase bool, title string) render.Node {
+	if eci.ImageName == "" {
+		return render.Z
+	}
+
+	base := ""
+	if needBase {
+		base = fmt.Sprintf("%d/%d/", eci.Year, eci.Number)
+	}
+
+	img := render.No("img.logo", render.
+		A("loading", "lazy").
+		A("title", title).
+		A("src", base+eci.ImageName).
+		A("width", eci.ImageWidth).
+		A("height", eci.ImageHeight),
+	)
+
+	if eci.ImageResizedName == "" {
+		return img
+	}
+
+	return render.N("picture.logo",
+		render.No("source", render.
+			A("type", resize0.MIME).
+			A("srcset", base+eci.ImageResizedName),
+		),
+		img)
 }

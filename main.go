@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"sniffle/myhandler"
 	"sniffle/service"
 	"sniffle/tool"
@@ -48,6 +49,8 @@ func main() {
 			fetch.CacheOnly(*cache),
 			fetch.Net(nil, *cache, 1, time.Millisecond*100),
 		},
+		LongTasksCache: writefile.Os(*cache + string(filepath.Separator) + "longtask"),
+		LongTasksMap:   service.LongTask,
 	}
 
 	tool.Run(context.Background(), &config, service.List)

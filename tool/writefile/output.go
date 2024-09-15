@@ -12,7 +12,14 @@ type WriteFile interface {
 	WriteFile(path string, data []byte) error
 }
 
-func Os(base string) WriteFile { return osBase(base) }
+type WriteReadFile interface {
+	WriteFile
+	// Like fs.ReadFileFS.
+	// But the output bytes can be shared because it will not be modified.
+	ReadFile(name string) ([]byte, error)
+}
+
+func Os(base string) WriteReadFile { return osBase(base) }
 
 type osBase string
 
@@ -24,6 +31,11 @@ func (base osBase) WriteFile(path string, data []byte) error {
 	}
 
 	return os.WriteFile(path, data, 0o664)
+}
+
+func (base osBase) ReadFile(path string) ([]byte, error) {
+	path = filepath.Join(string(base), filepath.FromSlash(path))
+	return os.ReadFile(path)
 }
 
 // A test map to check if a file (no empty) is written

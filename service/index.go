@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"sniffle/common/resize0"
 	"sniffle/front"
 	"sniffle/service/about"
 	"sniffle/service/eu_ec_eci"
@@ -28,4 +29,8 @@ func notImplementedPage(_ context.Context, t *tool.Tool) {
 		t.WriteFile("/eu/ec/index.html", render.Back)
 		t.WriteFile("/eu/ec/"+l.String()+".html", render.Back)
 	}
+}
+
+var LongTask = map[string]func([]byte) ([]byte, error){
+	resize0.Name: resize0.Resize,
 }

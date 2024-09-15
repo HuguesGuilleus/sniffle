@@ -3,7 +3,11 @@ package tool
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
 	"io"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -25,6 +29,9 @@ type Config struct {
 
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
+
+	LongTasksCache writefile.WriteReadFile
+	LongTasksMap   map[string]func([]byte) ([]byte, error)
 }
 
 func New(config *Config) *Tool {
@@ -38,6 +45,9 @@ func New(config *Config) *Tool {
 
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
+
+		longTasksCache: config.LongTasksCache,
+		longTasksMap:   config.LongTasksMap,
 	}
 }
 
@@ -67,6 +77,10 @@ type Tool struct {
 	// Do not include render.Back
 	htmlFiles     []string
 	htmlFileMutex sync.Mutex
+
+	longTasksCache writefile.WriteReadFile
+	longTasksMutex sync.Mutex
+	longTasksMap   map[string]func([]byte) ([]byte, error)
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
@@ -111,6 +125,45 @@ func (t *Tool) Fetch(ctx context.Context, method, urlString string, headers http
 
 	t.Warn("http.fatal", "url", urlString)
 	return nil
+}
+
+// Try to execute a long task.
+// The result can be empty if error occure or no task function.
+func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
+	if t.longTasksCache == nil || t.longTasksMap == nil {
+		t.Info("longtask.ignore", "name", name, "ref", logRef)
+		return nil
+	}
+
+	idH := sha256.Sum256(input)
+	id := hex.EncodeToString(idH[:])
+	path := name + "/" + id
+
+	if out, err := t.longTasksCache.ReadFile(path); err == nil {
+		t.Info("longtask.cache", "name", name, "id", id, "ref", logRef)
+		return out
+	} else if !errors.Is(err, fs.ErrNotExist) {
+		t.Warn("longtask.readErr", "name", name, "id", id, "ref", logRef, "err", err.Error())
+	}
+
+	t.longTasksMutex.Lock()
+	task := t.longTasksMap[name]
+	t.longTasksMutex.Unlock()
+	if task == nil {
+		t.Info("longtask.noFunc", "name", name, "id", id, "ref", logRef)
+		return nil
+	}
+
+	out, err := task(input)
+	if err != nil {
+		t.Warn("longtask.err", "name", name, "id", id, "ref", logRef, "err", err.Error())
+		return nil
+	} else if err := t.longTasksCache.WriteFile(path, out); err != nil {
+		t.Warn("longtask.writeErr", "name", name, "id", id, "ref", logRef, "err", err.Error())
+	}
+
+	t.Info("longtask.ok", "name", name, "id", id, "ref", logRef)
+	return out
 }
 
 func NewTestTool(fetcher fetch.TestFetcher) (writefile.T, *Tool) {

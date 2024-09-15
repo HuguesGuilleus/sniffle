@@ -6,7 +6,7 @@ input[type=search] {
 	display: block;
 	border: none;
 	padding: _spThin;
-	border: _line1 solid _back1;
+	border: _line2 solid _back1;
 	font: inherit;
 	width: 100%;
 }
@@ -15,7 +15,7 @@ input[type=search] {
 	display: grid;
 	grid-template-columns: 1fr auto;
 	grid-gap: 0 _sp;
-	border: solid _line1 _colorA;
+	border: solid _line2 _colorA;
 	padding: _spThin;
 	margin-top: _sp;
 	text-decoration: none;
