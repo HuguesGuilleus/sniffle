@@ -18,6 +18,8 @@ type H = template.HTML
 type Int int64
 
 // Render safe HTML.
+//
+// Deprecated: because it not used.
 type HTML interface {
 	HTML() H
 }
@@ -33,14 +35,42 @@ var DateZone = time.FixedZone("DATE", 0)
 type Attributes [][2]string
 
 // Create a new attribute
+//
+// Deprecated: Use Na()
 func A(key, value string) Attributes {
 	return Attributes{{key, value}}
+}
+
+// Create a Node with options.
+//
+// Deprecated: Use Na()
+func No(tags string, attr Attributes, children ...any) Node {
+	return Node{tags, attr, children}
 }
 
 // Append a new attribute to the slice.
 // Can be chained.
 func (a Attributes) A(key, value string) Attributes {
 	return append(a, [2]string{key, value})
+}
+
+type NodeAttrBuilder struct {
+	tags string
+	attr Attributes
+}
+
+// Create a node builde to add some attributes then create a Node
+//
+// Usage: Na("a.class1.class2", "href", "https://github.com/").A("title", "GitHub website").N(N("span", "GitHub ..."))
+func Na(tags string, key, value string) NodeAttrBuilder {
+	return NodeAttrBuilder{tags, Attributes{{key, value}}}
+}
+func (na NodeAttrBuilder) A(key, value string) NodeAttrBuilder {
+	na.attr = append(na.attr, [2]string{key, value})
+	return na
+}
+func (na NodeAttrBuilder) N(children ...any) Node {
+	return Node{na.tags, na.attr, children}
 }
 
 // One HTML node, used to
@@ -56,11 +86,6 @@ type Node struct {
 // Tags pattern is: tagName.class1.class2.class3
 // If tags == "", to print only the children without tag.
 func N(tags string, children ...any) Node { return Node{tags, nil, children} }
-
-// Create a Node with options.
-func No(tags string, attr Attributes, children ...any) Node {
-	return Node{tags, attr, children}
-}
 
 // Create a zero node, that production nothing.
 var Z = Node{"", nil, nil}
@@ -254,21 +279,44 @@ func Map[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
 	return children
 }
 
-func Slice[V any](s []V, f func(i int, v V) Node) []Node {
-	nodes := make([]Node, len(s))
-	for i, v := range s {
-		nodes[i] = f(i, v)
+func S[V any](s []V, separator H, f func(v V) Node) []Node {
+	if len(s) == 0 {
+		return nil
+	}
+	sep := Z
+	if separator != "" {
+		sep = N("", separator)
+	}
+	nodes := make([]Node, 0, len(s)*2-1)
+	nodes = append(nodes, f(s[0]))
+	for _, v := range s[1:] {
+		nodes = append(nodes, sep, f(v))
 	}
 	return nodes
 }
 
-func SliceSeparator[V any](s []V, separator H, f func(i int, v V) Node) []Node {
-	nodes := make([]Node, 0, len(s)*2)
-	for i, v := range s {
-		if i != 0 {
-			nodes = append(nodes, N("", separator))
-		}
-		nodes = append(nodes, f(i, v))
+func S2[V any](s []V, separator H, f func(i int, v V) Node) []Node {
+	if len(s) == 0 {
+		return nil
+	}
+	sep := Z
+	if separator != "" {
+		sep = N("", separator)
+	}
+	nodes := make([]Node, 0, len(s)*2-1)
+	nodes = append(nodes, f(0, s[0]))
+	for i, v := range s[1:] {
+		nodes = append(nodes, sep, f(i, v))
 	}
 	return nodes
+}
+
+// Deprecated: use S() or S2()
+func Slice[V any](s []V, f func(i int, v V) Node) []Node {
+	return S2[V](s, "", f)
+}
+
+// Deprecated: use S() or S2()
+func SliceSeparator[V any](s []V, separator H, f func(i int, v V) Node) []Node {
+	return S2[V](s, separator, f)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRender(t *testing.T) {
+func TestRenderWithA(t *testing.T) {
 	h := Merge(No("body.cl1.cl2.cl3",
 		A("hidden", "").
 			A("data-toescape", "<must' &escape\">").
@@ -24,6 +24,40 @@ func TestRender(t *testing.T) {
 		nil,
 	))
 
+	assert.Equal(t, `<!DOCTYPE html>`+
+		`<body class="cl1 cl2 cl3"`+
+		` hidden`+
+		` data-toescape="<must' &amp;escape&#34;>"`+
+		` data-normal=yolo/`+
+		` >`+
+		`Hello `+
+		`<i class=cl>World</i>`+
+		`&#33;`+
+		"\n"+
+		`true`+
+		`42`+
+		`-1`+
+		`TRUE`+
+		`ab`+
+		`</body>`,
+		string(h))
+}
+func TestRender(t *testing.T) {
+	h := Merge(Na("body.cl1.cl2.cl3", "hidden", "").
+		A("data-toescape", "<must' &escape\">").
+		A("data-normal", "yolo/").
+		N(
+			"Hello ",
+			N("i.cl", "World"),
+			H("&#33;"),
+			"\n",
+			true,
+			uint(42),
+			-1,
+			boolHTML(true),
+			[]H{"a", "b"},
+			nil,
+		))
 	assert.Equal(t, `<!DOCTYPE html>`+
 		`<body class="cl1 cl2 cl3"`+
 		` hidden`+
@@ -133,11 +167,22 @@ func TestSlice(t *testing.T) {
 	assert.Equal(t,
 		[]Node{
 			{"code", nil, []any{true}},
+			Z,
 			{"code", nil, []any{false}},
 		},
 		Slice(s, func(i int, b bool) Node {
 			return N("code", b)
 		}))
+	assert.Equal(t,
+		[]Node{
+			{"code", nil, []any{true}},
+			{"", nil, []any{H(",")}},
+			{"code", nil, []any{false}},
+		},
+		S(s, ",", func(b bool) Node {
+			return N("code", b)
+		}))
+	assert.Nil(t, S[any](nil, "", nil))
 }
 
 func TestSliceSeparator(t *testing.T) {
@@ -151,4 +196,5 @@ func TestSliceSeparator(t *testing.T) {
 		SliceSeparator(s, "/", func(i int, b bool) Node {
 			return N("code", b)
 		}))
+	assert.Nil(t, S2[any](nil, "", nil))
 }
