@@ -1,14 +1,12 @@
 package component
 
 import (
-	"bytes"
 	_ "embed"
 	"sniffle/front/translate"
+	"sniffle/tool/fronttool"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"time"
-
-	"github.com/tdewolff/minify/v2/js"
 )
 
 const (
@@ -25,31 +23,12 @@ var (
 	rawToc []byte
 
 	scripts = [...]render.H{
-		0:                minifyJs(raw0),
-		JsSearch:         minifyJs(raw0, rawSearch),
-		JsToc:            minifyJs(raw0, rawToc),
-		JsSearch | JsToc: minifyJs(raw0, rawSearch, rawToc),
+		0:                fronttool.InlineJs(raw0),
+		JsSearch:         fronttool.InlineJs(raw0, rawSearch),
+		JsToc:            fronttool.InlineJs(raw0, rawToc),
+		JsSearch | JsToc: fronttool.InlineJs(raw0, rawSearch, rawToc),
 	}
 )
-
-func minifyJs(chuncks ...[]byte) render.H {
-	src := bytes.Buffer{}
-	src.WriteString(`((document) => {`)
-	for _, chunck := range chuncks {
-		src.Write(chunck)
-		src.WriteString("\n\n")
-	}
-	src.WriteString(`})(document);`)
-
-	buff := bytes.Buffer{}
-	buff.WriteString(`<script>"use strict";`)
-	bytes.Join(chuncks, []byte("\n\n"))
-	if err := js.Minify(nil, &buff, &src, nil); err != nil {
-		panic(err)
-	}
-	buff.WriteString(`</script>`)
-	return render.H(buff.String())
-}
 
 // A footer node. It should be the last element in the page.
 // It contain in the end, so the DOM is complete when it's executed.
@@ -58,7 +37,7 @@ func Footer(l language.Language, flag uint) render.Node {
 		translate.AllTranslation[l].FooterBuild,
 		time.Now(),
 		render.H("<br>"),
-		render.No("a", render.A("href", "/about/"+l.String()+".html"),
+		render.Na("a", "href", "/about/"+l.String()+".html").N(
 			translate.AllTranslation[l].AboutTextLink),
 		scripts[flag],
 	)

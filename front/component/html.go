@@ -1,7 +1,7 @@
 package component
 
 import (
-	"sniffle/front/frontcss"
+	"sniffle/front"
 	"sniffle/tool"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
@@ -22,7 +22,7 @@ type Page struct {
 
 var htmlHeadBegin = `<meta charset=utf-8>` +
 	`<meta name=viewport content="width=device-width,initial-scale=1.0">` +
-	`<link rel=stylesheet href=/style.` + frontcss.StyleHash + `.css integrity="` + frontcss.Integrity + `">` +
+	`<link rel=stylesheet href=/style.` + front.StyleHash + `.css integrity="` + front.StyleIntegrity + `">` +
 	`<link rel=icon href=/favicon.ico>`
 
 // Render the page in
