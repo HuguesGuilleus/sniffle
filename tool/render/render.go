@@ -306,7 +306,7 @@ func S2[V any](s []V, separator H, f func(i int, v V) Node) []Node {
 	nodes := make([]Node, 0, len(s)*2-1)
 	nodes = append(nodes, f(0, s[0]))
 	for i, v := range s[1:] {
-		nodes = append(nodes, sep, f(i, v))
+		nodes = append(nodes, sep, f(i+1, v))
 	}
 	return nodes
 }

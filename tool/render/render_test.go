@@ -189,12 +189,12 @@ func TestSliceSeparator(t *testing.T) {
 	s := []bool{true, false}
 	assert.Equal(t,
 		[]Node{
-			{"code", nil, []any{true}},
+			{"code", nil, []any{0, true}},
 			{"", nil, []any{H("/")}},
-			{"code", nil, []any{false}},
+			{"code", nil, []any{1, false}},
 		},
 		SliceSeparator(s, "/", func(i int, b bool) Node {
-			return N("code", b)
+			return N("code", i, b)
 		}))
 	assert.Nil(t, S2[any](nil, "", nil))
 }
