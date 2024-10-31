@@ -96,6 +96,7 @@ func (m *Map) HTML(indent string) render.Node {
 				item.fieldValue.HTML(indentAdd),
 				",\n")
 		}),
+		render.IfS(m.extraFields, render.N("", indentAdd, "...\n")),
 		render.N("", indent, `}`),
 	)
 }
