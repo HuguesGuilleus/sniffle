@@ -14,6 +14,9 @@ func Do(ctx context.Context, t *tool.Tool) {
 	for _, l := range t.Languages {
 		renderIndex(t, eciSlice, l)
 	}
+	if tool.DevMode {
+		renderSchema(t)
+	}
 
 	years := make(map[int]bool)
 	for _, eci := range eciSlice {
