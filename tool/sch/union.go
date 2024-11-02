@@ -1,6 +1,9 @@
 package sch
 
-import "sniffle/tool/render"
+import (
+	"sniffle/tool/render"
+	"strings"
+)
 
 /* AND */
 
@@ -13,7 +16,7 @@ func (and andType) Match(v any) error {
 	for _, t := range and {
 		err := t.Match(v)
 		if err != nil {
-			errs = append(errs, err)
+			errs.Append("$and", err)
 		}
 	}
 	return errs.Return()
@@ -24,6 +27,25 @@ func (and andType) HTML(indent string) render.Node {
 		return t.HTML(indent)
 	}))
 }
+
+/* ENUM string */
+
+type enumString struct {
+	orType
+	s string
+}
+
+// A enum of string.
+// Equal Or(String(...), ...)
+func EnumString(enums ...string) TypeStringer {
+	or := make(orType, len(enums))
+	for i, e := range enums {
+		or[i] = String(e)
+	}
+	return enumString{or, strings.Join(enums, "|")}
+}
+
+func (enum enumString) String() string { return enum.s }
 
 /* OR */
 
@@ -39,7 +61,7 @@ func (or orType) Match(v any) error {
 		if err == nil {
 			return nil
 		}
-		errs = append(errs, err)
+		errs.Append("$or", err)
 	}
 	return errs
 }

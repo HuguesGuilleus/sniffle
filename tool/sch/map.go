@@ -6,42 +6,44 @@ import (
 	"sniffle/tool/render"
 )
 
-type Map struct {
-	fields      []mapField
+type mapType struct {
+	fields      []MapField
 	extraFields bool
 }
-type mapField struct {
+type MapField struct {
 	fieldKey   TypeStringer
 	fieldValue Type
 	required   bool
+	comments   []string
 }
 
-func NewMap() *Map { return new(Map) }
+func Map(fields ...MapField) Type      { return &mapType{fields, false} }
+func MapExtra(fields ...MapField) Type { return &mapType{fields, true} }
 
 // Add a field to the map.
-func (m *Map) Field(key TypeStringer, value Type, required bool) *Map {
-	m.fields = append(m.fields, mapField{key, value, required})
-	return m
+func Field(key TypeStringer, value Type, required bool) MapField {
+	return MapField{key, value, required, nil}
 }
 
 // Add a required field to the map.
 // The key is a String() Type.
-func (m *Map) FieldSR(key string, value Type) *Map {
-	return m.Field(String(key), value, true)
+func FieldSR(key string, value Type) MapField {
+	return Field(String(key), value, true)
 }
 
 // Add a optional field to the map.
 // The key is a String() Type.
-func (m *Map) FieldSO(key string, value Type) *Map {
-	return m.Field(String(key), value, false)
+func FieldSO(key string, value Type) MapField {
+	return Field(String(key), value, false)
 }
 
-func (m *Map) ExtraFields() *Map {
-	m.extraFields = true
-	return m
+// Add a comments
+func (f MapField) Comment(c ...string) MapField {
+	f.comments = append(f.comments, c...)
+	return f
 }
 
-func (m *Map) Match(v any) error {
+func (m *mapType) Match(v any) error {
 	mv, ok := v.(map[string]any)
 	if !ok {
 		return fmt.Errorf(notMapFormat, v)
@@ -56,7 +58,7 @@ func (m *Map) Match(v any) error {
 	for _, field := range m.fields {
 		key, ok := m.searchKey(&field, keys)
 		if !ok && field.required {
-			errs = append(errs, fmt.Errorf("not found key for %s", field.fieldKey))
+			errs = append(errs, fmt.Errorf("not found field for %s", field.fieldKey))
 		} else if !ok {
 			continue
 		} else if err := field.fieldValue.Match(mv[key]); err != nil {
@@ -72,7 +74,7 @@ func (m *Map) Match(v any) error {
 
 	return errs.Return()
 }
-func (m *Map) searchKey(field *mapField, keys map[string]bool) (key string, ok bool) {
+func (m *mapType) searchKey(field *MapField, keys map[string]bool) (key string, ok bool) {
 	for k := range keys {
 		if field.fieldKey.Match(k) == nil {
 			delete(keys, k)
@@ -82,18 +84,22 @@ func (m *Map) searchKey(field *mapField, keys map[string]bool) (key string, ok b
 	return "", false
 }
 
-func (m *Map) HTML(indent string) render.Node {
+func (m *mapType) HTML(indent string) render.Node {
 	indentAdd := indent + "\t"
 	return render.N("",
 		render.N("", `{`, "\n"),
-		render.S(m.fields, "", func(item mapField) render.Node {
+		render.S(m.fields, "", func(field MapField) render.Node {
 			sep := ": "
-			if !item.required {
+			if !field.required {
 				sep = "?: "
 			}
-			return render.N("", indentAdd,
-				item.fieldKey.HTML(indentAdd), sep,
-				item.fieldValue.HTML(indentAdd),
+			return render.N("",
+				render.S(field.comments, "", func(c string) render.Node {
+					return render.N("", indentAdd, render.N("span.sch-comment", "// ", c), "\n")
+				}),
+				indentAdd,
+				field.fieldKey.HTML(indentAdd), sep,
+				field.fieldValue.HTML(indentAdd),
 				",\n")
 		}),
 		render.IfS(m.extraFields, render.N("", indentAdd, "...\n")),

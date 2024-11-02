@@ -2,6 +2,8 @@ package sch
 
 import (
 	"encoding/json"
+	"io"
+	"os"
 	"sniffle/tool/render"
 	"strings"
 	"testing"
@@ -76,11 +78,11 @@ func TestAsInt(t *testing.T) {
 	assert.Error(t, IntervalAsInt(-1, 1).Match(json.Number("2")))
 
 	assert.Equal(t, `<span class=sch-int title=Integer>integer</span>`, genHTML(AsAnyInt()))
-	assert.Equal(t, `<span class=sch-int title=Integer>[ 0 ... ]</span>`, genHTML(AsPositiveInt()))
-	assert.Equal(t, `<span class=sch-int title=Integer>[ 1 ... ]</span>`, genHTML(AsStrictPositiveInt()))
-	assert.Equal(t, `<span class=sch-int title=Integer>[ ... 0 ]</span>`, genHTML(AsNegativeInt()))
-	assert.Equal(t, `<span class=sch-int title=Integer>[ ... -1 ]</span>`, genHTML(AsStrictNegativeInt()))
-	assert.Equal(t, `<span class=sch-int title=Integer>[ 3 ... 5 ]</span>`, genHTML(IntervalAsInt(3, 5)))
+	assert.Equal(t, `<span class=sch-int title=Integer>[ 0 .. ]</span>`, genHTML(AsPositiveInt()))
+	assert.Equal(t, `<span class=sch-int title=Integer>[ 1 .. ]</span>`, genHTML(AsStrictPositiveInt()))
+	assert.Equal(t, `<span class=sch-int title=Integer>[ .. 0 ]</span>`, genHTML(AsNegativeInt()))
+	assert.Equal(t, `<span class=sch-int title=Integer>[ .. -1 ]</span>`, genHTML(AsStrictNegativeInt()))
+	assert.Equal(t, `<span class=sch-int title=Integer>[ 3 .. 5 ]</span>`, genHTML(IntervalAsInt(3, 5)))
 }
 
 func TestAsStringInt(t *testing.T) {
@@ -110,14 +112,31 @@ func TestAsStringInt(t *testing.T) {
 	assert.Error(t, AsStrictNegativeStringInt().Match("1"))
 
 	assert.Equal(t, `<span class=sch-int title="Integer into a string">string(integer)</span>`, genHTML(AsAnyStringInt()))
-	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ 0 ... ])</span>`, genHTML(AsPositiveStringInt()))
-	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ 1 ... ])</span>`, genHTML(AsStrictPositiveStringInt()))
-	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ ... 0 ])</span>`, genHTML(AsNegativeStringInt()))
-	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ ... -1 ])</span>`, genHTML(AsStrictNegativeStringInt()))
-	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ 3 ... 5 ])</span>`, genHTML(IntervalAsStringInt(3, 5)))
+	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ 0 .. ])</span>`, genHTML(AsPositiveStringInt()))
+	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ 1 .. ])</span>`, genHTML(AsStrictPositiveStringInt()))
+	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ .. 0 ])</span>`, genHTML(AsNegativeStringInt()))
+	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ .. -1 ])</span>`, genHTML(AsStrictNegativeStringInt()))
+	assert.Equal(t, `<span class=sch-int title="Integer into a string">string([ 3 .. 5 ])</span>`, genHTML(IntervalAsStringInt(3, 5)))
 
 	assert.Equal(t, `string(integer)`, AsAnyStringInt().String())
-	assert.Equal(t, `string([ 3 ... 5 ])`, IntervalAsStringInt(3, 5).String())
+	assert.Equal(t, `string([ 3 .. 5 ])`, IntervalAsStringInt(3, 5).String())
+}
+
+func TestPrint(t *testing.T) {
+	p := Print("test")
+	assert.Equal(t, `<span class=sch-base>[log:test]</span>`, genHTML(p))
+
+	defer func(stdout *os.File) { os.Stdout = stdout }(os.Stdout)
+	r, w, err := os.Pipe()
+	assert.NoError(t, err)
+	os.Stdout = w
+
+	assert.NoError(t, p.Match(1))
+	w.Close()
+
+	out, err := io.ReadAll(r)
+	assert.NoError(t, err)
+	assert.EqualValues(t, "[test] 1\n", out)
 }
 
 func TestNil(t *testing.T) {

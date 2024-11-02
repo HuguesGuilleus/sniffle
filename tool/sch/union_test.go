@@ -21,3 +21,8 @@ func TestOr(t *testing.T) {
 	assert.Error(t, or.Match(false))
 	assert.Equal(t, `<span class=sch-str>&#34;a&#34;</span> | <span class=sch-base>true</span>`, genHTML(or))
 }
+
+func TestEnumString(t *testing.T) {
+	assert.Equal(t, enumString{orType{String("a"), String("b")}, "a|b"}, EnumString("a", "b"))
+	assert.Equal(t, "a|b", EnumString("a", "b").String())
+}

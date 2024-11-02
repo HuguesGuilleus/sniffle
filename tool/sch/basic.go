@@ -66,7 +66,7 @@ func (t boolType) Match(v any) error {
 	if !ok {
 		return fmt.Errorf(notBoolFormat, v)
 	} else if bool(t) != b {
-		return fmt.Errorf("expecetd bool %t != received %t", bool(t), b)
+		return fmt.Errorf("expected bool %t != received %t", bool(t), b)
 	}
 	return nil
 }
@@ -129,11 +129,11 @@ func (t asIntType) htmlContent() string {
 	case t.min == math.MinInt64 && t.max == math.MaxInt64:
 		return "integer"
 	case t.min == math.MinInt64:
-		return fmt.Sprintf("[ ... %d ]", t.max)
+		return fmt.Sprintf("[ .. %d ]", t.max)
 	case t.max == math.MaxInt64:
-		return fmt.Sprintf("[ %d ... ]", t.min)
+		return fmt.Sprintf("[ %d .. ]", t.min)
 	default:
-		return fmt.Sprintf("[ %d ... %d ]", t.min, t.max)
+		return fmt.Sprintf("[ %d .. %d ]", t.min, t.max)
 	}
 }
 
@@ -277,3 +277,18 @@ func (t stringType) HTML(_ string) render.Node {
 }
 
 func (t stringType) String() string { return string(t) }
+
+/* PRINT */
+
+type printlnType string
+
+// Print in the console the match argument with the id.
+// Use this type only for development.
+func Print(id string) Type { return printlnType(id) }
+
+func (id printlnType) Match(v any) error {
+	fmt.Printf("[%s] %+v\n", id, v)
+	return nil
+}
+
+func (id printlnType) HTML(_ string) render.Node { return render.N(baseMarkup, "[log:", id, "]") }
