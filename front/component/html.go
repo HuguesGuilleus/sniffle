@@ -2,7 +2,7 @@ package component
 
 import (
 	"sniffle/front"
-	"sniffle/tool"
+	"sniffle/front/translate"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 )
@@ -20,32 +20,28 @@ type Page struct {
 	BaseURL string
 }
 
-var htmlHeadBegin = `<meta charset=utf-8>` +
+var HeadBegin = render.H(`<meta charset=utf-8>` +
 	`<meta name=viewport content="width=device-width,initial-scale=1.0">` +
 	`<link rel=stylesheet href=/style.` + front.StyleHash + `.css integrity="` + front.StyleIntegrity + `">` +
-	`<link rel=icon href=/favicon.ico>`
+	`<link rel=icon href=/favicon.ico>`)
 
-// Render the page in
-func HTML(t *tool.Tool, page *Page, body render.Node) {
-	data := render.Merge(render.No("html", render.A("lang", page.Language.String()),
-		render.N("head",
-			render.H(htmlHeadBegin),
-			render.N("title", page.Title),
-			render.No("meta", render.A("name", "description").A("content", page.Description)),
-			langAlternate(t.HostURL+page.BaseURL, page.Language, t.Languages),
-		),
-		body,
-	))
-	t.WriteFile(page.BaseURL+page.Language.String()+".html", data)
+// <head> component.
+func Head(l language.Language, baseURL, title, description string) render.Node {
+	return render.N("head",
+		HeadBegin,
+		render.N("title", title),
+		render.Na("meta", "name", description).A("content", description),
+		langAlternate(baseURL, l, translate.Langs),
+	)
 }
 
-func langAlternate(url string, pageLang language.Language, langs []language.Language) []render.Node {
-	return render.Slice(langs, func(_ int, l language.Language) render.Node {
+func langAlternate(baseURL string, pageLang language.Language, langs []language.Language) []render.Node {
+	return render.S(langs, "", func(l language.Language) render.Node {
 		if pageLang == l {
 			return render.Z
 		}
-		return render.No("link", render.A("rel", "alternate").
+		return render.Na("link", "rel", "alternate").
 			A("hreflang", l.String()).
-			A("href", url+l.String()+".html"))
+			A("href", l.Path(baseURL)).N()
 	})
 }

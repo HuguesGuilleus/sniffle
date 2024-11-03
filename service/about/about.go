@@ -14,19 +14,21 @@ func Do(_ context.Context, t *tool.Tool) {
 	t.LangRedirect("/about/index.html")
 
 	for _, l := range t.Languages {
-		tr := translate.AllTranslation[l]
-		component.HTML(t, &component.Page{
-			Language:    l,
-			Title:       tr.ABOUT.PageTitle,
-			Description: tr.ABOUT.PageDescription,
-			BaseURL:     basePath,
-		}, render.N("body.edito",
-			component.TopHeader(l),
-			component.Header(t.Languages, l,
-				render.N("div.headerId", component.HomeAnchor(l)),
-				render.Z, tr.ABOUT.PageTitle),
-			render.N("div.w", tr.ABOUT.Text),
-			component.Footer(l, 0),
-		))
+		tr := translate.T[l]
+		t.WriteFile(l.Path(basePath), render.Merge(render.Na("html", "lang", l.String()).N(
+			component.Head(l, basePath, tr.ABOUT.PageTitle, tr.ABOUT.PageDescription),
+			render.N("body.edito",
+				component.TopHeader(l),
+				render.N("header",
+					render.N("div.headerSup", render.N("div.headerId",
+						component.HomeAnchor(l), "about",
+					)),
+					render.N("div.headerTitle", tr.ABOUT.PageTitle),
+					component.HeaderLangs(l, ""),
+				),
+				render.N("div.w", tr.ABOUT.Text),
+				component.Footer(l, 0),
+			),
+		)))
 	}
 }

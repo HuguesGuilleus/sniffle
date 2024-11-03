@@ -8,43 +8,38 @@ import (
 
 func TopHeader(l language.Language) render.Node {
 	return render.N("div.topHeader",
-		translate.AllTranslation[l].PageTop,
+		translate.T[l].PageTop,
 		render.H(" ("),
-		render.No("a", render.A("href", "/about/"+l.String()+".html"),
-			translate.AllTranslation[l].AboutTextLink),
+		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].AboutTextLink),
 		render.H(")"))
 }
 
 // A header to indicated taht this page is currently in development.
 func InDevHeader(l language.Language) render.Node {
-	return render.N("div.subHeader", translate.AllTranslation[l].InDev)
-}
-
-func Header(langs []language.Language, pageLang language.Language, idNamespace, idCode render.Node, title string) []render.Node {
-	return []render.Node{
-		render.N("header",
-			render.N("div.headerSup", idNamespace, idCode),
-			render.N("div.headerTitle", title),
-			render.N("div.headerLangs", render.Slice(langs, func(_ int, l language.Language) render.Node {
-				if pageLang == l {
-					return render.No("span.headerOneLang",
-						render.A("title", l.Human()),
-						l.String())
-				}
-				return render.No("a.headerOneLang",
-					render.
-						A("title", l.Human()).
-						A("hreflang", l.String()).
-						A("href", l.String()+".html"),
-					l.String())
-			})),
-		),
-	}
+	return render.N("div.subHeader", translate.T[l].InDev)
 }
 
 func HomeAnchor(l language.Language) render.Node {
-	tr := translate.AllTranslation[l]
+	tr := translate.T[l]
 	return render.N("",
-		render.No("a", render.A("href", "/"+l.String()+".html").A("title", tr.HOME.Name), "/////"),
-		" ")
+		render.Na("a.headerHome", "href", l.Path("/")).A("title", tr.HOME.Name).N("⾕"),
+		" / ",
+	)
 }
+
+// Links to different
+func HeaderLangs(pageLang language.Language, basePath string) render.Node {
+	return render.N("div.headerLangs", render.S(translate.Langs, "", func(l language.Language) render.Node {
+		if pageLang == l {
+			return render.Na("span.headerOneLang", "title", l.Human()).N(l.String())
+		}
+		return render.Na("a.headerOneLang", "title", l.Human()).
+			A("hreflang", l.String()).
+			A("href", l.Path(basePath)).
+			N(l.String())
+	}))
+}
+
+// The table of content node.
+// Yout need JS to fill it.
+var Toc = render.N("div", render.Na("div", "id", "toc"))

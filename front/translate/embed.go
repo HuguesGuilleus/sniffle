@@ -15,6 +15,7 @@ type Translation struct {
 	LinkOfficial  render.H `help:"Official page link"`
 	LogoTitle     string   `help:"Logo title and alt attribute"`
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
+	SchemaLink    render.H `help:"Schema link"`
 	SearchInside  string
 	HELP          render.H
 	Byte          render.H
@@ -86,7 +87,12 @@ type Translation struct {
 	}
 }
 
-var AllTranslation = [...]Translation{
+var Langs = []language.Language{
+	language.English,
+	language.French,
+}
+
+var T = [...]Translation{
 	language.English: load(fileEn),
 	language.French:  load(fileFR),
 }

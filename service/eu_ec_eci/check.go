@@ -65,7 +65,7 @@ func (dto *detailDTO) check(logger *slog.Logger) {
 	}
 
 	// Categorie
-	knownCategorie := translate.AllTranslation[language.English].EU_EC_ECI.Categorie
+	knownCategorie := translate.T[language.English].EU_EC_ECI.Categorie
 	categories := make(map[string]bool, len(dto.Categories))
 	for _, c := range dto.Categories {
 		if knownCategorie[c.CategoryType] == "" {

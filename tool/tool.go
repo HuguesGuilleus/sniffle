@@ -59,7 +59,7 @@ func New(config *Config) *Tool {
 type Tool struct {
 	*slog.Logger
 
-	// The host URL, whithout the training slash.
+	// The host URL, without the training slash.
 	// Ex: https://www.example.com
 	HostURL   string
 	Languages []language.Language

@@ -1,0 +1,33 @@
+pre.sch {
+	border: dashed _line2;
+	padding: _spThin;
+	tab-size: 4ex;
+	font-family: "Noto Sans Mono", monospace;
+}
+
+.sch-base,
+.sch-int,
+.sch-str {
+	display: inline-block;
+}
+
+.sch-base {
+	color: #66008b;
+}
+
+.sch-int {
+	color: darkred;
+}
+
+.sch-str {
+	color: #00418b;
+}
+
+.sch-xstr {
+	color: #0b5900;
+}
+
+.sch-comment {
+	color: #4f4f4f;
+	font-style: italic;
+}

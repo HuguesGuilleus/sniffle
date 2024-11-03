@@ -6,6 +6,7 @@ import (
 	"sniffle/tool/render"
 )
 
+// Print the v in JSON, and render in a .working component.
 func Json(v any) render.Node {
 	j, err := json.MarshalIndent(v, "", "\t")
 	if err != nil {

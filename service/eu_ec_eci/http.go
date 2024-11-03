@@ -395,7 +395,7 @@ func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
 }
 
 func (eci *ECIOut) countryByName(lang language.Language) []country.Country {
-	name := translate.AllTranslation[lang].Country
+	name := translate.T[lang].Country
 	return slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
 		return cmp.Compare(name[a], name[b])
 	})

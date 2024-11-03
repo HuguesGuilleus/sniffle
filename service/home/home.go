@@ -11,21 +11,21 @@ import (
 func Do(_ context.Context, t *tool.Tool) {
 	t.LangRedirect("/index.html")
 	for _, l := range t.Languages {
-		tr := translate.AllTranslation[l]
-		component.HTML(t, &component.Page{
-			Language:    l,
-			Title:       "Home",
-			Description: tr.HOME.PageDescription,
-			BaseURL:     "/",
-		}, render.N("body",
-			component.TopHeader(l),
-			component.Header(t.Languages, l, render.Z, render.Z, tr.HOME.Name),
-			render.No("ul.w",
-				render.A("style", "font-size:xx-large"),
-				render.N("li", render.No("a", render.A("href", "/about/"+l.String()+".html"), tr.ABOUT.PageTitle)),
-				render.N("li", render.No("a", render.A("href", "/eu/ec/eci/"+l.String()+".html"), tr.EU_EC_ECI.Name)),
+		tr := translate.T[l]
+
+		t.WriteFile(l.Path("/"), render.Merge(render.Na("html", "lang", l.String()).N(
+			component.Head(l, "/", tr.HOME.Name, tr.HOME.PageDescription),
+			render.N("body",
+				component.TopHeader(l),
+				render.N("header",
+					render.N("div.headerTitle", component.HomeAnchor(l), tr.HOME.Name),
+					component.HeaderLangs(l, ""),
+				),
+				render.Na("ul.w", "style", "font-size:xx-large").N(
+					render.N("li", render.Na("a", "href", l.Path("/about/")).N(tr.ABOUT.PageTitle)),
+					render.N("li", render.Na("a", "href", l.Path("/eu/ec/eci/")).N(tr.EU_EC_ECI.Name))),
+				component.Footer(l, 0),
 			),
-			component.Footer(l, 0),
-		))
+		)))
 	}
 }

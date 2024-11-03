@@ -21,91 +21,86 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 		)
 	})
 
-	tr := translate.AllTranslation[l]
+	tr := translate.T[l]
+	baseURL := "/eu/ec/eci/"
 
-	page := component.Page{
-		Language:    l,
-		Title:       tr.EU_EC_ECI.INDEX.Name,
-		Description: tr.EU_EC_ECI.INDEX.PageDescription,
-		BaseURL:     "/eu/ec/eci/",
-	}
-
-	component.HTML(t, &page, render.N("body",
-		component.TopHeader(l),
-		component.Header(t.Languages, l,
-			idNamespace(l),
-			render.Z,
-			tr.EU_EC_ECI.INDEX.Name),
-		render.N("div.w",
-			render.N("div.summary",
-				render.No("a.box", render.A("href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()), tr.LinkOfficial),
+	t.WriteFile(l.Path(baseURL), render.Merge(render.Na("html", "lang", l.String()).N(
+		component.Head(l, baseURL, tr.EU_EC_ECI.INDEX.Name, tr.EU_EC_ECI.INDEX.PageDescription),
+		render.N("body",
+			component.TopHeader(l),
+			render.N("header",
+				render.N("div.headerSup", idNamespace(l)),
+				render.N("div.headerTitle", tr.EU_EC_ECI.INDEX.Name),
+				component.HeaderLangs(l, ""),
 			),
-			render.N("div.searchBlock",
-				render.No("label", render.A("for", "s"), tr.SearchInside),
-				render.No("input", render.A("id", "s").A("hidden", "").A("type", "search")),
+			render.N("main.w",
+				render.N("div.summary",
+					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.LinkOfficial),
+					render.Na("a.box", "href", "schema.html").N(tr.SchemaLink),
+				),
+				render.N("div.searchBlock",
+					render.Na("label", "for", "s").N(tr.SearchInside),
+					render.Na("input", "id", "s").A("hidden", "").A("type", "search"),
+				),
+				render.S(eciSlice, "", func(eci *ECIOut) render.Node {
+					return render.Na("a.si.bigItem", "href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l)).N(
+						render.N("div",
+							render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
+							render.N("span.box.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
+						),
+						render.N("div.itemTitle.st", eci.Description[l].Title),
+						render.N("div", render.S(eci.Categorie, ", ", func(categorie string) render.Node {
+							return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
+						})),
+						render.N("p.itemDesc", eci.Description[l].PlainDesc),
+						renderImage(eci, true, tr.LogoTitle),
+					)
+				}),
 			),
-			render.Slice(eciSlice, func(_ int, eci *ECIOut) render.Node {
-				return render.No("a.si.bigItem", render.A("href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l.String())),
-					render.N("div",
-						render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
-						render.N("span.box.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
-					),
-					render.N("div.itemTitle.st", eci.Description[l].Title),
-					render.N("div", render.SliceSeparator(eci.Categorie, ", ", func(_ int, categorie string) render.Node {
-						return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
-					})),
-					render.N("p.itemDesc", eci.Description[l].PlainDesc),
-					renderImage(eci, true, tr.LogoTitle),
-				)
-			}),
+			component.Footer(l, component.JsSearch),
 		),
-		component.Footer(l, component.JsSearch),
-	))
+	)))
 }
 
 func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
-	tr := translate.AllTranslation[l]
+	tr := translate.T[l]
 	ONE := tr.EU_EC_ECI.ONE
 
-	page := component.Page{
-		Language:    l,
-		Title:       desc.Title,
-		Description: desc.PlainDesc,
-		BaseURL:     fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number),
-	}
-
-	component.HTML(t, &page, render.N("body",
-		component.TopHeader(l),
-		component.InDevHeader(l),
-		component.Header(t.Languages, l, idNamespace(l),
-			render.N("div.headerId", render.Int(eci.Year), "/", render.Int(eci.Number)),
-			desc.Title),
-
-		render.N("div.wt",
-			render.N("div", render.No("div", render.A("id", "toc"))),
-
-			render.N("div.wc",
+	t.WriteFile(l.Path(fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number)), render.Merge(render.Na("html", "lang", l.String()).N(
+		component.Head(l, fmt.Sprintf("%s/eu/ec/eci/%d/%d/", t.HostURL, eci.Year, eci.Number), desc.Title, desc.PlainDesc),
+		render.N("body",
+			component.TopHeader(l),
+			component.InDevHeader(l),
+			render.N("header",
+				render.N("div.headerSup",
+					idNamespace(l),
+					render.N("div.headerId", render.Int(eci.Year), "/", render.Int(eci.Number)),
+				),
+				render.N("div.headerTitle", desc.Title),
+				component.HeaderLangs(l, ""),
+			),
+			render.N("main.wt", component.Toc, render.N("div.wc",
 				// Summary
 				render.N("div.summary",
 					render.N("div", ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
 					render.N("div", ONE.LastUpdate, eci.LastUpdate),
-					render.N("div", ONE.Categorie, render.SliceSeparator(eci.Categorie, ", ", func(_ int, categorie string) render.Node {
+					render.N("div", ONE.Categorie, render.S(eci.Categorie, ", ", func(categorie string) render.Node {
 						return render.N("", tr.EU_EC_ECI.Categorie[categorie])
 					})),
 					render.N("div", ONE.DescriptionOriginalLangage, tr.Langage[eci.DescriptionOriginalLangage]),
 					render.N("div",
-						render.No("a.box", render.A("href", fmt.Sprintf(
-							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l.String())),
-							tr.LinkOfficial),
+						render.Na("a.box", "href", fmt.Sprintf(
+							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l)).
+							N(tr.LinkOfficial),
 						render.If(desc.FollowUp != nil, func() render.Node {
-							return render.No("a.box", render.A("href", desc.FollowUp.String()), ONE.LinkFollowUp)
+							return render.Na("a.box", "href", desc.FollowUp.String()).N(ONE.LinkFollowUp)
 						}),
 						render.If(desc.FollowUp == nil && desc.SupportLink != nil, func() render.Node {
-							return render.No("a.box", render.A("href", desc.SupportLink.String()), ONE.LinkSupport)
+							return render.Na("a.box", "href", desc.SupportLink.String()).N(ONE.LinkSupport)
 						}),
 						render.If(desc.Website != nil, func() render.Node {
-							return render.No("a.box", render.A("href", desc.Website.String()), ONE.LinkWebsite)
+							return render.Na("a.box", "href", desc.Website.String()).N(ONE.LinkWebsite)
 						}),
 					),
 				),
@@ -113,7 +108,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Image
 				renderImage(eci, false, tr.LogoTitle),
 
-				// Text information
+				// Text description
 				render.N("h1", ONE.H1Description),
 				render.N("div.text", desc.Objective),
 				render.IfS(desc.Annex != "" || desc.AnnexDoc != nil, render.N("h2", ONE.H1DescriptionAnnex)),
@@ -131,7 +126,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Timeline
 				render.N("h1", ONE.H1Timeline),
 				render.N("ol.timeLine",
-					render.Slice(eci.Timeline, func(_ int, t Timeline) render.Node {
+					render.S(eci.Timeline, "", func(t Timeline) render.Node {
 						child := render.Z
 						switch t.Status {
 						case "REGISTERED":
@@ -140,8 +135,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							child = render.IfS(t.EarlyClose, render.N("div", ONE.CollectionEarlyClosure))
 						case "ANSWERED":
 							child = render.N("",
-								render.If(t.AnswerPressRelease != nil, func() render.Node { return t.AnswerPressRelease[l].render(l, ONE.AnswerKind.PressRelease) }),
 								render.If(t.AnswerResponse != nil, func() render.Node { return t.AnswerResponse[l].render(l, ONE.AnswerKind.Response) }),
+								render.If(t.AnswerPressRelease != nil, func() render.Node { return t.AnswerPressRelease[l].render(l, ONE.AnswerKind.PressRelease) }),
 								render.If(t.AnswerAnnex != nil, func() render.Node { return t.AnswerAnnex[l].render(l, ONE.AnswerKind.Annex) }),
 							)
 						case "DEADLINE":
@@ -175,7 +170,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							render.N("div.editoT", tr.HELP),
 							tr.EU_EC_ECI.ThresholdRule[eci.ThresholdRule],
 							" ",
-							render.No("a", render.A("href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()), tr.Source),
+							render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()).N(tr.Source),
 						),
 						render.N("div.bigInfo",
 							render.N("div.bifInfoMeta", ONE.CountryOverThreshold),
@@ -191,13 +186,13 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								render.N("th", ONE.Signature),
 								render.N("th", ONE.Threshold),
 							),
-							render.Slice(eci.countryByName(l), func(_ int, c country.Country) render.Node {
+							render.S(eci.countryByName(l), "", func(c country.Country) render.Node {
 								return render.N("tr",
 									render.N("td", tr.Country[c]),
 									render.N("td", eci.Signature[c]),
 									render.N("td",
 										render.If(eci.ThresholdPass[c], func() render.Node {
-											return render.No("span.tag", render.A("title", ONE.OverThreshold), "✔")
+											return render.Na("span.tag", "title", ONE.OverThreshold).N("✔")
 										}),
 										eci.Threshold[c],
 									))
@@ -205,42 +200,35 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						),
 					)
 				}),
-			),
-		),
+			)),
 
-		component.Footer(l, component.JsToc),
-	))
+			component.Footer(l, component.JsToc),
+		),
+	)))
 }
 
 func idNamespace(l language.Language) render.Node {
-	tr := translate.AllTranslation[l]
+	tr := translate.T[l]
 	return render.N("div.headerId",
 		component.HomeAnchor(l),
-		render.No("a",
-			render.A("href", "/eu/"+l.String()+".html").A("title", tr.EU.Name),
-			"eu"),
-		" / ",
-		render.No("a",
-			render.A("href", "/eu/ec/"+l.String()+".html").A("title", tr.EU_EC.Name),
-			"ec"),
-		" / ",
-		render.No("a",
-			render.A("href", "/eu/ec/eci/"+l.String()+".html").A("title", tr.EU_EC_ECI.Name),
-			"eci"),
+		render.Na("a", "href", l.Path("/eu/")).A("title", tr.EU.Name).N("eu"), " / ",
+		render.Na("a", "href", l.Path("/eu/ec/")).A("title", tr.EU_EC.Name).N("ec"), " / ",
+		render.Na("a", "href", l.Path("/eu/ec/eci/")).A("title", tr.EU_EC_ECI.Name).N("eci"),
 	)
 }
 
-func (doc *Document) render(lang language.Language, name render.H) render.Node {
-	tr := translate.AllTranslation[lang]
-	return render.No("a.doc", render.A("href", doc.URL.String()),
+func (doc *Document) render(l language.Language, name render.H) render.Node {
+	tr := translate.T[l]
+	return render.Na("a.doc", "href", doc.URL.String()).N(
 		render.N("div.docT", name),
-		render.If(doc.Language != 0 && doc.Language != lang, func() render.Node {
+		render.If(doc.Language != 0 && doc.Language != l, func() render.Node {
 			return render.N("", " ["+tr.Langage[doc.Language]+"]")
 		}),
 		render.If(doc.Size != 0, func() render.Node {
 			return render.N("",
 				" (", doc.Size, " ", tr.Byte, ") ", doc.MimeType,
-				render.N("div.docName", doc.Name))
+				render.N("div.docName", doc.Name),
+			)
 		}),
 	)
 }
@@ -255,22 +243,18 @@ func renderImage(eci *ECIOut, needBase bool, title string) render.Node {
 		base = fmt.Sprintf("%d/%d/", eci.Year, eci.Number)
 	}
 
-	img := render.No("img.logo", render.
-		A("loading", "lazy").
+	img := render.Na("img.logo", "loading", "lazy").
 		A("title", title).
 		A("src", base+eci.ImageName).
 		A("width", eci.ImageWidth).
-		A("height", eci.ImageHeight),
-	)
+		A("height", eci.ImageHeight).N()
 
 	if eci.ImageResizedName == "" {
 		return img
 	}
 
 	return render.N("picture.logo",
-		render.No("source", render.
-			A("type", resize0.MIME).
-			A("srcset", base+eci.ImageResizedName),
-		),
-		img)
+		render.Na("source", "type", resize0.MIME).A("srcset", base+eci.ImageResizedName).N(),
+		img,
+	)
 }

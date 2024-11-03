@@ -43,7 +43,7 @@ const (
 )
 
 // https://en.wikipedia.org/wiki/Languages_of_the_European_Union#Official_EU_languages
-var language2iso = map[Language]string{
+var language2iso = [Len]string{
 	Bulgarian:  "bg",
 	Croatian:   "hr",
 	Czech:      "cs",
@@ -116,7 +116,7 @@ func (l *Language) UnmarshalText(data []byte) error {
 	return nil
 }
 
-var language2human = map[Language]string{
+var language2human = [Len]string{
 	Bulgarian:  "Български",
 	Spanish:    "Español",
 	Czech:      "Čeština",
@@ -151,3 +151,7 @@ func (l Language) Human() string {
 	}
 	return s
 }
+
+// Create path
+// Example: English.Path("/eu/ec/eci/scheme.") => "/eu/ec/eci/scheme.en.html"
+func (l Language) Path(basePath string) string { return basePath + l.String() + ".html" }

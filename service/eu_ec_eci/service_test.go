@@ -19,6 +19,7 @@ func TestService(t *testing.T) {
 		"/eu/ec/eci/index.html":        1,
 		"/eu/ec/eci/fr.html":           1,
 		"/eu/ec/eci/en.html":           1,
+		"/eu/ec/eci/schema.html":       1,
 		"/eu/ec/eci/2024/index.html":   1,
 		"/eu/ec/eci/2024/9/index.html": 1,
 		"/eu/ec/eci/2024/9/logo.png":   1,

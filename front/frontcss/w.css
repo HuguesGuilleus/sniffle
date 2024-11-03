@@ -11,6 +11,7 @@
 }
 
 #toc {
+	border: solid _line2 _colorA;
 	margin-bottom: _sp;
 }
 
@@ -24,8 +25,13 @@
 		padding: _sp;
 	}
 
+	.wt.wide {
+		max-width: fit-content;
+		grid-template-columns: 20rem 1fr;
+	}
+
 	#toc {
-		border-right: solid _line2 _back1;
+		border-style: none solid none none;
 		padding-right: _spThin;
 		position: sticky;
 		margin: 0;
