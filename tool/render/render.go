@@ -17,53 +17,25 @@ type H = template.HTML
 // A int display without space for thousand
 type Int int64
 
-// Render safe HTML.
-//
-// Deprecated: because it not used.
-type HTML interface {
-	HTML() H
-}
-
 // A fake time zone to indicate that this thime, is a date.
 // So hour, minute, seconds and milisecond must be ignored.
 var DateZone = time.FixedZone("DATE", 0)
 
 // Attributes, pair of key value.
-// Key is considerated as same.
 // If value is empty, create a empty attribute.
 // The value is auto escaped.
-type Attributes [][2]string
-
-// Create a new attribute
-//
-// Deprecated: Use Na()
-func A(key, value string) Attributes {
-	return Attributes{{key, value}}
-}
-
-// Create a Node with options.
-//
-// Deprecated: Use Na()
-func No(tags string, attr Attributes, children ...any) Node {
-	return Node{tags, attr, children}
-}
-
-// Append a new attribute to the slice.
-// Can be chained.
-func (a Attributes) A(key, value string) Attributes {
-	return append(a, [2]string{key, value})
-}
+type attributes = [][2]string
 
 type NodeAttrBuilder struct {
 	tags string
-	attr Attributes
+	attr attributes
 }
 
 // Create a node builde to add some attributes then create a Node
 //
 // Usage: Na("a.class1.class2", "href", "https://github.com/").A("title", "GitHub website").N(N("span", "GitHub ..."))
 func Na(tags string, key, value string) NodeAttrBuilder {
-	return NodeAttrBuilder{tags, Attributes{{key, value}}}
+	return NodeAttrBuilder{tags, attributes{{key, value}}}
 }
 func (na NodeAttrBuilder) A(key, value string) NodeAttrBuilder {
 	na.attr = append(na.attr, [2]string{key, value})
@@ -76,7 +48,7 @@ func (na NodeAttrBuilder) N(children ...any) Node {
 // One HTML node, used to
 type Node struct {
 	tags string
-	attr Attributes
+	attr attributes
 	// Children element, maybe alredy escaped string,
 	// or something that will be auto escaped.
 	children []any
@@ -87,7 +59,7 @@ type Node struct {
 // If tags == "", to print only the children without tag.
 func N(tags string, children ...any) Node { return Node{tags, nil, children} }
 
-// Create a zero node, that production nothing.
+// A zero node who output nothing.
 var Z = Node{"", nil, nil}
 
 // If b is true, return f call else return Z.
@@ -195,14 +167,15 @@ func (node *Node) mergeSlice(h []byte) []byte {
 }
 func renderChild(h []byte, child any) []byte {
 	switch child := child.(type) {
+	case NodeAttrBuilder:
+		n := child.N()
+		h = n.mergeSlice(h)
 	case Node:
 		h = child.mergeSlice(h)
 	case []Node:
 		for _, subChild := range child {
 			h = subChild.mergeSlice(h)
 		}
-	case HTML:
-		h = append(h, child.HTML()...)
 	case H:
 		h = append(h, child...)
 	case []H:
@@ -309,14 +282,4 @@ func S2[V any](s []V, separator H, f func(i int, v V) Node) []Node {
 		nodes = append(nodes, sep, f(i+1, v))
 	}
 	return nodes
-}
-
-// Deprecated: use S() or S2()
-func Slice[V any](s []V, f func(i int, v V) Node) []Node {
-	return S2[V](s, "", f)
-}
-
-// Deprecated: use S() or S2()
-func SliceSeparator[V any](s []V, separator H, f func(i int, v V) Node) []Node {
-	return S2[V](s, separator, f)
 }

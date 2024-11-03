@@ -7,41 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRenderWithA(t *testing.T) {
-	h := Merge(No("body.cl1.cl2.cl3",
-		A("hidden", "").
-			A("data-toescape", "<must' &escape\">").
-			A("data-normal", "yolo/"),
-		"Hello ",
-		N("i.cl", "World"),
-		H("&#33;"),
-		"\n",
-		true,
-		uint(42),
-		-1,
-		boolHTML(true),
-		[]H{"a", "b"},
-		nil,
-	))
-
-	assert.Equal(t, `<!DOCTYPE html>`+
-		`<body class="cl1 cl2 cl3"`+
-		` hidden`+
-		` data-toescape="<must' &amp;escape&#34;>"`+
-		` data-normal=yolo/`+
-		` >`+
-		`Hello `+
-		`<i class=cl>World</i>`+
-		`&#33;`+
-		"\n"+
-		`true`+
-		`42`+
-		`-1`+
-		`TRUE`+
-		`ab`+
-		`</body>`,
-		string(h))
-}
 func TestRender(t *testing.T) {
 	h := Merge(Na("body.cl1.cl2.cl3", "hidden", "").
 		A("data-toescape", "<must' &escape\">").
@@ -49,12 +14,12 @@ func TestRender(t *testing.T) {
 		N(
 			"Hello ",
 			N("i.cl", "World"),
+			Na("img", "src", "icon.png"),
 			H("&#33;"),
 			"\n",
 			true,
 			uint(42),
 			-1,
-			boolHTML(true),
 			[]H{"a", "b"},
 			nil,
 		))
@@ -66,12 +31,12 @@ func TestRender(t *testing.T) {
 		` >`+
 		`Hello `+
 		`<i class=cl>World</i>`+
+		`<img src=icon.png>`+
 		`&#33;`+
 		"\n"+
 		`true`+
 		`42`+
 		`-1`+
-		`TRUE`+
 		`ab`+
 		`</body>`,
 		string(h))
@@ -80,7 +45,7 @@ func TestRender(t *testing.T) {
 func TestZ(t *testing.T) {
 	assert.Nil(t, Z.mergeSlice(nil))
 }
-func TestExclamation(t *testing.T) {
+func TestNoMarkup(t *testing.T) {
 	n := N("", 1)
 	assert.Equal(t, `1`, string(n.mergeSlice(nil)))
 }
@@ -139,16 +104,6 @@ func TestEmptyNode(t *testing.T) {
 	assert.Equal(t, `<link>`, string(n.mergeSlice(nil)))
 }
 
-type boolHTML bool
-
-func (b boolHTML) HTML() H {
-	if b {
-		return "TRUE"
-	} else {
-		return "FALSE"
-	}
-}
-
 func TestMap(t *testing.T) {
 	m := map[int]bool{2: false, 1: true}
 	h := Merge(N("ul", Map(m, func(k int, v bool) Node {
@@ -164,15 +119,6 @@ func TestMap(t *testing.T) {
 
 func TestSlice(t *testing.T) {
 	s := []bool{true, false}
-	assert.Equal(t,
-		[]Node{
-			{"code", nil, []any{true}},
-			Z,
-			{"code", nil, []any{false}},
-		},
-		Slice(s, func(i int, b bool) Node {
-			return N("code", b)
-		}))
 	assert.Equal(t,
 		[]Node{
 			{"code", nil, []any{true}},
@@ -193,7 +139,7 @@ func TestSliceSeparator(t *testing.T) {
 			{"", nil, []any{H("/")}},
 			{"code", nil, []any{1, false}},
 		},
-		SliceSeparator(s, "/", func(i int, b bool) Node {
+		S2(s, "/", func(i int, b bool) Node {
 			return N("code", i, b)
 		}))
 	assert.Nil(t, S2[any](nil, "", nil))
