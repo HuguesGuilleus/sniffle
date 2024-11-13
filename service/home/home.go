@@ -1,14 +1,13 @@
 package home
 
 import (
-	"context"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
 )
 
-func Do(_ context.Context, t *tool.Tool) {
+func Do(t *tool.Tool) {
 	t.LangRedirect("/index.html")
 	for _, l := range t.Languages {
 		tr := translate.T[l]

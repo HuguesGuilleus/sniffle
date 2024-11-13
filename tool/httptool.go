@@ -1,37 +1,54 @@
 package tool
 
 import (
-	"context"
 	"encoding/json"
 	"io"
-	"net/http"
+	"sniffle/tool/fetch"
+	"sniffle/tool/sch"
 )
 
-func FetchJSON(ctx context.Context, t *Tool, method, url string, headers http.Header, body []byte, v any) (fail bool) {
-	reader := t.Fetch(ctx, method, url, headers, body)
-	if reader == nil {
+// Fetch and decode in JSON to dto.
+//
+// Is devmode and ty is not nil, make a first request to check json in type.
+func FetchJSON(t *Tool, ty sch.Type, dto any, request *fetch.Request) (fail bool) {
+	if DevMode && ty != nil {
+		r := t.Fetch(request)
+		if r == nil {
+			return true
+		}
+		defer r.Body.Close()
+
+		var value any
+		dec := json.NewDecoder(r.Body)
+		dec.UseNumber()
+		dec.Decode(&value)
+		sch.Log(t.Logger.With("url", request.URL), ty, value)
+	}
+
+	response := t.Fetch(request)
+	if response == nil {
 		return true
 	}
-	defer reader.Close()
+	defer response.Body.Close()
 
-	if err := json.NewDecoder(reader).Decode(v); err != nil {
-		t.Warn("http.decodeJsonFail", "url", url, "err", err.Error())
+	if err := json.NewDecoder(response.Body).Decode(dto); err != nil {
+		t.Warn("http.decodeJsonFail", "url", request.URL.String(), "err", err.Error())
 		return true
 	}
 
 	return false
 }
 
-func FetchAll(ctx context.Context, t *Tool, method, url string, headers http.Header, body []byte) []byte {
-	reader := t.Fetch(ctx, method, url, headers, body)
-	if reader == nil {
+func FetchAll(t *Tool, request *fetch.Request) []byte {
+	response := t.Fetch(request)
+	if response == nil {
 		return nil
 	}
-	defer reader.Close()
+	defer response.Body.Close()
 
-	data, err := io.ReadAll(reader)
+	data, err := io.ReadAll(response.Body)
 	if err != nil {
-		t.Warn("http.readAllfail", "url", url, "err", err.Error())
+		t.Warn("http.readAllfail", "url", request.URL.String(), "err", err.Error())
 		return nil
 	}
 

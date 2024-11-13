@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log/slog"
 	"os"
@@ -46,14 +45,14 @@ func main() {
 		Languages: []language.Language{language.English, language.French},
 		Writefile: writefile.Os(*out),
 		Fetcher: []fetch.Fetcher{
-			fetch.CacheOnly(*cache),
-			fetch.Net(nil, *cache, 1, time.Millisecond*100),
+			fetch.Cache(*cache),
+			fetch.Net(nil, *cache, time.Millisecond*100),
 		},
 		LongTasksCache: writefile.Os(*cache + string(filepath.Separator) + "longtask"),
 		LongTasksMap:   service.LongTask,
 	}
 
-	tool.Run(context.Background(), &config, service.List)
+	tool.Run(&config, service.List)
 }
 
 type levelValue struct {

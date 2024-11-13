@@ -1,22 +1,17 @@
 package fetch
 
-import (
-	"context"
-	"io"
-	"net/http"
-	"net/url"
-	"os"
-)
+import "os"
 
-// Use only the cache
-func CacheOnly(cacheBase string) Fetcher { return cacheOnly(cacheBase) }
+type cache string
 
-type cacheOnly string
+func Cache(cacheBase string) Fetcher { return cache(cacheBase) }
 
-func (cacheOnly) Name() string { return "cache" }
+func (cache) Name() string { return "cache" }
 
-func (cacheBase cacheOnly) Fetch(ctx context.Context, method string, u *url.URL, headers http.Header, body []byte) (io.ReadCloser, string, error) {
-	logId, filePath := GeneratePath(string(cacheBase), method, u, headers, body)
-	f, err := os.Open(filePath)
-	return f, logId, err
+func (cache cache) Fetch(request *Request) (*Response, error) {
+	f, err := os.Open(getPath(string(cache), request))
+	if err != nil {
+		return nil, err
+	}
+	return ReadResponse(f)
 }

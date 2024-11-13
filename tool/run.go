@@ -10,10 +10,10 @@ const NoticeLevel = slog.LevelInfo + 2
 
 type Service struct {
 	Name string
-	Do   func(context.Context, *Tool)
+	Do   func(*Tool)
 }
 
-func Run(ctx context.Context, config *Config, services []Service) {
+func Run(config *Config, services []Service) {
 	globalBegin := time.Now()
 
 	htmlFiles := make([]string, 0)
@@ -26,9 +26,9 @@ func Run(ctx context.Context, config *Config, services []Service) {
 		t := New(config)
 		t.Logger = t.Logger.With(slog.Any("service", service.Name))
 		t.htmlFiles = htmlFiles
-		service.Do(ctx, t)
+		service.Do(t)
 
-		t.Log(ctx, NoticeLevel, "end", "duration", time.Since(begin))
+		t.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(begin))
 		htmlFiles = t.htmlFiles
 
 		writeSum += t.writeSum
@@ -38,7 +38,7 @@ func Run(ctx context.Context, config *Config, services []Service) {
 	to.writeSitemap(htmlFiles)
 	writeSum += to.writeSum
 
-	config.Logger.Log(ctx, NoticeLevel, "end", "duration", time.Since(globalBegin), "writeSum", writeSum)
+	config.Logger.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(globalBegin), "writeSum", writeSum)
 }
 
 func (t *Tool) writeSitemap(paths []string) {

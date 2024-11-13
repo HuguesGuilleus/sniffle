@@ -3,8 +3,6 @@ package eu_ec_eci
 import (
 	"bytes"
 	"cmp"
-	"context"
-	"encoding/json"
 	"fmt"
 	"image"
 	_ "image/jpeg"
@@ -17,9 +15,9 @@ import (
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/country"
+	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
-	"sniffle/tool/sch"
 	"sniffle/tool/securehtml"
 	"strconv"
 	"time"
@@ -109,7 +107,7 @@ type indexItem struct {
 }
 
 // Get all ECI item to after get all details.
-func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
+func fetchIndex(t *tool.Tool) (items []indexItem) {
 	dto := struct {
 		Entries []struct {
 			Year   int `json:"year,string"`
@@ -120,16 +118,9 @@ func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
 		} `json:"entries"`
 	}{}
 	if tool.DevMode {
-		j := tool.FetchAll(ctx, t, "", indexURL, nil, nil)
-		t.WriteFile("/eu/ec/eci/src.json", j)
-
-		var value any
-		dec := json.NewDecoder(bytes.NewReader(j))
-		dec.UseNumber()
-		dec.Decode(&value)
-		sch.Log(t.Logger.With("id", "index"), indexType, value)
+		t.WriteFile("/eu/ec/eci/src.json", tool.FetchAll(t, fetch.R("", indexURL, nil)))
 	}
-	if tool.FetchJSON(ctx, t, "", indexURL, nil, nil, &dto) {
+	if tool.FetchJSON(t, indexType, &dto, fetch.R("", indexURL, nil)) {
 		return nil
 	}
 
@@ -149,19 +140,16 @@ func fetchIndex(ctx context.Context, t *tool.Tool) (items []indexItem) {
 	return
 }
 
-func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
+func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	dto := detailDTO{}
 	fetchURL := fmt.Sprintf(detailURL, info.year, info.number)
 	if tool.DevMode {
-		j := tool.FetchAll(ctx, t, "", fetchURL, nil, nil)
-		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number), j)
-		var eciDTO any
-		dec := json.NewDecoder(bytes.NewReader(j))
-		dec.UseNumber()
-		dec.Decode(&eciDTO)
-		sch.Log(t.Logger.With("id", fmt.Sprintf("%d/%d", info.year, info.number)), eciType, eciDTO)
+		t.WriteFile(
+			fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),
+			tool.FetchAll(t, fetch.R("", fetchURL, nil)),
+		)
 	}
-	if tool.FetchJSON(ctx, t, "", fetchURL, nil, nil, &dto) {
+	if tool.FetchJSON(t, eciType, &dto, fetch.R("", fetchURL, nil)) {
 		return nil
 	}
 	if tool.DevMode {
@@ -350,18 +338,18 @@ func fetchDetail(ctx context.Context, t *tool.Tool, info indexItem) *ECIOut {
 	}
 
 	// Set image
-	eci.fetchImage(ctx, t, info.logoID)
+	eci.fetchImage(t, info.logoID)
 
 	return eci
 }
 
-func (eci *ECIOut) fetchImage(ctx context.Context, t *tool.Tool, logoID int) {
+func (eci *ECIOut) fetchImage(t *tool.Tool, logoID int) {
 	if logoID == 0 {
 		return
 	}
 
 	u := fmt.Sprintf(logoURL, logoID)
-	data := tool.FetchAll(ctx, t, "", u, nil, nil)
+	data := tool.FetchAll(t, fetch.R("", u, nil))
 	if len(data) == 0 {
 		return
 	}

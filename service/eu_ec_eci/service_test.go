@@ -1,7 +1,6 @@
 package eu_ec_eci
 
 import (
-	"context"
 	"io"
 	"log/slog"
 	"sniffle/tool"
@@ -14,7 +13,7 @@ import (
 func TestService(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
 	to.Logger = slog.New(slog.NewTextHandler(io.Discard, nil))
-	Do(context.Background(), to)
+	Do(to)
 	assert.Equal(t, writefile.T{
 		"/eu/ec/eci/index.html":        1,
 		"/eu/ec/eci/fr.html":           1,

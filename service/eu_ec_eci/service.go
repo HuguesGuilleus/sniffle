@@ -1,14 +1,13 @@
 package eu_ec_eci
 
 import (
-	"context"
 	"fmt"
 	"sniffle/tool"
 	"sniffle/tool/render"
 )
 
-func Do(ctx context.Context, t *tool.Tool) {
-	eciSlice := fetchAll(ctx, t)
+func Do(t *tool.Tool) {
+	eciSlice := fetchAll(t)
 
 	t.LangRedirect("/eu/ec/eci/index.html")
 	for _, l := range t.Languages {
@@ -36,12 +35,12 @@ func Do(ctx context.Context, t *tool.Tool) {
 	}
 }
 
-func fetchAll(ctx context.Context, t *tool.Tool) []*ECIOut {
-	items := fetchIndex(ctx, t)
+func fetchAll(t *tool.Tool) []*ECIOut {
+	items := fetchIndex(t)
 
 	eciSlice := make([]*ECIOut, 0, len(items))
 	for _, info := range items {
-		eci := fetchDetail(ctx, t, info)
+		eci := fetchDetail(t, info)
 		if eci == nil {
 			continue
 		}

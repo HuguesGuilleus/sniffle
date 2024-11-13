@@ -1,7 +1,6 @@
 package front
 
 import (
-	"context"
 	"embed"
 	"sniffle/tool"
 	"sniffle/tool/fronttool"
@@ -38,7 +37,7 @@ var (
 	StyleHash, StyleIntegrity = fronttool.FileSum(styleData)
 )
 
-func Do(_ context.Context, t *tool.Tool) {
+func Do(t *tool.Tool) {
 	t.WriteFile("favicon.ico", favicon)
 	t.WriteFile("robots.txt", append(robots, ("\nSitemap: "+t.HostURL+"/sitemap.txt\n")...))
 	t.WriteFile("style."+StyleHash+".css", styleData)

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"sniffle/common/resize0"
 	"sniffle/front"
 	"sniffle/service/about"
@@ -22,7 +21,7 @@ var List = []tool.Service{
 	{Name: "front", Do: front.Do},
 }
 
-func notImplementedPage(_ context.Context, t *tool.Tool) {
+func notImplementedPage(t *tool.Tool) {
 	for _, l := range t.Languages {
 		t.WriteFile("/eu/index.html", render.Back)
 		t.WriteFile("/eu/"+l.String()+".html", render.Back)

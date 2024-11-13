@@ -1,7 +1,6 @@
 package eu_ec_eci
 
 import (
-	"context"
 	"net/url"
 	"sniffle/tool"
 	"sniffle/tool/country"
@@ -56,8 +55,8 @@ var image3x1JPG = []byte{
 	0x00, 0x02, 0x11, 0x03, 0x11, 0x00, 0x3f, 0x00, 0x3a, 0x03, 0x15, 0x4d, 0xff, 0xd9,
 }
 
-var fetcher = fetch.TestFetcher{
-	indexURL: []byte(`{
+var fetcher = map[string]*fetch.TestResponse{
+	indexURL: fetch.TRs(200, `{
 		"entries": [
 			{
 				"year": "2024",
@@ -70,9 +69,9 @@ var fetcher = fetch.TestFetcher{
 			}
 		]
 	}`),
-	"https://register.eci.ec.europa.eu/core/api/register/logo/8846": image3x1PNG,
-	"https://register.eci.ec.europa.eu/core/api/register/logo/8847": image3x1JPG,
-	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000009": []byte(`{
+	"https://register.eci.ec.europa.eu/core/api/register/logo/8846": fetch.TR(200, image3x1PNG),
+	"https://register.eci.ec.europa.eu/core/api/register/logo/8847": fetch.TR(200, image3x1JPG),
+	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000009": fetch.TRs(200, `{
 		"status": "ONGOING",
 		"latestUpdateDate": "24/07/2024 13:52",
 		"deadline": "17/05/2025",
@@ -217,7 +216,7 @@ var fetcher = fetch.TestFetcher{
 
 func TestFetchIndex(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
-	items := fetchIndex(context.Background(), to)
+	items := fetchIndex(to)
 	assert.True(t, wf.NoCalled())
 	assert.Equal(t, []indexItem{
 		{year: 2024, number: 8},
@@ -227,7 +226,7 @@ func TestFetchIndex(t *testing.T) {
 
 func TestFetchDetail(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
-	eci := fetchDetail(context.Background(), to, indexItem{
+	eci := fetchDetail(to, indexItem{
 		year:   2024,
 		number: 9,
 		logoID: 8846,
@@ -373,7 +372,7 @@ func TestFetchDetail(t *testing.T) {
 func TestFetchImageJPEG(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
 	eci := &ECIOut{}
-	eci.fetchImage(context.Background(), to, 8847)
+	eci.fetchImage(to, 8847)
 	assert.True(t, wf.NoCalled())
 	assert.Equal(t, &ECIOut{
 		ImageName:   "logo.jpg",

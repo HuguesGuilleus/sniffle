@@ -2,15 +2,11 @@ package tool
 
 import (
 	"bytes"
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"io"
 	"io/fs"
 	"log/slog"
-	"net/http"
-	"net/url"
 	"os"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
@@ -106,24 +102,24 @@ func (t *Tool) WriteFile(path string, data []byte) {
 // Logs results and errors.
 //
 // If all internal fetchers return and error, return nil.
-func (t *Tool) Fetch(ctx context.Context, method, urlString string, headers http.Header, body []byte) io.ReadCloser {
-	u, err := url.Parse(urlString)
-	if err != nil {
-		t.Warn("http.failParseURL", "url", urlString, "err", err.Error())
-		return nil
-	}
-
+func (t *Tool) Fetch(request *fetch.Request) *fetch.Response {
+	id := request.ID()
+	u := request.URL.String()
 	for _, f := range t.fetcher {
-		r, id, err := f.Fetch(ctx, method, u, headers, body)
+		r, err := f.Fetch(request)
 		if err != nil {
-			t.Debug("http.fail", "fetcher", f.Name(), "id", id, "url", urlString, "err", err.Error())
+			if errors.Is(err, fs.ErrNotExist) {
+				t.Debug("http.notExist", "fetcher", f.Name(), "id", id, "url", u)
+			} else {
+				t.Warn("http.fail", "fetcher", f.Name(), "id", id, "url", u, "err", err.Error())
+			}
 			continue
 		}
-		t.Info("http.ok", "fetcher", f.Name(), "id", id, "url", urlString)
+		t.Info("http.ok", "fetcher", f.Name(), "id", id[:8], "url", u, "status", r.Status)
 		return r
 	}
 
-	t.Warn("http.fatal", "url", urlString)
+	t.Warn("http.fatal", "url", u)
 	return nil
 }
 
@@ -143,7 +139,7 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 		t.Info("longtask.cache", "name", name, "id", id, "ref", logRef)
 		return out
 	} else if !errors.Is(err, fs.ErrNotExist) {
-		t.Warn("longtask.readErr", "name", name, "id", id, "ref", logRef, "err", err.Error())
+		t.Warn("longtask.cacheErr", "name", name, "id", id, "ref", logRef, "err", err.Error())
 	}
 
 	t.longTasksMutex.Lock()
@@ -166,7 +162,7 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 	return out
 }
 
-func NewTestTool(fetcher fetch.TestFetcher) (writefile.T, *Tool) {
+func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool) {
 	wf := writefile.T{}
 	return wf, New(&Config{
 		HostURL:   "https://example.com",
@@ -177,7 +173,7 @@ func NewTestTool(fetcher fetch.TestFetcher) (writefile.T, *Tool) {
 		})),
 
 		Writefile: wf,
-		Fetcher:   []fetch.Fetcher{fetcher},
+		Fetcher:   []fetch.Fetcher{fetch.Test(fetcherMap)},
 	})
 }
 

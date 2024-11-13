@@ -1,22 +1,24 @@
 package eu_eca
 
 import (
-	"context"
 	"net/http"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 )
 
-func Do(ctx context.Context, t *tool.Tool) {
+func Do(t *tool.Tool) {
 	if !tool.DevMode {
 		t.Info("skip")
 		return
 	}
 
 	if tool.DevMode {
-		t.WriteFile("/eu/eca/src-token.json", tool.FetchAll(ctx, t, http.MethodPost, "https://www.eca.europa.eu/_api/contextinfo", http.Header{
-			"Accept":       []string{"application/json; odata=verbose"},
-			"Content-Type": []string{"application/json; odata=verbose"},
-		}, nil))
+		t.WriteFile("/eu/eca/src-token.json", tool.FetchAll(t,
+			fetch.R(http.MethodPost, "https://www.eca.europa.eu/_api/contextinfo", nil,
+				"Accept", "application/json; odata=verbose",
+				"Content-Type", "application/json; odata=verbose",
+			),
+		))
 	}
 	v := struct {
 		D struct {
@@ -25,17 +27,17 @@ func Do(ctx context.Context, t *tool.Tool) {
 			}
 		}
 	}{}
-	tool.FetchJSON(ctx, t, http.MethodPost, "https://www.eca.europa.eu/_api/contextinfo", http.Header{
-		"Accept":       []string{"application/json; odata=verbose"},
-		"Content-Type": []string{"application/json; odata=verbose"},
-	}, nil, &v)
+	tool.FetchJSON(t, nil, &v, fetch.R(http.MethodPost, "https://www.eca.europa.eu/_api/contextinfo", nil,
+		"Accept", "application/json; odata=verbose",
+		"Content-Type", "application/json; odata=verbose",
+	))
 	token := v.D.GetContextWebInformation.FormDigestValue
 
 	if tool.DevMode {
-		t.WriteFile("/eu/eca/src-doc.json", tool.FetchAll(ctx, t, http.MethodPost, "https://www.eca.europa.eu/_vti_bin/ECA.Internet/DocSetService.svc/SearchDocs", http.Header{
-			"Accept":          []string{"application/json"},
-			"Content-Type":    []string{"application/json"},
-			"X-RequestDigest": []string{token},
-		}, []byte(`{"searchInput":{"RowLimit":1000,"Filter":"ECADocType=\"Annual report\"","Lang":"French","LangCode":"FR"}}`)))
+		t.WriteFile("/eu/eca/src-doc.json", tool.FetchAll(t, fetch.Rs(http.MethodPost, "https://www.eca.europa.eu/_vti_bin/ECA.Internet/DocSetService.svc/SearchDocs", `{"searchInput":{"RowLimit":1000,"Filter":"ECADocType=\"Annual report\"","Lang":"French","LangCode":"FR"}}`,
+			"Accept", "application/json",
+			"Content-Type", "application/json",
+			"X-RequestDigest", token,
+		)))
 	}
 }

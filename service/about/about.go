@@ -1,7 +1,6 @@
 package about
 
 import (
-	"context"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
@@ -9,7 +8,7 @@ import (
 )
 
 // Write about pages.
-func Do(_ context.Context, t *tool.Tool) {
+func Do(t *tool.Tool) {
 	basePath := "/about/"
 	t.LangRedirect("/about/index.html")
 
