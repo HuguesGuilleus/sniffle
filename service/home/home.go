@@ -20,9 +20,10 @@ func Do(t *tool.Tool) {
 					render.N("div.headerTitle", component.HomeAnchor(l), tr.HOME.Name),
 					component.HeaderLangs(l, ""),
 				),
-				render.Na("ul.w", "style", "font-size:xx-large").N(
+				render.N("ul.w.home",
 					render.N("li", render.Na("a", "href", l.Path("/about/")).N(tr.ABOUT.PageTitle)),
-					render.N("li", render.Na("a", "href", l.Path("/eu/ec/eci/")).N(tr.EU_EC_ECI.Name))),
+					render.N("li", render.Na("a", "href", l.Path("/eu/ec/eci/")).N(tr.EU_EC_ECI.Name)),
+				),
 				component.Footer(l, 0),
 			),
 		)))
