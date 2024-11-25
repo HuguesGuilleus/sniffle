@@ -38,12 +38,15 @@ func SaveHTTP(request *Request, response *Response, now time.Time, w io.Writer) 
 	})
 
 	head := [8]byte{'H', 'T', 'T', 'P'}
-	binary.BigEndian.PutUint32(head[4:], uint32(len(j)))
+	binary.BigEndian.PutUint32(head[4:], uint32(len(j)+2))
 
 	if _, err := w.Write(head[:]); err != nil {
 		return err
 	}
 	if _, err := w.Write(j); err != nil {
+		return err
+	}
+	if _, err := w.Write([]byte{'\n', '\n'}); err != nil {
 		return err
 	}
 	if _, err := io.Copy(w, response.Body); err != nil {

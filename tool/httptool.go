@@ -32,7 +32,7 @@ func FetchJSON(t *Tool, ty sch.Type, dto any, request *fetch.Request) (fail bool
 	defer response.Body.Close()
 
 	if err := json.NewDecoder(response.Body).Decode(dto); err != nil {
-		t.Warn("http.decodeJsonFail", "url", request.URL.String(), "err", err.Error())
+		t.Warn("http.decodeJsonFail", "id", request.ID(), "url", request.URL.String(), "err", err.Error())
 		return true
 	}
 

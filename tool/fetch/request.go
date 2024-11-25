@@ -38,24 +38,32 @@ type Request struct {
 	id string
 }
 
+// Create a *Request from a URL.
+// If error, create a request with url: scheme=err, path=rawURL.
+func URL(rawURL string) *Request {
+	u, _ := url.Parse(rawURL)
+	if u == nil {
+		u = new(url.URL)
+		u.Scheme = "err"
+		u.Path = rawURL
+	}
+	return &Request{URL: u}
+}
+
 // Easy way to create a request.
-// Ignore error when parse url.
+// If error, create a request with url: scheme=err, path=rawURL.
 //
 // Headers is key1, value1, key2, value2 ...
 // If headers length is odd, the last element is ignored.
 //
 // Use .B() or Bs() to add a body.
 func R(method, rawURL string, body []byte, headers ...string) *Request {
-	u, _ := url.Parse(rawURL)
-	h := make(http.Header, len(headers)/2)
+	r := URL(rawURL)
+	r.Method = method
+	r.Body = body
+	r.Header = make(http.Header, len(headers)/2)
 	for i := 0; i+1 < len(headers); i += 2 {
-		h.Add(headers[i], headers[i+1])
-	}
-	r := &Request{
-		Method: method,
-		URL:    u,
-		Header: h,
-		Body:   body,
+		r.Header.Add(headers[i], headers[i+1])
 	}
 	return r
 }

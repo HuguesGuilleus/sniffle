@@ -42,6 +42,9 @@ Result: `150ee78242120c0e38fc747a175c56068c2f07f8b0c57345a7ee6cdd5a172d05`
 
 The json contain meta info of the request in json:
 
+NOTE: At end of JSON, add two `\n\n` only for display file. This two byte are
+included in the json length.
+
 ```json
 {
 	"time": "2006-01-02T15:04:05Z",
