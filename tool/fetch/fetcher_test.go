@@ -8,6 +8,7 @@ import (
 	"os"
 	"sniffle/tool/fetch"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -46,8 +47,8 @@ func TestNetAndCache(t *testing.T) {
 	}
 
 	// Network
-	assert.Equal(t, "net", fetch.Net(nil, "", 0).Name())
-	testResponse(fetch.Net(fakeRoundTrip{}, "_cache", 0))
+	assert.Equal(t, "net", fetch.Net(nil, "", nil).Name())
+	testResponse(fetch.Net(fakeRoundTrip{}, "_cache", make(map[string]time.Duration)))
 
 	// Cache
 	assert.Equal(t, "cache", fetch.Cache("").Name())

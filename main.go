@@ -46,7 +46,7 @@ func main() {
 		Writefile: writefile.Os(*out),
 		Fetcher: []fetch.Fetcher{
 			fetch.Cache(*cache),
-			fetch.Net(nil, *cache, time.Millisecond*100),
+			fetch.Net(nil, *cache, map[string]time.Duration{"": time.Millisecond * 100}),
 		},
 		LongTasksCache: writefile.Os(*cache + string(filepath.Separator) + "longtask"),
 		LongTasksMap:   service.LongTask,

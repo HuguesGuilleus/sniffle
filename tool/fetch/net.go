@@ -5,28 +5,30 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
 type netFetcher struct {
 	roundTripper http.RoundTripper
 	cacheBase    string
-	limit        chan struct{}
 	// Sleep interval between each request
-	sleep time.Duration
+	delayDuration map[string]time.Duration
+	delayChannels map[string]<-chan struct{}
+	delayMutex    sync.Mutex
 }
 
-func Net(roundTripper http.RoundTripper, cacheBase string, sleep time.Duration) Fetcher {
+func Net(roundTripper http.RoundTripper, cacheBase string, delay map[string]time.Duration) Fetcher {
 	if roundTripper == nil {
 		roundTripper = http.DefaultTransport
 	}
 	limit := make(chan struct{}, 1)
 	limit <- struct{}{}
 	return &netFetcher{
-		roundTripper: roundTripper,
-		cacheBase:    filepath.Clean(cacheBase),
-		limit:        limit,
-		sleep:        sleep,
+		roundTripper:  roundTripper,
+		cacheBase:     filepath.Clean(cacheBase),
+		delayDuration: delay,
+		delayChannels: make(map[string]<-chan struct{}),
 	}
 }
 
@@ -40,13 +42,7 @@ func (fetcher *netFetcher) Fetch(request *Request) (*Response, error) {
 	httpRequest.URL = request.URL
 	httpRequest.Header = request.Header.Clone()
 
-	<-fetcher.limit
-	defer func() {
-		go func() {
-			time.Sleep(fetcher.sleep)
-			fetcher.limit <- struct{}{}
-		}()
-	}()
+	defer fetcher.wait(request.URL.Host)()
 
 	httpResponse, err := fetcher.roundTripper.RoundTrip(httpRequest)
 	if err != nil {
@@ -76,4 +72,25 @@ func (fetcher *netFetcher) Fetch(request *Request) (*Response, error) {
 		return nil, err
 	}
 	return ReadResponse(f)
+}
+
+func (fetcher *netFetcher) wait(host string) func() {
+	newChannel := make(chan struct{})
+
+	fetcher.delayMutex.Lock()
+	previousChannel := fetcher.delayChannels[host]
+	fetcher.delayChannels[host] = newChannel
+	delay, ok := fetcher.delayDuration[host]
+	if !ok {
+		delay = fetcher.delayDuration[""]
+	}
+	fetcher.delayMutex.Unlock()
+
+	if previousChannel != nil {
+		<-previousChannel
+	}
+
+	return func() {
+		time.AfterFunc(delay, func() { newChannel <- struct{}{} })
+	}
 }
