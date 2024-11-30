@@ -2,8 +2,6 @@ package render
 
 // A static page to redirect to the parent
 var Back = []byte(`<!DOCTYPE html><html>` +
-	`<script>` +
-	`location=".."` +
-	`</script>` +
+	`<meta http-equiv=refresh content='0;URL=..'>` +
 	`<body>` +
 	`<a id=a href=..>Redirect</a>`)
