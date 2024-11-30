@@ -72,7 +72,7 @@ var eciType = sch.Map(
 	sch.FieldSO("startCollectionDate", dateType),
 	sch.FieldSO("earlyClosureDate", sch.Or(sch.String(""), dateType)),
 	sch.FieldSR("partiallyRegistered", sch.AnyBool()),
-	sch.FieldSR("linguisticVersions", sch.Array(sch.Map(
+	sch.FieldSR("linguisticVersions", sch.ArrayRange(3, 24, sch.Map(
 		sch.FieldSR("original", sch.AnyBool()),
 		sch.FieldSR("languageCode", langs),
 		sch.FieldSR("title", sch.NotEmptyString()),
@@ -83,26 +83,26 @@ var eciType = sch.Map(
 		sch.FieldSO("supportLink", sch.AnyURL()),
 		sch.FieldSR("commissionDecision", sch.Or(
 			sch.Map(
+				sch.FieldSR("document", docPDF),
+			),
+			sch.Map(
 				sch.FieldSR("celex", sch.NotEmptyString()),
 				sch.FieldSO("corrigendum", sch.NotEmptyString()),
 				sch.FieldSR("url", sch.URL("http://eur-lex.europa.eu/legal-content/**?uri=*&from=*")),
-			),
-			sch.Map(
-				sch.FieldSR("document", docPDF),
 			),
 		)),
 		sch.FieldSO("additionalDocument", docType),
 		sch.FieldSO("draftLegal", docType),
 	))),
-	sch.FieldSO("categories", sch.Array(sch.Map(
+	sch.FieldSO("categories", sch.ArrayMin(1, sch.Map(
 		sch.FieldSR("categoryType", sch.EnumString("AGRI", "CULT", "DECO", "DEVCO", "EDU", "EMPL", "ENER", "ENV", "EURO", "JUST", "MARE", "MIGR", "REGIO", "RSH", "SANTE", "SEC", "TRA", "TRADE")),
 	))),
-	sch.FieldSR("members", sch.Array(sch.Map(
+	sch.FieldSR("members", sch.ArrayMin(7, sch.Map(
 		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSR("privacyApplied", sch.AnyBool()),
 		sch.FieldSR("type", sch.EnumString("MEMBER", "SUBSTITUTE", "REPRESENTATIVE", "OTHER", "DPO", "LEGAL_ENTITY")),
 		sch.FieldSO("email", sch.Or(sch.AnyURL(), sch.AnyMail())),
-		sch.FieldSO("replacedMember", sch.Array(sch.Map(
+		sch.FieldSO("replacedMember", sch.ArraySize(1, sch.Map(
 			sch.FieldSO("email", sch.AnyMail()),
 			sch.FieldSO("residenceCountry", countriesLower),
 			sch.FieldSR("endDate", dateType),
@@ -114,7 +114,7 @@ var eciType = sch.Map(
 		sch.FieldSO("residenceCountry", countriesLower),
 		sch.FieldSO("startingDate", dateType),
 	))),
-	sch.FieldSR("progress", sch.Array(sch.Map(
+	sch.FieldSR("progress", sch.ArrayMin(2, sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
 		sch.FieldSR("name", statusType),
 		sch.FieldSO("date", dateType),
@@ -124,7 +124,7 @@ var eciType = sch.Map(
 		sch.Map(),
 		sch.Map(
 			sch.FieldSR("lastUpdate", dateType),
-			sch.FieldSR("sponsors", sch.Array(sch.Map(
+			sch.FieldSR("sponsors", sch.ArrayMin(1, sch.Map(
 				sch.FieldSR("amount", sch.PositiveFloat()),
 				sch.FieldSR("date", dateType),
 				sch.FieldSR("name", sch.NotEmptyString()),
@@ -138,7 +138,7 @@ var eciType = sch.Map(
 	sch.Field(sch.EnumString("submission", "sosReport"), sch.Map(
 		sch.FieldSR("totalSignatures", sch.PositiveInt()),
 		sch.FieldSO("updateDate", dateType),
-		sch.FieldSR("entry", sch.Array(sch.Map(
+		sch.FieldSR("entry", sch.ArrayRange(3, 28, sch.Map(
 			sch.FieldSR("countryCodeType", countries),
 			sch.FieldSR("total", sch.PositiveInt()),
 			sch.FieldSO("afterSubmission", sch.AnyBool()),
@@ -154,11 +154,11 @@ var eciType = sch.Map(
 	sch.FieldSO("answer", sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("decisionDate", dateType),
-		sch.FieldSR("links", sch.Array(sch.Map(
+		sch.FieldSR("links", sch.ArrayRange(3, 4, sch.Map(
 			sch.FieldSO("defaultLanguageCode", sch.String("EN")),
 			sch.FieldSR("defaultName", sch.EnumString("ANNEX", "COMMUNICATION", "FOLLOW_UP", "PRESS_RELEASE")),
 			sch.FieldSR("defaultLink", sch.URL("http.s://**europa.eu/**")),
-			sch.FieldSO("link", sch.Array(sch.Map(
+			sch.FieldSO("link", sch.ArraySize(24, sch.Map(
 				sch.FieldSR("languageCode", langs),
 				sch.FieldSR("link", sch.URL("https://**europa.eu/**")),
 			))),

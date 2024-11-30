@@ -34,6 +34,13 @@ func TestMap(t *testing.T) {
 		"\n\t\t..."+
 		"\n\t}", genHTML(m))
 
+	assert.Equal(t, "{ <span class=sch-str>&#34;k1&#34;</span>: <span class=sch-base>false</span> }",
+		genHTML(Map(FieldSR("k1", False()))),
+	)
+	assert.Equal(t, "{ <span class=sch-str>&#34;k1&#34;</span>?: <span class=sch-base>false</span>, ... }",
+		genHTML(MapExtra(FieldSO("k1", False()))),
+	)
+
 	assert.Equal(t, "{}", genHTML(Map()))
 	assert.Equal(t, "{...}", genHTML(MapExtra()))
 }

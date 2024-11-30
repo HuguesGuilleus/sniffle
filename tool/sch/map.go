@@ -91,6 +91,17 @@ func (m *mapType) HTML(indent string) render.Node {
 		} else {
 			return render.N("", "{}")
 		}
+	} else if len(m.fields) == 1 && len(m.fields[0].comments) == 0 {
+		field := m.fields[0]
+		sep := ": "
+		if !field.required {
+			sep = "?: "
+		}
+		return render.N("", "{ ",
+			field.fieldKey.HTML(indent), sep,
+			field.fieldValue.HTML(indent),
+			render.If(m.extraFields, func() render.Node { return render.N("", ", ...") }),
+			" }")
 	}
 
 	indentAdd := indent + "\t"
