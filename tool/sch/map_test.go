@@ -33,4 +33,7 @@ func TestMap(t *testing.T) {
 		"\n\t\t<span class=sch-str>&#34;k2&#34;</span>?: <span class=sch-base>true</span>,"+
 		"\n\t\t..."+
 		"\n\t}", genHTML(m))
+
+	assert.Equal(t, "{}", genHTML(Map()))
+	assert.Equal(t, "{...}", genHTML(MapExtra()))
 }

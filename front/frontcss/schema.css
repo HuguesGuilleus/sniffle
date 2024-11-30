@@ -15,7 +15,8 @@ pre.sch {
 	color: #66008b;
 }
 
-.sch-int {
+.sch-int,
+.sch-float {
 	color: darkred;
 }
 

@@ -16,6 +16,24 @@ func TestEmailAdress(t *testing.T) {
 	assert.Equal(t, "mail-address", AnyMail().String())
 }
 
+func TestMime(t *testing.T) {
+	assert.Panics(t, func() { MIME("; charset=utf-8") })
+	assert.Panics(t, func() { MIME("x; charset=utf-8") })
+
+	assert.NoError(t, MIME("text/html;charset=utf-8").Match("text/html;charset=utf-8"))
+	assert.NoError(t, MIME("text/html").Match("text/html"))
+	assert.NoError(t, MIME("text/*").Match("text/plain"))
+	assert.NoError(t, MIME("*/*").Match("image/png"))
+
+	assert.Error(t, MIME("text/*").Match(1))
+	assert.Error(t, MIME("text/*").Match(";charset=utf-8"))
+	assert.Error(t, MIME("text/*").Match("text/html;charset=utf-8"))
+	assert.Error(t, MIME("text/html;charset=utf-8").Match("text/html;charset=us-ascii"))
+
+	assert.Equal(t, `<span class=sch-xstr>mime(<u>text/html; charset=utf-8</u>)</span>`,
+		genHTML(MIME("text/html;charset=utf-8")))
+}
+
 func TestRegexp(t *testing.T) {
 	assert.NoError(t, Regexp(`^ECI\(\d{4}\)\d{6}$`).Match("ECI(2024)000008"))
 	assert.Error(t, Regexp(`^ECI\(\d{4}\)\d{6}$`).Match("ECI(2024)0000008"))

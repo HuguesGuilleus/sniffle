@@ -15,52 +15,56 @@ var countries = sch.EnumString("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "
 var countriesLower = sch.EnumString("at", "be", "bg", "cy", "cz", "de", "dk", "ee", "es", "fi", "fr", "gb", "gr", "hr", "hu", "ie", "it", "lt", "lu", "lv", "mt", "nl", "pl", "pt", "ro", "se", "si", "sk")
 var langs = sch.EnumString("BG", "CS", "DA", "DE", "EL", "EN", "ES", "ET", "FI", "FR", "GA", "HR", "HU", "IT", "LT", "LV", "MT", "NL", "PL", "PT", "RO", "SK", "SL", "SV")
 
-var docPDF = sch.And(
-	sch.Map(
-		sch.FieldSR("id", sch.AsStrictPositiveInt()).Comment(
-			"URL to get the document:",
-			"https://register.eci.ec.europa.eu/core/api/register/document/{id}",
-		),
-		sch.FieldSR("mimeType", sch.Regexp(`\w+/[\w.-]+`)),
-		sch.FieldSR("name", sch.NotEmptyString()),
-		sch.FieldSR("size", sch.AsStrictPositiveInt()),
+var docType, docTypeDef = sch.Def("Document", sch.Map(
+	sch.FieldSR("id", sch.StrictPositiveInt()).Comment(
+		"URL to get the document:",
+		"https://register.eci.ec.europa.eu/core/api/register/document/{id}",
 	),
-	sch.MapExtra(sch.FieldSR("mimeType", sch.String("application/pdf"))),
-)
+	sch.FieldSR("mimeType", sch.MIME(`application/*`)),
+	sch.FieldSR("name", sch.NotEmptyString()),
+	sch.FieldSR("size", sch.StrictPositiveInt()),
+))
+
+var docPDF, docPDFDef = sch.Def("DocumentPDF", sch.And(
+	docType,
+	sch.MapExtra(sch.FieldSR("mimeType", sch.MIME("application/pdf"))),
+))
+
+var statusType = sch.EnumString("ANSWERED", "CLOSED", "COLLECTION_START_DATE", "INSUFFICIENT_SUPPORT", "ONGOING", "REGISTERED", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN")
 
 var indexType = sch.Map(
-	sch.FieldSR("requests", sch.AsStrictPositiveInt()),
-	sch.FieldSR("registered", sch.AsStrictPositiveInt()),
-	sch.FieldSR("successful", sch.AsStrictPositiveInt()),
-	sch.FieldSR("ongoing", sch.AsStrictPositiveInt()),
-	sch.FieldSR("answered", sch.AsStrictPositiveInt()),
-	sch.FieldSR("all", sch.AsStrictPositiveInt()),
-	sch.FieldSR("recordsFound", sch.AsStrictPositiveInt()),
+	sch.FieldSR("requests", sch.StrictPositiveInt()),
+	sch.FieldSR("registered", sch.StrictPositiveInt()),
+	sch.FieldSR("successful", sch.StrictPositiveInt()),
+	sch.FieldSR("ongoing", sch.StrictPositiveInt()),
+	sch.FieldSR("answered", sch.StrictPositiveInt()),
+	sch.FieldSR("all", sch.StrictPositiveInt()),
+	sch.FieldSR("recordsFound", sch.StrictPositiveInt()),
 	sch.FieldSR("entries", sch.Array(sch.Map(
-		sch.FieldSR("id", sch.AsStrictPositiveInt()),
+		sch.FieldSR("id", sch.StrictPositiveInt()),
+		sch.FieldSR("year", sch.IntervalStringInt(2012, math.MaxInt64)),
+		sch.FieldSR("number", sch.StrictPositiveStringInt()),
+		sch.FieldSR("pubRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)),
 		sch.FieldSR("languageCode", sch.String("EN")),
 		sch.FieldSR("lastCall", sch.AnyBool()),
 		sch.FieldSR("latestUpdateDate", timeType),
 		sch.FieldSO("logo", sch.Map(
-			sch.FieldSR("id", sch.AsStrictPositiveInt()),
+			sch.FieldSR("id", sch.StrictPositiveInt()),
 			sch.FieldSR("name", sch.NotEmptyString()),
 			sch.FieldSR("mimeType", sch.EnumString("image/png", "image/jpeg")),
-			sch.FieldSR("size", sch.AsStrictPositiveInt()),
+			sch.FieldSR("size", sch.StrictPositiveInt()),
 		)),
-		sch.FieldSR("number", sch.AsStrictPositiveStringInt()),
-		sch.FieldSR("pubRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)),
-		sch.FieldSR("status", sch.EnumString("ANSWERED", "INSUFFICIENT_SUPPORT", "ONGOING", "REGISTERED", "VERIFICATION", "WITHDRAWN")),
+		sch.FieldSR("status", statusType),
 		sch.FieldSO("supportLink", sch.AnyURL()),
 		sch.FieldSR("title", sch.NotEmptyString()),
-		sch.FieldSR("totalSupporters", sch.AsPositiveInt()),
-		sch.FieldSR("year", sch.IntervalAsStringInt(2012, math.MaxInt64)),
+		sch.FieldSR("totalSupporters", sch.PositiveInt()),
 	))),
 )
 
 var eciType = sch.Map(
-	sch.FieldSR("id", sch.AsStrictPositiveInt()),
+	sch.FieldSR("id", sch.StrictPositiveInt()),
 	sch.FieldSR("comRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)),
-	sch.FieldSR("status", sch.EnumString("ANSWERED", "INSUFFICIENT_SUPPORT", "ONGOING", "REGISTERED", "VERIFICATION", "WITHDRAWN")),
+	sch.FieldSR("status", statusType),
 	sch.FieldSR("latestUpdateDate", timeType),
 	sch.FieldSR("lastCall", sch.AnyBool()),
 	sch.FieldSR("registrationDate", dateType),
@@ -112,7 +116,7 @@ var eciType = sch.Map(
 	))),
 	sch.FieldSR("progress", sch.Array(sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
-		sch.FieldSR("name", sch.AnyString()),
+		sch.FieldSR("name", statusType),
 		sch.FieldSO("date", dateType),
 		sch.FieldSO("footnoteType", sch.String("COLLECTION_EARLY_CLOSURE")),
 	))),
@@ -121,34 +125,34 @@ var eciType = sch.Map(
 		sch.Map(
 			sch.FieldSR("lastUpdate", dateType),
 			sch.FieldSR("sponsors", sch.Array(sch.Map(
-				sch.FieldSR("amount", sch.Any()), // + float64
+				sch.FieldSR("amount", sch.PositiveFloat()),
 				sch.FieldSR("date", dateType),
 				sch.FieldSR("name", sch.NotEmptyString()),
 				sch.FieldSR("privateSponsor", sch.AnyBool()),
 				sch.FieldSR("anonymized", sch.AnyBool()),
 			))),
-			sch.FieldSR("totalAmount", sch.Any()), // + float64
+			sch.FieldSR("totalAmount", sch.PositiveFloat()),
 			sch.FieldSO("document", docPDF),
 		),
 	)),
 	sch.Field(sch.EnumString("submission", "sosReport"), sch.Map(
-		sch.FieldSR("totalSignatures", sch.AsPositiveInt()),
+		sch.FieldSR("totalSignatures", sch.PositiveInt()),
 		sch.FieldSO("updateDate", dateType),
 		sch.FieldSR("entry", sch.Array(sch.Map(
 			sch.FieldSR("countryCodeType", countries),
-			sch.FieldSR("total", sch.AsPositiveInt()),
+			sch.FieldSR("total", sch.PositiveInt()),
 			sch.FieldSO("afterSubmission", sch.AnyBool()),
 		))),
 		sch.FieldSO("footnoteType", sch.String("AFTER_SUBMISSION_CERTIFICATES")),
 	), false),
 	sch.FieldSO("logo", sch.Map(
-		sch.FieldSR("id", sch.AsStrictPositiveInt()),
+		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("name", sch.NotEmptyString()),
 		sch.FieldSR("mimeType", sch.EnumString("image/png", "image/jpeg")),
-		sch.FieldSR("size", sch.AsStrictPositiveInt()),
+		sch.FieldSR("size", sch.StrictPositiveInt()),
 	)),
 	sch.FieldSO("answer", sch.Map(
-		sch.FieldSR("id", sch.AsStrictPositiveInt()),
+		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("decisionDate", dateType),
 		sch.FieldSR("links", sch.Array(sch.Map(
 			sch.FieldSO("defaultLanguageCode", sch.String("EN")),
@@ -160,16 +164,6 @@ var eciType = sch.Map(
 			))),
 		))),
 	)),
-)
-
-var docType = sch.Map(
-	sch.FieldSR("id", sch.AsStrictPositiveInt()).Comment(
-		"URL to get the document:",
-		"https://register.eci.ec.europa.eu/core/api/register/document/{id}",
-	),
-	sch.FieldSR("mimeType", sch.Regexp(`application/[\w.-]+`)),
-	sch.FieldSR("name", sch.NotEmptyString()),
-	sch.FieldSR("size", sch.AsStrictPositiveInt()),
 )
 
 func renderSchema(t *tool.Tool) {
@@ -213,7 +207,8 @@ func renderSchema(t *tool.Tool) {
 						"GET ", render.Na("a.block", "href", indexURL).N(indexURL),
 						"\n\n200 OK\n",
 						"Content-Type: application/json\n\n",
-						indexType.HTML("")),
+						indexType.HTML(""),
+					),
 
 					render.N("h1", "Get details"),
 					render.N("pre.sch",
@@ -222,6 +217,8 @@ func renderSchema(t *tool.Tool) {
 						"\n\n200 OK\n",
 						"Content-Type: application/json\n\n",
 						eciType.HTML(""),
+						docPDFDef,
+						docTypeDef,
 					),
 
 					render.N("h1", "Get logo"),

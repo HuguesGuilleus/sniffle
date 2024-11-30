@@ -9,7 +9,12 @@ import (
 
 type andType []Type
 
-func And(types ...Type) Type { return andType(types) }
+func And(types ...Type) Type {
+	if len(types) <= 1 {
+		panic("sch.And() must pass multiples types")
+	}
+	return andType(types)
+}
 
 func (and andType) Match(v any) error {
 	errs := make(ErrorSlice, 0, len(and))
@@ -52,7 +57,12 @@ func (enum enumString) String() string { return enum.s }
 type orType []Type
 
 // Check the value checks one of the Type.
-func Or(types ...Type) Type { return orType(types) }
+func Or(types ...Type) Type {
+	if len(types) <= 1 {
+		panic("sch.Or() must pass multiples types")
+	}
+	return orType(types)
+}
 
 func (or orType) Match(v any) error {
 	errs := make(ErrorSlice, 0, len(or))

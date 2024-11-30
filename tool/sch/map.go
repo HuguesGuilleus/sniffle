@@ -85,6 +85,14 @@ func (m *mapType) searchKey(field *MapField, keys map[string]bool) (key string, 
 }
 
 func (m *mapType) HTML(indent string) render.Node {
+	if len(m.fields) == 0 {
+		if m.extraFields {
+			return render.N("", "{...}")
+		} else {
+			return render.N("", "{}")
+		}
+	}
+
 	indentAdd := indent + "\t"
 	return render.N("",
 		render.N("", `{`, "\n"),

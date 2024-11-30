@@ -12,6 +12,8 @@ func TestAnd(t *testing.T) {
 	assert.Error(t, and.Match("B"))
 	assert.Error(t, and.Match(1))
 	assert.Equal(t, `<span class=sch-str>&#34;b&#34;</span> & <span class=sch-str>~&#34;b&#34;</span>`, genHTML(and))
+	assert.Panics(t, func() { And() })
+	assert.Panics(t, func() { And(True()) })
 }
 
 func TestOr(t *testing.T) {
@@ -20,6 +22,8 @@ func TestOr(t *testing.T) {
 	assert.NoError(t, or.Match(true))
 	assert.Error(t, or.Match(false))
 	assert.Equal(t, `<span class=sch-str>&#34;a&#34;</span> | <span class=sch-base>true</span>`, genHTML(or))
+	assert.Panics(t, func() { Or() })
+	assert.Panics(t, func() { Or(True()) })
 }
 
 func TestEnumString(t *testing.T) {

@@ -3,6 +3,7 @@ package sch
 import (
 	"errors"
 	"fmt"
+	"mime"
 	"net/mail"
 	"net/url"
 	"regexp"
@@ -39,6 +40,73 @@ func (anyMailType) HTML(_ string) render.Node {
 }
 
 func (anyMailType) String() string { return "mail-address" }
+
+/* MIME */
+
+type mimeType struct {
+	mainType string
+	subType  string
+	params   map[string]string
+}
+
+func MIME(pattern string) TypeStringer {
+	main, sub, params, err := parseMIME(pattern)
+	if err != nil {
+		panic(err.Error())
+	}
+	return mimeType{main, sub, params}
+}
+func parseMIME(s string) (main, sub string, params map[string]string, err error) {
+	mediatype := ""
+	mediatype, params, err = mime.ParseMediaType(s)
+	if err != nil {
+		return
+	}
+	ok := false
+	main, sub, ok = strings.Cut(mediatype, "/")
+	if !ok {
+		return "", "", nil, fmt.Errorf("Wrong media type of %q", s)
+	}
+	return
+}
+
+func (t mimeType) Match(v any) error {
+	s, ok := v.(string)
+	if !ok {
+		return fmt.Errorf(notStringFormat, v)
+	}
+
+	main, sub, params, err := parseMIME(s)
+	if err != nil {
+		return fmt.Errorf("cannot parse mime type of %q: %w", s, err)
+	}
+	if (t.mainType != "*" && t.mainType != main) ||
+		(t.subType != "*" && t.subType != sub) ||
+		notEqualMap(t.params, params) {
+		return fmt.Errorf("not same mime %q: get %q", t.String(), s)
+	}
+
+	return nil
+}
+func notEqualMap(a, b map[string]string) bool {
+	if len(a) != len(b) {
+		return true
+	}
+	for k, v := range a {
+		if v != b[k] {
+			return true
+		}
+	}
+	return false
+}
+
+func (t mimeType) HTML(_ string) render.Node {
+	return render.N(xstringMarkup, "mime(", render.N("u", t.String()), ")")
+}
+
+func (t mimeType) String() string {
+	return mime.FormatMediaType(t.mainType+"/"+t.subType, t.params)
+}
 
 /* REGEXP */
 
