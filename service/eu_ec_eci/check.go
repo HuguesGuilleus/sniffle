@@ -2,8 +2,8 @@ package eu_ec_eci
 
 import (
 	"log/slog"
+	"sniffle/common/country"
 	"sniffle/front/translate"
-	"sniffle/tool/country"
 	"sniffle/tool/language"
 	"sniffle/tool/securehtml"
 )

@@ -3,7 +3,7 @@ package translate
 import (
 	_ "embed"
 	"encoding/json"
-	"sniffle/tool/country"
+	"sniffle/common/country"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 )

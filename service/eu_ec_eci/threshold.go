@@ -1,7 +1,7 @@
 package eu_ec_eci
 
 import (
-	"sniffle/tool/country"
+	"sniffle/common/country"
 	"time"
 )
 

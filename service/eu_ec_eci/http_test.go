@@ -2,8 +2,8 @@ package eu_ec_eci
 
 import (
 	"net/url"
+	"sniffle/common/country"
 	"sniffle/tool"
-	"sniffle/tool/country"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/render"

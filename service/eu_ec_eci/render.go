@@ -4,11 +4,11 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"sniffle/common/country"
 	"sniffle/common/resize0"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
-	"sniffle/tool/country"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 )
