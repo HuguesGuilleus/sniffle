@@ -95,6 +95,8 @@ var Langs = []language.Language{
 var T = [...]Translation{
 	language.English: load(fileEn),
 	language.French:  load(fileFR),
+
+	language.AllEnglish: load(fileEn),
 }
 
 var (

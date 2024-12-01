@@ -167,7 +167,7 @@ var eciType = sch.Map(
 )
 
 func renderSchema(t *tool.Tool) {
-	en := language.English
+	lang := language.AllEnglish
 	title := "European Citizens' Initiative crawling method"
 	description := "Our usage of the https://citizens-initiative.europa.eu/ website to crawl data."
 
@@ -181,11 +181,11 @@ func renderSchema(t *tool.Tool) {
 			render.Na("meta", "name", description).A("content", description),
 		),
 		render.N("body.edito",
-			component.TopHeader(en),
-			component.InDevHeader(en),
+			component.TopHeader(lang),
+			component.InDevHeader(lang),
 			render.N("header",
 				render.N("div.headerSup",
-					idNamespace(en),
+					idNamespace(lang),
 					render.N("div.headerId", "schema"),
 				),
 				render.N("div.headerTitle", title),
@@ -194,7 +194,7 @@ func renderSchema(t *tool.Tool) {
 				component.Toc,
 				render.N("div.wc",
 					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative."),
-					render.N("h1", "Get index page (not used)"),
+					render.N("h1", "Get index range (not used)"),
 					render.N("pre.sch",
 						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/{begin}/{end}").N("https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/{begin}/{end}"),
 
@@ -238,7 +238,7 @@ func renderSchema(t *tool.Tool) {
 					),
 				),
 			),
-			component.Footer(en, component.JsSchema|component.JsToc),
+			component.Footer(lang, component.JsSchema|component.JsToc),
 		),
 	)))
 }

@@ -37,9 +37,11 @@ const (
 	Slovene
 	Finnish
 	Swedish
+	// Use english, but do not print anchor href to english page, but ./index.html for client redirect to his language.
+	AllEnglish
 
 	// The length for a array of language codes.
-	Len = Swedish + 1
+	Len = AllEnglish + 1
 )
 
 // https://en.wikipedia.org/wiki/Languages_of_the_European_Union#Official_EU_languages
@@ -152,6 +154,17 @@ func (l Language) Human() string {
 	return s
 }
 
-// Create path
+// Create path.
 // Example: English.Path("/eu/ec/eci/scheme.") => "/eu/ec/eci/scheme.en.html"
-func (l Language) Path(basePath string) string { return basePath + l.String() + ".html" }
+//
+// If l == [AllEnglish], return without change.
+// Is this case, the nbasePath but end with a '/', else panic.
+func (l Language) Path(basePath string) string {
+	if l == AllEnglish {
+		if !strings.HasSuffix(basePath, "/") {
+			panic(fmt.Sprintf("Language.Path(%q) do not end with a '/'", basePath))
+		}
+		return basePath
+	}
+	return basePath + l.String() + ".html"
+}
