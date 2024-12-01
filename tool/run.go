@@ -13,11 +13,10 @@ type Service struct {
 	Do   func(*Tool)
 }
 
-func Run(config *Config, services []Service) {
+func Run(config *Config, services ...Service) {
 	globalBegin := time.Now()
 
 	htmlFiles := make([]string, 0)
-
 	writeSum := uint64(0)
 
 	for _, service := range services {
