@@ -193,7 +193,7 @@ func renderSchema(t *tool.Tool) {
 			render.N("main.wt.wide",
 				component.Toc,
 				render.N("div.wc",
-					render.N("div.summary", "Usage of public API register.eci.ec.europa.eu to get index and details of European Citizens' Initiative."),
+					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative."),
 					render.N("h1", "Get index page (not used)"),
 					render.N("pre.sch",
 						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/{begin}/{end}").N("https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/{begin}/{end}"),
@@ -219,6 +219,13 @@ func renderSchema(t *tool.Tool) {
 						eciType.HTML(""),
 						docPDFDef,
 						docTypeDef,
+					),
+
+					render.N("h1", "Thresholds data"),
+					render.N("p.noindent",
+						"We manualy extract data from ",
+						render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_en").N("https://citizens-initiative.europa.eu/thresholds_en"),
+						". Last check: ", threshold_lastCheck, ".",
 					),
 
 					render.N("h1", "Get logo"),
