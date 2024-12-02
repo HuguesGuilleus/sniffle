@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"slices"
 	"sniffle/common/country"
-	"sniffle/common/resize0"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
@@ -234,27 +233,9 @@ func (doc *Document) render(l language.Language, name render.H) render.Node {
 }
 
 func renderImage(eci *ECIOut, needBase bool, title string) render.Node {
-	if eci.ImageName == "" {
-		return render.Z
-	}
-
-	base := ""
+	base := "logo"
 	if needBase {
-		base = fmt.Sprintf("%d/%d/", eci.Year, eci.Number)
+		base = fmt.Sprintf("%d/%d/logo", eci.Year, eci.Number)
 	}
-
-	img := render.Na("img.logo", "loading", "lazy").
-		A("title", title).
-		A("src", base+eci.ImageName).
-		A("width", eci.ImageWidth).
-		A("height", eci.ImageHeight).N()
-
-	if eci.ImageResizedName == "" {
-		return img
-	}
-
-	return render.N("picture.logo",
-		render.Na("source", "type", resize0.MIME).A("srcset", base+eci.ImageResizedName).N(),
-		img,
-	)
+	return eci.Image.Render(base, title)
 }

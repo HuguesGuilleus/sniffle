@@ -2,6 +2,7 @@ package eu_ec_eci
 
 import (
 	"net/url"
+	"sniffle/common"
 	"sniffle/common/country"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -362,10 +363,14 @@ func TestFetchDetail(t *testing.T) {
 		ThresholdPass:      [country.Len]bool{country.Finland: true},
 		ThresholdPassTotal: 1,
 
-		ImageName:   "logo.png",
-		ImageWidth:  "3",
-		ImageHeight: "1",
-		ImageData:   image3x1PNG,
+		Image: &common.ResizedImage{
+			Raw: common.Image{
+				Extension: ".png",
+				Width:     "3",
+				Height:    "1",
+				Data:      image3x1PNG,
+			},
+		},
 	}, eci)
 }
 
@@ -375,10 +380,14 @@ func TestFetchImageJPEG(t *testing.T) {
 	eci.fetchImage(to, 8847)
 	assert.True(t, wf.NoCalled())
 	assert.Equal(t, &ECIOut{
-		ImageName:   "logo.jpg",
-		ImageWidth:  "3",
-		ImageHeight: "1",
-		ImageData:   image3x1JPG,
+		Image: &common.ResizedImage{
+			Raw: common.Image{
+				Extension: ".jpg",
+				Width:     "3",
+				Height:    "1",
+				Data:      image3x1JPG,
+			},
+		},
 	}, eci)
 }
 

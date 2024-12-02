@@ -1,18 +1,16 @@
 package eu_ec_eci
 
 import (
-	"bytes"
 	"cmp"
 	"fmt"
-	"image"
 	_ "image/jpeg"
 	_ "image/png"
 	"maps"
 	"mime"
 	"net/url"
 	"slices"
+	"sniffle/common"
 	"sniffle/common/country"
-	"sniffle/common/resize0"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -60,15 +58,7 @@ type ECIOut struct {
 	ThresholdPass         [country.Len]bool
 	ThresholdPassTotal    uint
 
-	ImageName   string
-	ImageWidth  string
-	ImageHeight string
-	ImageData   []byte
-
-	ImageResizedName   string
-	ImageResizedWidth  string
-	ImageResizedHeight string
-	ImageResizedData   []byte
+	Image *common.ResizedImage
 }
 type Description struct {
 	Title       string
@@ -347,39 +337,7 @@ func (eci *ECIOut) fetchImage(t *tool.Tool, logoID int) {
 	if logoID == 0 {
 		return
 	}
-
-	u := fmt.Sprintf(logoURL, logoID)
-	data := tool.FetchAll(t, fetch.R("", u, nil))
-	if len(data) == 0 {
-		return
-	}
-
-	config, format, err := image.DecodeConfig(bytes.NewReader(data))
-	if err != nil || config.Width == 0 || config.Height == 0 {
-		return
-	}
-
-	switch format {
-	case "png":
-		eci.ImageName = "logo.png"
-	case "jpeg":
-		eci.ImageName = "logo.jpg"
-	default:
-		t.Warn("fetchImage", "err", "unknown format", "format", format, "logoID", logoID)
-		return
-	}
-
-	eci.ImageWidth = strconv.Itoa(config.Width)
-	eci.ImageHeight = strconv.Itoa(config.Height)
-	eci.ImageData = data
-
-	if resized := t.LongTask(resize0.Name, u, data); len(resized) != 0 {
-		eci.ImageResizedName = "logo" + resize0.Extension
-		eci.ImageResizedData = resized
-		width, height := resize0.NewDimension(config.Width, config.Height)
-		eci.ImageResizedWidth = strconv.Itoa(width)
-		eci.ImageResizedHeight = strconv.Itoa(height)
-	}
+	eci.Image = common.FetchImage(t, fetch.URL(fmt.Sprintf(logoURL, logoID)))
 }
 
 func (eci *ECIOut) countryByName(lang language.Language) []country.Country {

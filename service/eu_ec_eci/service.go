@@ -22,11 +22,11 @@ func Do(t *tool.Tool) {
 		for _, l := range t.Languages {
 			renderOne(t, eci, l)
 		}
-		if eci.ImageName != "" {
-			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s", eci.Year, eci.Number, eci.ImageName), eci.ImageData)
-		}
-		if eci.ImageResizedName != "" {
-			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s", eci.Year, eci.Number, eci.ImageResizedName), eci.ImageResizedData)
+		if img := eci.Image; img != nil {
+			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/logo%s", eci.Year, eci.Number, img.Raw.Extension), img.Raw.Data)
+			if res := img.Resized; res != nil {
+				t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/logo%s", eci.Year, eci.Number, res.Extension), res.Data)
+			}
 		}
 	}
 
