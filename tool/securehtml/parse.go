@@ -156,6 +156,8 @@ func (buff *buffer) walk(node *html.Node) {
 	} else if node.Type == html.ElementNode {
 		if node.Namespace != "" {
 			return
+		} else if first := node.FirstChild; first != nil && node.LastChild == first && first.DataAtom == atom.Br {
+			return
 		}
 		// Inspired from: https://docs.joinmastodon.org/spec/activitypub/#sanitization
 		switch node.DataAtom {

@@ -79,6 +79,10 @@ p {
 	overflow-wrap: break-word;
 }
 
+li {
+	text-indent: 0;
+}
+
 p.noindent {
 	text-indent: 0;
 }
