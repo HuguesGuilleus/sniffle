@@ -60,6 +60,7 @@ type Translation struct {
 			H1Description              render.H
 			H1DescriptionAnnex         render.H
 			AnnexDocument              render.H
+			DraftLegal                 render.H
 			H1Treaty                   render.H
 			H1Timeline                 render.H
 			Registration               render.H

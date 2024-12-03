@@ -115,6 +115,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.If(desc.AnnexDoc != nil, func() render.Node {
 					return desc.AnnexDoc.render(l, ONE.AnnexDocument)
 				}),
+				render.If(desc.DraftLegal != nil, func() render.Node {
+					return desc.DraftLegal.render(l, ONE.DraftLegal)
+				}),
 				render.If(desc.Treaty != "", func() render.Node {
 					return render.N("",
 						render.N("h2", ONE.H1Treaty),

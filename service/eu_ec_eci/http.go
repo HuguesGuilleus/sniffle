@@ -68,6 +68,7 @@ type Description struct {
 	FollowUp    *url.URL
 	Objective   render.H
 	AnnexDoc    *Document
+	DraftLegal  *Document
 	Annex       render.H
 	Treaty      render.H
 }
@@ -166,6 +167,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	// Description
 	registrationDoc := new([language.Len]*Document)
 	defaultAnnexDoc := (*Document)(nil)
+	defaultDraftLegal := (*Document)(nil)
 	for _, desc := range dto.Description {
 		if desc.SupportLink == desc.Website {
 			desc.SupportLink = ""
@@ -175,6 +177,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			supportLink = nil
 		}
 		annexDoc := desc.AnnexDoc.Document(desc.Language)
+		draftLegal := desc.DraftLegal.Document(desc.Language)
 		eci.Description[desc.Language] = &Description{
 			Title:       desc.Title,
 			PlainDesc:   securehtml.Text(desc.Objective, 200),
@@ -182,12 +185,14 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			Website:     securehtml.ParseURL(desc.Website),
 			Objective:   securehtml.Secure(desc.Objective),
 			AnnexDoc:    annexDoc,
+			DraftLegal:  draftLegal,
 			Annex:       securehtml.Secure(desc.Annex),
 			Treaty:      securehtml.TextWithURL(desc.Treaty),
 		}
 		if desc.Original {
 			eci.DescriptionOriginalLangage = desc.Language
 			defaultAnnexDoc = annexDoc
+			defaultDraftLegal = draftLegal
 		}
 		if u := securehtml.ParseURL(desc.Register.Url); u != nil {
 			registrationDoc[desc.Language] = &Document{URL: u}
@@ -198,6 +203,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	for _, desc := range eci.Description {
 		if desc.AnnexDoc == nil {
 			desc.AnnexDoc = defaultAnnexDoc
+			desc.DraftLegal = defaultDraftLegal
 		}
 	}
 

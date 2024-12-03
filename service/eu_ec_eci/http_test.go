@@ -94,6 +94,12 @@ var fetcher = map[string]*fetch.TestResponse{
 					"name": "Fur Free Europe- additional info.pdf",
 					"mimeType": "application/pdf",
 					"size": 144933
+				},
+				"draftLegal": {
+					"id": 8936,
+					"name": "DRAFT LEGAL ACT.pdf",
+					"mimeType": "application/pdf",
+					"size": 47930
 				}
 			},
 			{
@@ -264,6 +270,13 @@ func TestFetchDetail(t *testing.T) {
 					Size:     144933,
 					MimeType: "application/pdf",
 				},
+				DraftLegal: &Document{
+					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8936"),
+					Language: language.English,
+					Name:     "DRAFT LEGAL ACT.pdf",
+					Size:     47930,
+					MimeType: "application/pdf",
+				},
 				Annex:  "<ul><li>arg 1: BECAUSE!!!</li><li>arg 2 ...</li></ul>",
 				Treaty: "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
 			},
@@ -277,6 +290,13 @@ func TestFetchDetail(t *testing.T) {
 					Language: language.English,
 					Name:     "Fur Free Europe- additional info.pdf",
 					Size:     144933,
+					MimeType: "application/pdf",
+				},
+				DraftLegal: &Document{
+					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8936"),
+					Language: language.English,
+					Name:     "DRAFT LEGAL ACT.pdf",
+					Size:     47930,
 					MimeType: "application/pdf",
 				},
 				Annex:  "<ul><li>arg 1: PARCE QUE!!!</li><li>arg 2 ...</li></ul>",

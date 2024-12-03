@@ -21,6 +21,7 @@ type detailDTO struct {
 		Website     string
 		Objective   string  `json:"objectives"`
 		AnnexDoc    *docDTO `json:"additionalDocument"`
+		DraftLegal  *docDTO `json:"draftLegal"`
 		Annex       string  `json:"annexText"`
 		Treaty      string  `json:"treaties"`
 		Register    struct {
