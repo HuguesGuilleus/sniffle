@@ -20,7 +20,7 @@ var docType, docTypeDef = sch.Def("Document", sch.Map(
 		"URL to get the document:",
 		"https://register.eci.ec.europa.eu/core/api/register/document/{id}",
 	),
-	sch.FieldSR("mimeType", sch.MIME(`application/*`)),
+	sch.FieldSR("mimeType", sch.MIME(`*/*`)),
 	sch.FieldSR("name", sch.NotEmptyString()),
 	sch.FieldSR("size", sch.StrictPositiveInt()),
 ))
@@ -28,6 +28,22 @@ var docType, docTypeDef = sch.Def("Document", sch.Map(
 var docPDF, docPDFDef = sch.Def("DocumentPDF", sch.And(
 	docType,
 	sch.MapExtra(sch.FieldSR("mimeType", sch.MIME("application/pdf"))),
+))
+
+var docPDFOrMSWord, docPDFOrMSWordDef = sch.Def("DocumentPDFOrMSWord", sch.And(
+	docType,
+	sch.MapExtra(sch.FieldSR("mimeType", sch.Or(
+		sch.MIME("application/pdf"),
+		sch.MIME("application/msword"),
+		sch.MIME("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+	))),
+))
+
+var docImage, docImageDef = sch.Def("DocumentImage", sch.And(
+	docType,
+	sch.MapExtra(
+		sch.FieldSR("mimeType", sch.EnumString("image/png", "image/jpeg")),
+	),
 ))
 
 var statusType = sch.EnumString("ANSWERED", "CLOSED", "COLLECTION_START_DATE", "INSUFFICIENT_SUPPORT", "ONGOING", "REGISTERED", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN")
@@ -48,12 +64,7 @@ var indexType = sch.Map(
 		sch.FieldSR("languageCode", sch.String("EN")),
 		sch.FieldSR("lastCall", sch.AnyBool()),
 		sch.FieldSR("latestUpdateDate", timeType),
-		sch.FieldSO("logo", sch.Map(
-			sch.FieldSR("id", sch.StrictPositiveInt()),
-			sch.FieldSR("name", sch.NotEmptyString()),
-			sch.FieldSR("mimeType", sch.EnumString("image/png", "image/jpeg")),
-			sch.FieldSR("size", sch.StrictPositiveInt()),
-		)),
+		sch.FieldSO("logo", docImage),
 		sch.FieldSR("status", statusType),
 		sch.FieldSO("supportLink", sch.AnyURL()),
 		sch.FieldSR("title", sch.NotEmptyString()),
@@ -91,8 +102,8 @@ var eciType = sch.Map(
 				sch.FieldSR("url", sch.URL("http://eur-lex.europa.eu/legal-content/**?uri=*&from=*")),
 			),
 		)),
-		sch.FieldSO("additionalDocument", docType),
-		sch.FieldSO("draftLegal", docType),
+		sch.FieldSO("additionalDocument", docPDFOrMSWord),
+		sch.FieldSO("draftLegal", docPDFOrMSWord),
 	))),
 	sch.FieldSO("categories", sch.ArrayMin(1, sch.Map(
 		sch.FieldSR("categoryType", sch.EnumString("AGRI", "CULT", "DECO", "DEVCO", "EDU", "EMPL", "ENER", "ENV", "EURO", "JUST", "MARE", "MIGR", "REGIO", "RSH", "SANTE", "SEC", "TRA", "TRADE")),
@@ -145,12 +156,7 @@ var eciType = sch.Map(
 		))),
 		sch.FieldSO("footnoteType", sch.String("AFTER_SUBMISSION_CERTIFICATES")),
 	), false),
-	sch.FieldSO("logo", sch.Map(
-		sch.FieldSR("id", sch.StrictPositiveInt()),
-		sch.FieldSR("name", sch.NotEmptyString()),
-		sch.FieldSR("mimeType", sch.EnumString("image/png", "image/jpeg")),
-		sch.FieldSR("size", sch.StrictPositiveInt()),
-	)),
+	sch.FieldSO("logo", docImage),
 	sch.FieldSO("answer", sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("decisionDate", dateType),
@@ -217,7 +223,9 @@ func renderSchema(t *tool.Tool) {
 						"\n\n200 OK\n",
 						"Content-Type: application/json\n\n",
 						eciType.HTML(""),
+						docImageDef,
 						docPDFDef,
+						docPDFOrMSWordDef,
 						docTypeDef,
 					),
 
