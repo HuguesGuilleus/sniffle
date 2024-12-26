@@ -59,6 +59,11 @@ type ECIOut struct {
 	ThresholdPassTotal    uint
 
 	Image *common.ResizedImage
+
+	FundingTotal    float64
+	FundingUpdate   time.Time
+	FundingDocument *Document
+	Sponsor         []Sponsor
 }
 type Description struct {
 	Title       string
@@ -89,6 +94,11 @@ type Document struct {
 	Name     string
 	Size     int
 	MimeType string
+}
+type Sponsor struct {
+	Name   string
+	Amount float64
+	Date   time.Time
 }
 
 type indexItem struct {
@@ -335,6 +345,25 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 
 	// Set image
 	eci.fetchImage(t, info.logoID)
+
+	// Set funding
+	if fund := dto.Funding; !fund.LastUpdate.Time.IsZero() {
+		eci.FundingUpdate = fund.LastUpdate.Time
+		eci.FundingTotal = fund.TotalAmount
+		eci.FundingDocument = fund.Document.Document(language.English)
+		eci.Sponsor = make([]Sponsor, len(fund.Sponsors))
+		for i, s := range fund.Sponsors {
+			name := s.Name
+			if s.PrivateSponsor {
+				name = ""
+			}
+			eci.Sponsor[i] = Sponsor{
+				Name:   name,
+				Amount: s.Amount,
+				Date:   s.Date.Time,
+			}
+		}
+	}
 
 	return eci
 }

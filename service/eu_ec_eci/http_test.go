@@ -142,6 +142,32 @@ var fetcher = map[string]*fetch.TestResponse{
 				"date": "18/05/2022"
 			}
 		],
+		"funding": {
+			"lastUpdate": "15/05/2023",
+			"sponsors": [
+				{
+					"name": "Campaigns and Activism for Animals in the Industry",
+					"date": "01/03/2023",
+					"amount": 11986,
+					"privateSponsor": false,
+					"anonymized": false
+				},
+				{
+					"name": "[ANONYMIZED]",
+					"date": "19/08/2024",
+					"amount": 881.1,
+					"privateSponsor": true,
+					"anonymized": true
+				}
+			],
+			"document": {
+				"id": 9122,
+				"name": "2023_03_01_ffe_financial reporting.pdf",
+				"mimeType": "application/pdf",
+				"size": 500553
+			},
+			"totalAmount": 12867.1
+		},
 		"sosReport": {
 			"updateDate": "24/07/2024",
 			"entry": [
@@ -389,6 +415,28 @@ func TestFetchDetail(t *testing.T) {
 				Width:     "3",
 				Height:    "1",
 				Data:      image3x1PNG,
+			},
+		},
+
+		FundingUpdate: time.Date(2023, time.May, 15, 0, 0, 0, 0, render.DateZone),
+		FundingTotal:  12867.1,
+		FundingDocument: &Document{
+			URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/9122"),
+			Language: language.English,
+			Name:     "2023_03_01_ffe_financial reporting.pdf",
+			Size:     500553,
+			MimeType: "application/pdf",
+		},
+		Sponsor: []Sponsor{
+			{
+				Name:   "Campaigns and Activism for Animals in the Industry",
+				Amount: 11986,
+				Date:   time.Date(2023, time.March, 1, 0, 0, 0, 0, render.DateZone),
+			},
+			{
+				Name:   "",
+				Amount: 881.1,
+				Date:   time.Date(2024, time.August, 19, 0, 0, 0, 0, render.DateZone),
 			},
 		},
 	}, eci)

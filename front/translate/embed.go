@@ -81,6 +81,19 @@ type Translation struct {
 				Response     render.H
 				PressRelease render.H
 			}
+
+			Funding struct {
+				Name               render.H
+				Total              render.H
+				Sponsor            render.H
+				Amount             render.H
+				Date               render.H
+				PrivateSponsor     render.H
+				PrivateSponsorHelp string
+				CaptionDate        render.H
+				CaptionAmount      render.H
+				Document           render.H
+			}
 		}
 		Status        map[string]render.H
 		Categorie     map[string]render.H

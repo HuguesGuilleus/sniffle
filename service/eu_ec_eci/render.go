@@ -112,12 +112,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.N("div.text", desc.Objective),
 				render.IfS(desc.Annex != "" || desc.AnnexDoc != nil, render.N("h2", ONE.H1DescriptionAnnex)),
 				render.IfS(desc.Annex != "", render.N("div.text", desc.Annex)),
-				render.If(desc.AnnexDoc != nil, func() render.Node {
-					return desc.AnnexDoc.render(l, ONE.AnnexDocument)
-				}),
-				render.If(desc.DraftLegal != nil, func() render.Node {
-					return desc.DraftLegal.render(l, ONE.DraftLegal)
-				}),
+				desc.AnnexDoc.render(l, ONE.AnnexDocument),
+				desc.DraftLegal.render(l, ONE.DraftLegal),
 				render.If(desc.Treaty != "", func() render.Node {
 					return render.N("",
 						render.N("h2", ONE.H1Treaty),
@@ -202,6 +198,49 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						),
 					)
 				}),
+
+				// Members
+				render.N("div.working", render.N("h1", "$Members ...")),
+
+				// Funding
+				render.If(!eci.FundingUpdate.IsZero(), func() render.Node {
+					return render.N("",
+						render.N("h1", ONE.Funding.Name),
+						render.N("div.marginBottom", ONE.LastUpdate, eci.FundingUpdate),
+						render.N("div.bigInfo",
+							render.N("div.bifInfoMeta", ONE.Funding.Total),
+							render.N("div.bigInfoMain.bigInfoData", printEuros(eci.FundingTotal)),
+						),
+						render.N("table.right",
+							render.N("tr",
+								render.N("th", ONE.Funding.Sponsor),
+								render.N("th", ONE.Funding.Amount),
+								render.N("th", ONE.Funding.Date),
+							),
+							render.S(eci.Sponsor, "", func(s Sponsor) render.Node {
+								privateSponsor := render.Na("i", "title", ONE.Funding.PrivateSponsorHelp).N(ONE.Funding.PrivateSponsor)
+								return render.N("tr",
+									render.N("td", render.IfElse(s.Name != "", func() render.Node {
+										return render.N("", s.Name)
+									}, func() render.Node { return privateSponsor })),
+									render.N("td", printEuros(s.Amount)),
+									render.N("td", s.Date.In(render.ShortDateZone)),
+								)
+							}),
+							render.N("caption",
+								render.N("div.edito",
+									render.N("div.editoT", ONE.Funding.Date),
+									ONE.Funding.CaptionDate,
+								),
+								render.N("div.edito",
+									render.N("div.editoT", ONE.Funding.Amount),
+									ONE.Funding.CaptionAmount,
+								),
+							),
+						),
+						eci.FundingDocument.render(l, ONE.Funding.Document),
+					)
+				}),
 			)),
 
 			component.Footer(l, component.JsToc),
@@ -220,6 +259,9 @@ func idNamespace(l language.Language) render.Node {
 }
 
 func (doc *Document) render(l language.Language, name render.H) render.Node {
+	if doc == nil {
+		return render.Z
+	}
 	tr := translate.T[l]
 	return render.Na("a.doc", "href", doc.URL.String()).N(
 		render.N("div.docT", name),
@@ -241,4 +283,11 @@ func renderImage(eci *ECIOut, needBase bool, title string) render.Node {
 		base = fmt.Sprintf("%d/%d/logo", eci.Year, eci.Number)
 	}
 	return eci.Image.Render(base, title)
+}
+
+func printEuros(f float64) any {
+	return render.N("",
+		int(f),
+		fmt.Sprintf(".%02d\u202F€", int64(f*100)%100),
+	)
 }

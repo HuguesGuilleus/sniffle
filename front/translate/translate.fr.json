@@ -132,6 +132,19 @@
 				"Annex": "Annexe",
 				"Response": "Réponse",
 				"PressRelease": "Communiqué de presse"
+			},
+
+			"Funding": {
+				"Name": "Financement",
+				"Total": "Somme total",
+				"Sponsor": "donateur·trice",
+				"Amount": "Montant",
+				"Date": "Date",
+				"PrivateSponsor": "Donateur·trice privé·e",
+				"PrivateSponsorHelp": "Le nom du donateur privé n'est pas publié, car celui-ci a choisi de rester anonyme.",
+				"CaptionDate": "Date à laquelle la contribution a été reçue. S'il s'agit d'une contribution en nature, date à laquelle celle-ci a commencé.",
+				"CaptionAmount": "Montant réel du financement octroyé ou valeur estimée de la contribution en nature.",
+				"Document": "Document financier additionnel"
 			}
 		},
 		"Status": {

@@ -11,6 +11,8 @@ qsa(
 	(time) =>
 		time[INNERTEXT] = (/T/.test(time.dateTime)
 			? DateTimeFormat({ timeStyle: "long" })
+			: /_/.test(time[INNERTEXT])
+			? DateTimeFormat({ dateStyle: "short" })
 			: DateTimeFormat({}))
 			.format(new Date(time.dateTime)),
 );

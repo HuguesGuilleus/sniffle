@@ -132,6 +132,19 @@
 				"Annex": "Annex",
 				"Response": "Response",
 				"PressRelease": "Press release"
+			},
+
+			"Funding": {
+				"Name": "Financement",
+				"Total": "Total sum",
+				"Sponsor": "Sponsor",
+				"Amount": "Amount",
+				"Date": "Date",
+				"PrivateSponsor": "Private sponsor",
+				"PrivateSponsorHelp": "Name is not published, as the private sponsor has chosen to remain anonymous.",
+				"CaptionDate": "Date when the contribution was received. In case of in kind contributions, date when the in kind contribution started.",
+				"CaptionAmount": "Actual amount of funding provided or estimated value of in kind contribution.",
+				"Document": "Aditional financial document"
 			}
 		},
 		"Status": {

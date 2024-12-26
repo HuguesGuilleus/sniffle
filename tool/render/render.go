@@ -220,7 +220,7 @@ func renderChild(h []byte, child any) []byte {
 	return h
 }
 func renderUint64(h []byte, u uint64) []byte {
-	if u > 1000 {
+	if u >= 1000 {
 		h = renderUint64(h, u/1000)
 		u %= 1000
 		h = append(h, 0xE2, 0x80, 0xAF,

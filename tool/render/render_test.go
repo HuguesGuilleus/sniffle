@@ -1,6 +1,8 @@
 package render
 
 import (
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -90,12 +92,19 @@ func TestNumber(t *testing.T) {
 	assert.Equal(t, "-23\u202F456\u202F789", string(renderChild(nil, -23_456_789)))
 	assert.Equal(t, "-3\u202F456\u202F789", string(renderChild(nil, -3_456_789)))
 	assert.Equal(t, "-3\u202F056\u202F789", string(renderChild(nil, -3_056_789)))
+	assert.Equal(t, "1\u202F000", string(renderChild(nil, 1_000)))
 	assert.Equal(t, `-789`, string(renderChild(nil, -789)))
 	assert.Equal(t, `-89`, string(renderChild(nil, -89)))
 	assert.Equal(t, `-9`, string(renderChild(nil, -9)))
 	assert.Equal(t, `0`, string(renderChild(nil, 0)))
 	assert.Equal(t, `100`, string(renderChild(nil, 100)))
 	assert.Equal(t, `10`, string(renderChild(nil, 10)))
+
+	for i := range 1_111_111 {
+		assert.Equal(t,
+			strings.ReplaceAll(string(renderUint64(nil, uint64(i))), "\u202F", ""),
+			strconv.Itoa(i), i)
+	}
 }
 
 func TestArray(t *testing.T) {

@@ -41,6 +41,18 @@ type detailDTO struct {
 	Submission struct {
 		Entry []signatureDTO
 	}
+	Funding struct {
+		LastUpdate dtoDate
+		Sponsors   []struct {
+			Amount         float64
+			Date           dtoDate
+			Name           string
+			PrivateSponsor bool
+			Anonymized     bool
+		}
+		TotalAmount float64
+		Document    *docDTO
+	}
 	Answer struct {
 		Links []struct {
 			DefaultLanguageCode language.Language

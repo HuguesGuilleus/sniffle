@@ -36,6 +36,7 @@ table {
 	width: 100%;
 	border: solid _line2 _color2;
 	border-collapse: collapse;
+	caption-side: bottom;
 }
 
 table.right {
@@ -51,6 +52,9 @@ th {
 	padding: 0 _spThin;
 }
 
+caption {
+	margin-top: _sp;
+}
 
 tr:hover {
 	background: _back1;
