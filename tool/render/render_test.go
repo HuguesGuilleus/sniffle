@@ -82,10 +82,10 @@ func TestIntType(t *testing.T) {
 	assert.Equal(t, `-123456789`, string(renderChild(nil, Int(-123_456_789))))
 }
 func TestNumber(t *testing.T) {
-	assert.Equal(t, `-123 456 789`, string(renderChild(nil, -123_456_789)))
-	assert.Equal(t, `-23 456 789`, string(renderChild(nil, -23_456_789)))
-	assert.Equal(t, `-3 456 789`, string(renderChild(nil, -3_456_789)))
-	assert.Equal(t, `-3 056 789`, string(renderChild(nil, -3_056_789)))
+	assert.Equal(t, "-123\u202F456\u202F789", string(renderChild(nil, -123_456_789)))
+	assert.Equal(t, "-23\u202F456\u202F789", string(renderChild(nil, -23_456_789)))
+	assert.Equal(t, "-3\u202F456\u202F789", string(renderChild(nil, -3_456_789)))
+	assert.Equal(t, "-3\u202F056\u202F789", string(renderChild(nil, -3_056_789)))
 	assert.Equal(t, `-789`, string(renderChild(nil, -789)))
 	assert.Equal(t, `-89`, string(renderChild(nil, -89)))
 	assert.Equal(t, `-9`, string(renderChild(nil, -9)))

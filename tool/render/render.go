@@ -220,7 +220,7 @@ func renderUint64(h []byte, u uint64) []byte {
 	if u > 1000 {
 		h = renderUint64(h, u/1000)
 		u %= 1000
-		h = append(h, ' ',
+		h = append(h, 0xE2, 0x80, 0xAF,
 			'0'+byte(u/100),
 			'0'+byte(u/10%10),
 			'0'+byte(u%10),
