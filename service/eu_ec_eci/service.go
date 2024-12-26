@@ -36,6 +36,8 @@ func Do(t *tool.Tool) {
 }
 
 func fetchAll(t *tool.Tool) []*ECIOut {
+	checkThreashold(t)
+
 	items := fetchIndex(t)
 
 	eciSlice := make([]*ECIOut, 0, len(items))
