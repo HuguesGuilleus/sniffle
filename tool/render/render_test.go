@@ -77,6 +77,10 @@ func TestDate(t *testing.T) {
 	assert.Equal(t, `<time datetime=2024-02-14>2024-02-14</time>`,
 		string(renderChild(nil, time.Date(2024, time.February, 14, 0, 0, 0, 0, DateZone))))
 }
+func TestShortDate(t *testing.T) {
+	assert.Equal(t, `<time datetime=2024-02-14>2024_02_14</time>`,
+		string(renderChild(nil, time.Date(2024, time.February, 14, 0, 0, 0, 0, ShortDateZone))))
+}
 
 func TestIntType(t *testing.T) {
 	assert.Equal(t, `-123456789`, string(renderChild(nil, Int(-123_456_789))))

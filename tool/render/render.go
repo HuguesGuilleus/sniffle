@@ -20,6 +20,7 @@ type Int int64
 // A fake time zone to indicate that this thime, is a date.
 // So hour, minute, seconds and milisecond must be ignored.
 var DateZone = time.FixedZone("DATE", 0)
+var ShortDateZone = time.FixedZone("SHORTDATE", 0)
 
 // Attributes, pair of key value.
 // If value is empty, create a empty attribute.
@@ -196,8 +197,10 @@ func renderChild(h []byte, child any) []byte {
 		h = renderUint64(h, uint64(child))
 	case time.Time:
 		h = append(h, `<time datetime=`...)
-		if child.Location() == DateZone {
+		if l := child.Location(); l == DateZone {
 			h = child.AppendFormat(h, `2006-01-02>2006-01-02`)
+		} else if l == ShortDateZone {
+			h = child.AppendFormat(h, `2006-01-02>2006_01_02`)
 		} else {
 			child = child.UTC().Truncate(time.Second)
 			h = child.AppendFormat(h, `2006-01-02T15:04:05Z`)
