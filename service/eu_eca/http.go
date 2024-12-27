@@ -15,10 +15,6 @@ import (
 // (ECADocType= "Annual report" OR ECADocType= "Review" OR ECADocType= "Special Report" OR ECADocType= "Specific Annual Report" OR ECADocType= "opinions and other outputs")
 
 func Do(t *tool.Tool) {
-	if !tool.DevMode {
-		t.Info("skip")
-		return
-	}
 
 	// if tool.DevMode {
 	// 	t.WriteFile("/eu/eca/src-token.json", tool.FetchAll(t,

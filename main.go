@@ -34,7 +34,7 @@ func main() {
 		tool.Service{Name: "home", Do: home.Do},
 
 		tool.Service{Name: "eu_ec_eci", Do: eu_ec_eci.Do},
-		tool.Service{Name: "eu_eca", Do: eu_eca.Do},
+		tool.Service{Name: "//eu_eca", Do: eu_eca.Do},
 	)
 }
 
