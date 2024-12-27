@@ -24,7 +24,7 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 	baseURL := "/eu/ec/eci/"
 
 	t.WriteFile(l.Path(baseURL), render.Merge(render.Na("html", "lang", l.String()).N(
-		component.Head(l, baseURL, tr.EU_EC_ECI.INDEX.Name, tr.EU_EC_ECI.INDEX.PageDescription),
+		component.Head(l, t.HostURL+baseURL, tr.EU_EC_ECI.INDEX.Name, tr.EU_EC_ECI.INDEX.PageDescription),
 		render.N("body",
 			component.TopHeader(l),
 			render.N("header",
@@ -141,7 +141,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date)
 						}
 						return render.N("li.timePoint",
-							render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date,
+							render.N("div.timeHead", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date),
 							child)
 					}),
 				),

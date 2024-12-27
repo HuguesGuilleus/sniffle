@@ -70,6 +70,7 @@ var language2iso = [Len]string{
 	Slovene:    "sl",
 	Spanish:    "es",
 	Swedish:    "sv",
+	AllEnglish: "en",
 }
 
 // Two ascii letter of the ISO language code.

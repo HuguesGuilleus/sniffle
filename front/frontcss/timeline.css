@@ -4,6 +4,10 @@
 	background: linear-gradient(90deg, _back 0 1rem, _colorA 1rem 1.2rem, _back 1.2rem);
 }
 
+.edito .timeLine {
+	background: linear-gradient(90deg, _back 0 1rem, _colorEdito 1rem 1.2rem, _back 1.2rem);
+}
+
 .timePoint {
 	margin-bottom: _sp1;
 	padding: _spThin;
@@ -15,4 +19,8 @@
 
 .timePoint.future {
 	border-style: dotted;
+}
+
+.timeHead {
+	font-weight: bolder;
 }

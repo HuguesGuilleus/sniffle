@@ -84,7 +84,10 @@
 
 	"HOME": {
 		"Name": "Page d'accueil",
-		"PageDescription": "Page d'accueil du site web"
+		"PageDescription": "Page d'accueil du site web",
+		"EU": "Union européenne",
+		"About": "À propos",
+		"Release": "Sortie de version (anglais)"
 	},
 
 	"EU": {

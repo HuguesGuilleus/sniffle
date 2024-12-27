@@ -4,6 +4,11 @@
 	padding: _sp;
 }
 
+.home {
+	max-width: 60rem;
+	font-size: xx-large;
+}
+
 .wt {
 	max-width: 40rem;
 	margin: 0 auto;

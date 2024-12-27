@@ -30,7 +30,7 @@ func Head(l language.Language, baseURL, title, description string) render.Node {
 	return render.N("head",
 		HeadBegin,
 		render.N("title", title),
-		render.Na("meta", "name", description).A("content", description),
+		render.Na("meta", "name", "description").A("content", description),
 		langAlternate(baseURL, l, translate.Langs),
 	)
 }

@@ -84,7 +84,10 @@
 
 	"HOME": {
 		"Name": "Home page",
-		"PageDescription": "Website home page"
+		"PageDescription": "Website home page",
+		"EU": "European union",
+		"About": "About section",
+		"Release": "Website's release"
 	},
 
 	"EU": {
@@ -135,7 +138,7 @@
 			},
 
 			"Funding": {
-				"Name": "Financement",
+				"Name": "Funding",
 				"Total": "Total sum",
 				"Sponsor": "Sponsor",
 				"Amount": "Amount",

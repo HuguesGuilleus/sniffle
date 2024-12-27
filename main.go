@@ -8,6 +8,8 @@ import (
 	"sniffle/service/eu_ec_eci"
 	"sniffle/service/eu_eca"
 	"sniffle/service/home"
+
+	"sniffle/service/release"
 	"sniffle/tool"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
@@ -31,6 +33,7 @@ func main() {
 		tool.Service{Name: "notImplementedPage", Do: notImplementedPage},
 
 		tool.Service{Name: "about", Do: about.Do},
+		tool.Service{Name: "release", Do: release.Do},
 		tool.Service{Name: "home", Do: home.Do},
 
 		tool.Service{Name: "eu_ec_eci", Do: eu_ec_eci.Do},

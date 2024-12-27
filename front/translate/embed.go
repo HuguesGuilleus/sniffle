@@ -33,6 +33,9 @@ type Translation struct {
 	HOME struct {
 		Name            string `help:"Full Home text link"`
 		PageDescription string `help:"Website home page head description"`
+		EU              string `help:"European union section"`
+		About           string `help:"About section"`
+		Release         string `help:"Version release (in english)"`
 	} `help:"website home page"`
 
 	EU struct {
