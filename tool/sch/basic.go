@@ -446,4 +446,4 @@ func (id printlnType) Match(v any) error {
 	return nil
 }
 
-func (id printlnType) HTML(_ string) render.Node { return render.N(baseMarkup, "[log:", id, "]") }
+func (id printlnType) HTML(_ string) render.Node { return render.N(baseMarkup, "[print:", id, "]") }

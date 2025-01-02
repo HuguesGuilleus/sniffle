@@ -13,6 +13,11 @@ div.edito {
 	background: _colorEdito;
 }
 
-.tag {
+.edito .tag {
 	background: _colorEdito;
+}
+
+.edito hr {
+	border: none;
+	border-top: dashed _line2 _colorEdito;
 }

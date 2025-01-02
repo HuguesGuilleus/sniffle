@@ -217,7 +217,7 @@ func TestAsStringInt(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	p := Print("test")
-	assert.Equal(t, `<span class=sch-base>[log:test]</span>`, genHTML(p))
+	assert.Equal(t, `<span class=sch-base>[print:test]</span>`, genHTML(p))
 
 	defer func(stdout *os.File) { os.Stdout = stdout }(os.Stdout)
 	r, w, err := os.Pipe()
