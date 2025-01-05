@@ -25,6 +25,35 @@ type Meta struct {
 }
 
 func SaveHTTP(request *Request, response *Response, now time.Time, w io.Writer) error {
+	defer response.Body.Close()
+
+	buff := bytes.Buffer{}
+	buff.WriteString("HTTP\x00\x00\x00\x00")
+	json.NewEncoder(&buff).Encode(&Meta{
+		Time: now.UTC(),
+
+		Method:        request.Method,
+		RawURL:        request.URL.String(),
+		RequestHeader: request.Header,
+		RequestBody:   request.Body,
+
+		Status:         response.Status,
+		ResponseHeader: response.Header,
+	})
+	buff.WriteString("\n\n")
+	binary.BigEndian.PutUint32(buff.Bytes()[4:8], uint32(buff.Len()-8))
+
+	if _, err := w.Write(buff.Bytes()); err != nil {
+		return err
+	}
+	if _, err := io.Copy(w, response.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SaveHTTP0(request *Request, response *Response, now time.Time, w io.Writer) error {
 	j, _ := json.Marshal(&Meta{
 		Time: now.UTC(),
 
@@ -57,29 +86,12 @@ func SaveHTTP(request *Request, response *Response, now time.Time, w io.Writer) 
 }
 
 func ReadResponse(r io.ReadCloser) (*Response, error) {
-	needClose := true
-	defer func() {
-		if needClose {
-			r.Close()
-		}
-	}()
-
-	head := [8]byte{}
-	if _, err := r.Read(head[:]); err != nil {
-		return nil, err
-	} else if !bytes.Equal(head[0:4], []byte{'H', 'T', 'T', 'P'}) {
-		return nil, fmt.Errorf("wrong head: %q", head[0:4])
-	}
-
-	j := make([]byte, binary.BigEndian.Uint32(head[4:8]))
-	meta := Meta{}
-	if _, err := r.Read(j); err != nil {
-		return nil, err
-	} else if err := json.Unmarshal(j, &meta); err != nil {
+	meta, err := readMeta(r)
+	if err != nil {
+		r.Close()
 		return nil, err
 	}
 
-	needClose = false
 	return &Response{
 		Status: meta.Status,
 		Header: meta.ResponseHeader,
@@ -90,7 +102,10 @@ func ReadResponse(r io.ReadCloser) (*Response, error) {
 // Read meta data and close the reader.
 func ReadMeta(r io.ReadCloser) (*Meta, error) {
 	defer r.Close()
+	return readMeta(r)
+}
 
+func readMeta(r io.ReadCloser) (*Meta, error) {
 	head := [8]byte{}
 	if _, err := r.Read(head[:]); err != nil {
 		return nil, err
