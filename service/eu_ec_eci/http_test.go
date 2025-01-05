@@ -119,6 +119,34 @@ var fetcher = map[string]*fetch.TestResponse{
 				}
 			}
 		],
+		"members": [
+				{
+					"type": "LEGAL_ENTITY",
+					"fullName": "Zavod za zaščito in napredek reproduktivnih pravic My Voice, My Choice ",
+					"email": "https://www.myvoice-mychoice.org",
+					"residenceCountry": "si",
+					"privacyApplied": false
+				},
+				{
+					"type": "REPRESENTATIVE",
+					"fullName": "Remo NANNETTI",
+					"email": "",
+					"residenceCountry": "it",
+					"privacyApplied": false,
+					"replacedMember": [
+						{
+							"type": "REPRESENTATIVE",
+							"fullName": "Gabriele BONCI",
+							"email": "stopcrueltystopslaughter@gmail.com",
+							"residenceCountry": "it",
+							"privacyApplied": false,
+							"startingDate": "24/07/2024",
+							"endDate": "03/09/2024"
+						}
+					],
+					"startingDate": "03/09/2024"
+				}
+		],
 		"categories": [
 			{ "categoryType": "SANTE" },
 			{ "categoryType": "TRADE" },
@@ -265,6 +293,7 @@ func TestFetchDetail(t *testing.T) {
 		logoID: 8846,
 	})
 	assert.True(t, wf.NoCalled())
+
 	assert.Equal(t, &ECIOut{
 		Year:       2024,
 		Number:     9,
@@ -418,6 +447,31 @@ func TestFetchDetail(t *testing.T) {
 			},
 		},
 
+		// Members
+		Members: []Member{
+			{
+				Type:             "LEGAL_ENTITY",
+				FullName:         "Zavod za zaščito in napredek reproduktivnih pravic My Voice, My Choice",
+				URL:              "https://www.myvoice-mychoice.org",
+				ResidenceCountry: country.Slovenia,
+			},
+			{
+				Type:             "REPRESENTATIVE",
+				FullName:         "Remo NANNETTI",
+				ResidenceCountry: country.Italy,
+				Start:            newDate(2024, time.September, 3),
+				Replaced: &Member{
+					Type:             "REPRESENTATIVE",
+					FullName:         "Gabriele BONCI",
+					URL:              "mailto:stopcrueltystopslaughter@gmail.com",
+					ResidenceCountry: country.Italy,
+					Start:            newDate(2024, time.July, 24),
+					End:              newDate(2024, time.September, 3),
+				},
+			},
+		},
+
+		// Funding
 		FundingUpdate: time.Date(2023, time.May, 15, 0, 0, 0, 0, render.DateZone),
 		FundingTotal:  12867.1,
 		FundingDocument: &Document{

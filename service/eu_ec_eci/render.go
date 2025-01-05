@@ -200,7 +200,10 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				}),
 
 				// Members
-				render.N("div.working", render.N("h1", "$Members ...")),
+				render.N("h1.working", "$Members"),
+				render.S(eci.Members, "", func(m Member) render.Node {
+					return component.Json(m)
+				}),
 
 				// Funding
 				render.If(!eci.FundingUpdate.IsZero(), func() render.Node {

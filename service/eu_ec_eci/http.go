@@ -16,8 +16,10 @@ import (
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
+	"sniffle/tool/sch"
 	"sniffle/tool/securehtml"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -64,6 +66,8 @@ type ECIOut struct {
 	FundingUpdate   time.Time
 	FundingDocument *Document
 	Sponsor         []Sponsor
+
+	Members []Member
 }
 type Description struct {
 	Title       string
@@ -94,6 +98,24 @@ type Document struct {
 	Name     string
 	Size     int
 	MimeType string
+}
+type Member struct {
+	// "MEMBER" | "SUBSTITUTE" | "REPRESENTATIVE" | "OTHER" | "DPO" | "LEGAL_ENTITY"
+	Type string
+
+	FullName string
+
+	// Nothing, HTTP.S or mailto:...
+	URL string
+
+	// Maybe zero.
+	Start time.Time
+	End   time.Time
+
+	ResidenceCountry country.Country
+
+	// Only one dept level.
+	Replaced *Member
 }
 type Sponsor struct {
 	Name   string
@@ -346,6 +368,31 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	// Set image
 	eci.fetchImage(t, info.logoID)
 
+	// set Members
+	eci.Members = make([]Member, len(dto.Members))
+	for i, entry := range dto.Members {
+		replacedMember := (*Member)(nil)
+		if len(entry.ReplacedMember) == 1 {
+			r := entry.ReplacedMember[0]
+			replacedMember = &Member{
+				FullName:         strings.TrimSpace(r.FullName),
+				Type:             r.Type,
+				URL:              memberURL(r.URL),
+				ResidenceCountry: r.ResidenceCountry,
+				Start:            r.Start.Time,
+				End:              r.End.Time,
+			}
+		}
+		eci.Members[i] = Member{
+			FullName:         strings.TrimSpace(entry.FullName),
+			Type:             entry.Type,
+			URL:              memberURL(entry.URL),
+			ResidenceCountry: entry.ResidenceCountry,
+			Start:            entry.Start.Time,
+			Replaced:         replacedMember,
+		}
+	}
+
 	// Set funding
 	if fund := dto.Funding; !fund.LastUpdate.Time.IsZero() {
 		eci.FundingUpdate = fund.LastUpdate.Time
@@ -380,6 +427,16 @@ func (eci *ECIOut) countryByName(lang language.Language) []country.Country {
 	return slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
 		return cmp.Compare(name[a], name[b])
 	})
+}
+
+func memberURL(s string) string {
+	if s != "" && sch.AnyMail().Match(s) == nil {
+		return "mailto:" + s
+	}
+	if u := securehtml.ParseURL(s); u != nil {
+		return u.String()
+	}
+	return ""
 }
 
 type dtoDate struct {

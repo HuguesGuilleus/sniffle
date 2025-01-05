@@ -29,6 +29,21 @@ type detailDTO struct {
 			Document *docDTO
 		} `json:"commissionDecision"`
 	} `json:"linguisticVersions"`
+	Members []struct {
+		FullName         string
+		Type             string
+		URL              string `json:"email"`
+		ResidenceCountry country.Country
+		Start            dtoDate `json:"startingDate"`
+		ReplacedMember   []struct {
+			FullName         string          `json:"fullName"`
+			Type             string          `json:"type"`
+			URL              string          `json:"email"`
+			ResidenceCountry country.Country `json:"residenceCountry"`
+			Start            dtoDate         `json:"startingDate"`
+			End              dtoDate         `json:"endDate"`
+		}
+	}
 	Progress []struct {
 		Status string `json:"Name"`
 		Note   string `json:"footnoteType"`
