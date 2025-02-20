@@ -142,6 +142,7 @@ var eciType = sch.Map(
 				sch.FieldSR("name", sch.NotEmptyString()),
 				sch.FieldSR("privateSponsor", sch.AnyBool()),
 				sch.FieldSR("anonymized", sch.AnyBool()),
+				sch.FieldSO("otherSupport", sch.String("Research and Network")).Comment("Found only in ECI 2025/1"),
 			))),
 			sch.FieldSR("totalAmount", sch.PositiveFloat()),
 			sch.FieldSO("document", docPDF),
@@ -220,7 +221,7 @@ var detailedMember, detailedMemberDef = sch.Def("DetailedMember", sch.Or(
 		sch.FieldSR("type", sch.EnumString("LEGAL_ENTITY")),
 		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSR("privacyApplied", sch.False()),
-		sch.FieldSR("email", sch.AnyURL()),
+		sch.FieldSO("email", sch.AnyURL()),
 		sch.FieldSR("residenceCountry", countriesLower),
 	),
 	sch.Map(
@@ -268,7 +269,7 @@ func renderSchema(t *tool.Tool) {
 			render.N("main.wt.wide",
 				component.Toc,
 				render.N("div.wc",
-					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative."),
+					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative. It is full empiric, and official team can do some API change."),
 
 					render.N("h1", "Common types"),
 					render.N("h2", "Enumerations types"),
