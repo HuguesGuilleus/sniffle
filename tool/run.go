@@ -3,6 +3,7 @@ package tool
 import (
 	"context"
 	"log/slog"
+	"sniffle/tool/toollog"
 	"strings"
 	"time"
 )
@@ -10,13 +11,17 @@ import (
 const NoticeLevel = slog.LevelInfo + 2
 
 type Service struct {
-	// If name begin by "//" and we are not in DevMode, kip it.
+	// If name begin by "//" and we are not in DevMode, skip it.
 	Name string
 	Do   func(*Tool)
 }
 
 func Run(config *Config, services ...Service) {
 	globalBegin := time.Now()
+
+	defer func(oldLogger *slog.Logger) { config.Logger = oldLogger }(config.Logger)
+	counterLogHandler := toollog.FailCounterHandler{}
+	config.Logger = toollog.Slice(config.Logger.Handler(), &counterLogHandler)
 
 	htmlFiles := make([]string, 0)
 	writeSum := uint64(0)
@@ -39,9 +44,10 @@ func Run(config *Config, services ...Service) {
 		writeSum += t.writeSum
 	}
 
-	to := New(config)
-	to.writeSitemap(htmlFiles)
-	writeSum += to.writeSum
+	end := New(config)
+	end.writeSitemap(htmlFiles)
+	end.WriteFile("/log", counterLogHandler.Bytes())
+	writeSum += end.writeSum
 
 	config.Logger.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(globalBegin), "writeSum", writeSum)
 }

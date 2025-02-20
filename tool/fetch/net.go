@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 )
@@ -24,6 +25,10 @@ func Net(roundTripper http.RoundTripper, cacheBase string, delay map[string]time
 	}
 	limit := make(chan struct{}, 1)
 	limit <- struct{}{}
+	if delay == nil {
+		delay = make(map[string]time.Duration, 1)
+	}
+	delay[""] = max(delay[""], 0)
 	return &netFetcher{
 		roundTripper:  roundTripper,
 		cacheBase:     filepath.Clean(cacheBase),
@@ -80,14 +85,15 @@ func (fetcher *netFetcher) wait(host string) func() {
 	fetcher.delayMutex.Lock()
 	previousChannel := fetcher.delayChannels[host]
 	fetcher.delayChannels[host] = newChannel
-	delay, ok := fetcher.delayDuration[host]
-	if !ok {
-		delay = fetcher.delayDuration[""]
-	}
 	fetcher.delayMutex.Unlock()
 
 	if previousChannel != nil {
 		<-previousChannel
+	}
+
+	delay, ok := time.Duration(0), false
+	for h := host; !ok; _, h, _ = strings.Cut(h, ".") {
+		delay, ok = fetcher.delayDuration[h]
 	}
 
 	return func() {

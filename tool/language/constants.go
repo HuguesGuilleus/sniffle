@@ -159,7 +159,7 @@ func (l Language) Human() string {
 // Example: English.Path("/eu/ec/eci/scheme.") => "/eu/ec/eci/scheme.en.html"
 //
 // If l == [AllEnglish], return without change.
-// Is this case, the nbasePath but end with a '/', else panic.
+// Is this case, the basePath must ends with a '/', else panic.
 func (l Language) Path(basePath string) string {
 	if l == AllEnglish {
 		if !strings.HasSuffix(basePath, "/") {
