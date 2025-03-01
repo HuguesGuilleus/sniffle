@@ -37,7 +37,11 @@ func Do(t *tool.Tool) {
 	// ))
 	// token := v.D.GetContextWebInformation.FormDigestValue
 
-	fetchReports(t, language.French)
+	t.LangRedirect("/eu/eca/annual-report/index.html")
+	reports := fetchReports(t, language.French)
+	for _, l := range t.Languages {
+		renderReportIndex(t, l, reports)
+	}
 }
 
 type Report struct {
@@ -80,7 +84,7 @@ func fetchReports(t *tool.Tool, lang language.Language) []Report {
 			Title:       dto.Title,
 			Description: securehtml.Secure(dto.Description),
 			Publication: dto.PublicationDate.Time,
-			ReportPage:  securehtml.ParseURL("https://www.eca.euroap.eu" + dto.ReportLandingPageUrl),
+			ReportPage:  securehtml.ParseURL("https://www.eca.europa.eu" + dto.ReportLandingPageUrl),
 			ReportURL:   securehtml.ParseURL(dto.ReportUrl),
 			Languages:   dto.Languages,
 			// Image
