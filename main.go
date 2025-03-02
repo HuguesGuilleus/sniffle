@@ -8,7 +8,6 @@ import (
 	"sniffle/service/eu_ec_eci"
 	"sniffle/service/eu_eca"
 	"sniffle/service/home"
-
 	"sniffle/service/release"
 	"sniffle/tool"
 	"sniffle/tool/language"

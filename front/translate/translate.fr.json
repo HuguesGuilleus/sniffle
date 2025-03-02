@@ -123,7 +123,7 @@
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Nombre total de signature",
-			"ValidatedSignature": "Les signatures ont été validés.",
+			"ValidatedSignature": "Les signatures ont été validées.",
 			"PaperSignaturesUpdate": "Dernière mise à jour des signatures papiers\u00A0: ",
 			"CountryOverThreshold": "Pays dépassant le seuil de signature",
 			"Country": "Pays",
@@ -183,8 +183,8 @@
 			"TRADE": "Commerce extérieur et relations extérieures"
 		},
 		"ThresholdRule": {
-			"2012-04-01": "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par 750.",
-			"2020-01-01": "Les seuils correspondent au nombre de députés au Parlement européen élus dans chaque État membre, multiplié par le nombre total de députés au Parlement européen."
+			"2012-04-01": "Jusqu'en 2019, les seuils correspondent au nombre de députés au Parlement européen élus dans chaque état membre, multiplié par 750.",
+			"2020-01-01": "À partir de 2020, les seuils correspondent au nombre de députés au Parlement européen élus dans chaque état membre, multiplié par le nombre total de députés au Parlement européen."
 		}
 	}
 }

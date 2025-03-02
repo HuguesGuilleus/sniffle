@@ -1,11 +1,20 @@
 .bigInfo {
 	display: grid;
 	grid-template-columns: 1fr auto;
-	gap: _sp;
+	gap: _spThin _sp;
 	align-items: center;
 	margin-bottom: _sp;
 	border: solid _line2 _colorA;
 	padding: _spThin;
+}
+
+.bigInfo>.edito {
+	grid-column: 1 / 3;
+	margin: 0;
+}
+
+.bigInfoMain,
+.bigInfoMeta {
 	font-size: larger;
 	font-weight: bold;
 }

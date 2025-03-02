@@ -151,7 +151,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					return render.N("",
 						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
 						render.If(eci.ValidatedSignature, func() render.Node {
-							return render.N("div.marginBottom", ONE.ValidatedSignature)
+							return render.N("div.marginBottom", render.N("span.tag", ONE.ValidatedSignature))
 						}),
 						render.If(!eci.PaperSignaturesUpdate.IsZero(), func() render.Node {
 							return render.N("div.marginBottom", ONE.PaperSignaturesUpdate, eci.PaperSignaturesUpdate)
@@ -164,17 +164,17 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							),
 						),
 
-						render.N("div.edito",
-							render.N("div.editoT", tr.HELP),
-							tr.EU_EC_ECI.ThresholdRule[eci.ThresholdRule],
-							" ",
-							render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()).N(tr.Source),
-						),
 						render.N("div.bigInfo",
-							render.N("div.bifInfoMeta", ONE.CountryOverThreshold),
+							render.N("div.bigInfoMeta", ONE.CountryOverThreshold),
 							render.N("div.bigInfoMain",
 								render.N("span.bigInfoData", eci.ThresholdPassTotal),
 								" / 7",
+							),
+							render.N("div.edito",
+								render.N("div.editoT", tr.HELP),
+								tr.EU_EC_ECI.ThresholdRule[eci.ThresholdRule],
+								" ",
+								render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()).N(tr.Source),
 							),
 						),
 
@@ -211,7 +211,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						render.N("h1", ONE.Funding.Name),
 						render.N("div.marginBottom", ONE.LastUpdate, eci.FundingUpdate),
 						render.N("div.bigInfo",
-							render.N("div.bifInfoMeta", ONE.Funding.Total),
+							render.N("div.bigInfoMeta", ONE.Funding.Total),
 							render.N("div.bigInfoMain.bigInfoData", printEuros(eci.FundingTotal)),
 						),
 						render.N("table.right",
