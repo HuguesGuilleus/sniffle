@@ -200,10 +200,10 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				}),
 
 				// Members
-				render.N("h1.working", "$Members"),
-				render.S(eci.Members, "", func(m Member) render.Node {
-					return component.Json(m)
-				}),
+				render.N("h1", ONE.Member.H1),
+				render.N("ul.peopleIndex", render.S(eci.Members, "", func(m Member) render.Node {
+					return renderMember(&m, l)
+				})),
 
 				// Funding
 				render.If(!eci.FundingUpdate.IsZero(), func() render.Node {
@@ -286,6 +286,36 @@ func renderImage(eci *ECIOut, needBase bool, title string) render.Node {
 		base = fmt.Sprintf("%d/%d/logo", eci.Year, eci.Number)
 	}
 	return eci.Image.Render(base, title)
+}
+
+func renderMember(m *Member, l language.Language) render.Node {
+	ONE := translate.T[l].EU_EC_ECI.ONE
+	return render.N("li.people",
+		render.N("div",
+			render.N("span.tag", ONE.Member.Type[m.Type]),
+			render.N("em", m.FullName),
+		),
+		render.If(m.HrefURL != "", func() render.Node {
+			return render.N("div", render.Na("a", "href", m.HrefURL).N(m.DisplayURL))
+		}),
+		render.N("div",
+			render.If(!m.Start.IsZero(), func() render.Node {
+				return render.N("", ONE.Member.Start, m.Start, ". ")
+			}),
+			render.If(!m.End.IsZero(), func() render.Node {
+				return render.N("", ONE.Member.End, m.End, ". ")
+			}),
+			render.If(m.ResidenceCountry.NotZero(), func() render.Node {
+				return render.N("",
+					ONE.Member.Country,
+					translate.T[l].Country[m.ResidenceCountry],
+				)
+			}),
+		),
+		render.If(m.Replaced != nil, func() render.Node {
+			return render.N("ul.peopleIndex", renderMember(m.Replaced, l))
+		}),
+	)
 }
 
 func printEuros(f float64) any {

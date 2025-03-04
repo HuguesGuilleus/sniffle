@@ -85,6 +85,15 @@ type Translation struct {
 				PressRelease render.H
 			}
 
+			Member struct {
+				H1      render.H
+				Type    map[string]render.H
+				Start   render.H
+				End     render.H
+				Country render.H
+				Privacy render.H
+			}
+
 			Funding struct {
 				Name               render.H
 				Total              render.H

@@ -76,6 +76,11 @@ a:hover {
 	color: _color;
 }
 
+em {
+	font-style: normal;
+	font-weight: bolder;
+}
+
 .text,
 p {
 	text-indent: 3em;

@@ -118,7 +118,7 @@
 			"DraftLegal": "Brouillon légal",
 			"H1Treaty": "Traité",
 			"H1Timeline": "Chronologie",
-			"Registration": "Entregisytrement",
+			"Registration": "Enregistrement",
 			"CollectionEarlyClosure": "Collecte clôturée de manière anticipée par les organisateurs.",
 
 			"H1Signature": "Signature",
@@ -137,14 +137,30 @@
 				"PressRelease": "Communiqué de presse"
 			},
 
+			"Member": {
+				"H1": "Membres",
+				"Type": {
+					"DPO": "Protection des données",
+					"LEGAL_ENTITY": "Entité juridique",
+					"MEMBER": "Membre",
+					"OTHER": "Autre",
+					"REPRESENTATIVE": "Représentant·e",
+					"SUBSTITUTE": "Suppléant·e"
+				},
+				"Country": "Pays de résidence\u00A0: ",
+				"Start": "Depuis\u00A0: ",
+				"End": "Jusqu'à\u00A0: ",
+				"Privacy": "Vie privée"
+			},
+
 			"Funding": {
 				"Name": "Financement",
 				"Total": "Somme total",
-				"Sponsor": "donateur·trice",
+				"Sponsor": "Donateur·trice",
 				"Amount": "Montant",
 				"Date": "Date",
 				"PrivateSponsor": "Donateur·trice privé·e",
-				"PrivateSponsorHelp": "Le nom du donateur privé n'est pas publié, car celui-ci a choisi de rester anonyme.",
+				"PrivateSponsorHelp": "Le nom du donateur·trice privé·e n'est pas publié, car iel a choisi de rester anonyme.",
 				"CaptionDate": "Date à laquelle la contribution a été reçue. S'il s'agit d'une contribution en nature, date à laquelle celle-ci a commencé.",
 				"CaptionAmount": "Montant réel du financement octroyé ou valeur estimée de la contribution en nature.",
 				"Document": "Document financier additionnel"

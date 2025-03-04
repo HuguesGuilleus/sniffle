@@ -106,7 +106,10 @@ type Member struct {
 	FullName string
 
 	// Nothing, HTTP.S or mailto:...
-	URL string
+	// Href used in anchor href attribute
+	HrefURL string
+	// DisplayURL is used to print.
+	DisplayURL string
 
 	// Maybe zero.
 	Start time.Time
@@ -114,7 +117,10 @@ type Member struct {
 
 	ResidenceCountry country.Country
 
-	// Only one dept level.
+	// Privacy applied
+	Privacy bool
+
+	// Only one depth level.
 	Replaced *Member
 }
 type Sponsor struct {
@@ -374,21 +380,27 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		replacedMember := (*Member)(nil)
 		if len(entry.ReplacedMember) == 1 {
 			r := entry.ReplacedMember[0]
+			hrefURL, displayURL := memberURL(r.URL)
 			replacedMember = &Member{
 				FullName:         strings.TrimSpace(r.FullName),
 				Type:             r.Type,
-				URL:              memberURL(r.URL),
+				HrefURL:          hrefURL,
+				DisplayURL:       displayURL,
 				ResidenceCountry: r.ResidenceCountry,
 				Start:            r.Start.Time,
 				End:              r.End.Time,
+				Privacy:          r.Privacy,
 			}
 		}
+		hrefURL, displayURL := memberURL(entry.URL)
 		eci.Members[i] = Member{
 			FullName:         strings.TrimSpace(entry.FullName),
 			Type:             entry.Type,
-			URL:              memberURL(entry.URL),
+			HrefURL:          hrefURL,
+			DisplayURL:       displayURL,
 			ResidenceCountry: entry.ResidenceCountry,
 			Start:            entry.Start.Time,
+			Privacy:          entry.Privacy,
 			Replaced:         replacedMember,
 		}
 	}
@@ -429,14 +441,16 @@ func (eci *ECIOut) countryByName(lang language.Language) []country.Country {
 	})
 }
 
-func memberURL(s string) string {
-	if s != "" && sch.AnyMail().Match(s) == nil {
-		return "mailto:" + s
+func memberURL(s string) (href, display string) {
+	if s == "email@anonymised" {
+		return "", ""
+	} else if s != "" && sch.AnyMail().Match(s) == nil {
+		return "mailto:" + s, s
+	} else if u := securehtml.ParseURL(s); u != nil {
+		s := u.String()
+		return s, s
 	}
-	if u := securehtml.ParseURL(s); u != nil {
-		return u.String()
-	}
-	return ""
+	return "", ""
 }
 
 type dtoDate struct {

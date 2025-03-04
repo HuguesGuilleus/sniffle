@@ -44,6 +44,13 @@ const (
 	Len = UnitedKingdom + 1
 )
 
+func (c Country) IsZero() bool {
+	return c < Austria || UnitedKingdom < c
+}
+func (c Country) NotZero() bool {
+	return Austria <= c && c <= UnitedKingdom
+}
+
 func (c *Country) UnmarshalText(data []byte) error {
 	s := string(data)
 	*c = fromJSON[s]

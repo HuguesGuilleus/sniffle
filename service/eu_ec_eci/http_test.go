@@ -139,7 +139,7 @@ var fetcher = map[string]*fetch.TestResponse{
 							"fullName": "Gabriele BONCI",
 							"email": "stopcrueltystopslaughter@gmail.com",
 							"residenceCountry": "it",
-							"privacyApplied": false,
+							"privacyApplied": true,
 							"startingDate": "24/07/2024",
 							"endDate": "03/09/2024"
 						}
@@ -452,7 +452,8 @@ func TestFetchDetail(t *testing.T) {
 			{
 				Type:             "LEGAL_ENTITY",
 				FullName:         "Zavod za zaščito in napredek reproduktivnih pravic My Voice, My Choice",
-				URL:              "https://www.myvoice-mychoice.org",
+				DisplayURL:       "https://www.myvoice-mychoice.org",
+				HrefURL:          "https://www.myvoice-mychoice.org",
 				ResidenceCountry: country.Slovenia,
 			},
 			{
@@ -463,10 +464,12 @@ func TestFetchDetail(t *testing.T) {
 				Replaced: &Member{
 					Type:             "REPRESENTATIVE",
 					FullName:         "Gabriele BONCI",
-					URL:              "mailto:stopcrueltystopslaughter@gmail.com",
+					HrefURL:          "mailto:stopcrueltystopslaughter@gmail.com",
+					DisplayURL:       "stopcrueltystopslaughter@gmail.com",
 					ResidenceCountry: country.Italy,
 					Start:            newDate(2024, time.July, 24),
 					End:              newDate(2024, time.September, 3),
+					Privacy:          true,
 				},
 			},
 		},

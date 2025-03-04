@@ -1,7 +1,7 @@
 {
 	"AboutTextLink": "About",
 	"FooterBuild": "Last page build: ",
-	"InDev": "This page is actualy on development",
+	"InDev": "This page is currently under development",
 	"LinkOfficial": "Official page",
 	"LogoTitle": "Logo",
 	"PageTop": "This is not an official european website.",
@@ -135,6 +135,22 @@
 				"Annex": "Annex",
 				"Response": "Response",
 				"PressRelease": "Press release"
+			},
+
+			"Member": {
+				"H1": "Members",
+				"Type": {
+					"DPO": "Data protection",
+					"LEGAL_ENTITY": "Legal entity",
+					"MEMBER": "Member",
+					"OTHER": "Other",
+					"REPRESENTATIVE": "Representative",
+					"SUBSTITUTE": "Substitute"
+				},
+				"Country": "Residence coutry: ",
+				"Start": "From: ",
+				"End": "Until: ",
+				"Privacy": "Privacy"
 			},
 
 			"Funding": {

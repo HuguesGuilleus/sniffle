@@ -35,6 +35,7 @@ type detailDTO struct {
 		URL              string `json:"email"`
 		ResidenceCountry country.Country
 		Start            dtoDate `json:"startingDate"`
+		Privacy          bool    `json:"privacyApplied"`
 		ReplacedMember   []struct {
 			FullName         string          `json:"fullName"`
 			Type             string          `json:"type"`
@@ -42,6 +43,7 @@ type detailDTO struct {
 			ResidenceCountry country.Country `json:"residenceCountry"`
 			Start            dtoDate         `json:"startingDate"`
 			End              dtoDate         `json:"endDate"`
+			Privacy          bool            `json:"privacyApplied"`
 		}
 	}
 	Progress []struct {
