@@ -246,12 +246,24 @@ func Map[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
 		keys = append(keys, k)
 	}
 	slices.Sort(keys)
+	return mapCall(keys, m, f)
+}
 
+func MapReverse[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
+	keys := make([]K, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	slices.Sort(keys)
+	slices.Reverse(keys)
+	return mapCall(keys, m, f)
+}
+
+func mapCall[K cmp.Ordered, V any](keys []K, m map[K]V, f func(k K, v V) Node) []Node {
 	children := make([]Node, len(keys))
 	for i, k := range keys {
 		children[i] = f(k, m[k])
 	}
-
 	return children
 }
 

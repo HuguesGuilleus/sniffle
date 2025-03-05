@@ -1,9 +1,7 @@
 package eu_ec_eci
 
 import (
-	"cmp"
 	"fmt"
-	"slices"
 	"sniffle/common/country"
 	"sniffle/front/component"
 	"sniffle/front/translate"
@@ -12,14 +10,7 @@ import (
 	"sniffle/tool/render"
 )
 
-func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
-	slices.SortFunc(eciSlice, func(a, b *ECIOut) int {
-		return cmp.Or(
-			cmp.Compare(b.Year, a.Year),
-			cmp.Compare(b.Number, a.Number),
-		)
-	})
-
+func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language) {
 	tr := translate.T[l]
 	baseURL := "/eu/ec/eci/"
 
@@ -32,31 +23,40 @@ func renderIndex(t *tool.Tool, eciSlice []*ECIOut, l language.Language) {
 				render.N("div.headerTitle", tr.EU_EC_ECI.INDEX.Name),
 				component.HeaderLangs(l, ""),
 			),
-			render.N("main.w",
+			render.N("main.wt", component.Toc, render.N("div.wc",
 				render.N("div.summary",
-					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.LinkOfficial),
+					render.N("div.edito",
+						render.N("div.editoT", tr.Global.Presentation),
+						tr.EU_EC_ECI.INDEX.Help,
+					),
+					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.LinkOfficial),
 					render.Na("a.box", "href", "schema.html").N(tr.SchemaLink),
 				),
 				render.N("div.searchBlock",
 					render.Na("label", "for", "s").N(tr.SearchInside),
 					render.Na("input", "id", "s").A("hidden", "").A("type", "search"),
 				),
-				render.S(eciSlice, "", func(eci *ECIOut) render.Node {
-					return render.Na("a.si.bigItem", "href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l)).N(
-						render.N("div",
-							render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
-							render.N("span.box.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
-						),
-						render.N("div.itemTitle.st", eci.Description[l].Title),
-						render.N("div", render.S(eci.Categorie, ", ", func(categorie string) render.Node {
-							return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
-						})),
-						render.N("p.itemDesc", eci.Description[l].PlainDesc),
-						renderImage(eci, true, tr.LogoTitle),
+				render.N("div", render.MapReverse(eciByYear, func(year int, slice []*ECIOut) render.Node {
+					return render.N("div.sg",
+						render.N("h1", render.Int(year)),
+						render.S(slice, "", func(eci *ECIOut) render.Node {
+							return render.Na("a.si.bigItem", "href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l)).N(
+								render.N("div",
+									render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
+									render.N("span.box.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
+								),
+								render.N("div.itemTitle.st", eci.Description[l].Title),
+								render.N("div", render.S(eci.Categorie, ", ", func(categorie string) render.Node {
+									return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
+								})),
+								render.N("p.itemDesc", eci.Description[l].PlainDesc),
+								renderImage(eci, true, tr.LogoTitle),
+							)
+						}),
 					)
-				}),
-			),
-			component.Footer(l, component.JsSearch),
+				})),
+			)),
+			component.Footer(l, component.JsSearch|component.JsToc),
 		),
 	)))
 }
@@ -70,7 +70,6 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 		component.Head(l, fmt.Sprintf("%s/eu/ec/eci/%d/%d/", t.HostURL, eci.Year, eci.Number), desc.Title, desc.PlainDesc),
 		render.N("body",
 			component.TopHeader(l),
-			component.InDevHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(l),

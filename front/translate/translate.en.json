@@ -1,4 +1,8 @@
 {
+	"Global": {
+		"Presentation": "Presentation"
+	},
+
 	"AboutTextLink": "About",
 	"FooterBuild": "Last page build: ",
 	"InDev": "This page is currently under development",
@@ -101,8 +105,9 @@
 	"EU_EC_ECI": {
 		"Name": "European Citizens' Initiative",
 		"INDEX": {
-			"Name": "European Citizens' Initiative index",
-			"PageDescription": "The index of all european citizens' initiative"
+			"Name": "European Citizens' Initiative / ECI index",
+			"PageDescription": "The index of all european citizens' initiative",
+			"Help": "The European Citizens' Initiative is a sort of petition. If over one million signatures, the European Commission musts respond with his position and eventually add new legal act."
 		},
 		"ONE": {
 			"Status": "Status: ",

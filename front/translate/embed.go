@@ -9,6 +9,10 @@ import (
 )
 
 type Translation struct {
+	Global struct {
+		Presentation render.H
+	}
+
 	AboutTextLink render.H `help:"About text for link"`
 	FooterBuild   render.H `help:"In Footer, before build date"`
 	InDev         render.H `help:"This page is actualy on development"`
@@ -51,6 +55,7 @@ type Translation struct {
 		INDEX struct {
 			Name            string
 			PageDescription string
+			Help            render.H
 		} `help:"ECI index page"`
 		ONE struct {
 			Status                     render.H

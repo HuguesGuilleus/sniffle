@@ -1,4 +1,8 @@
 {
+	"Global": {
+		"Presentation": "Présentation"
+	},
+
 	"AboutTextLink": "À propos",
 	"FooterBuild": "Dernière génération de la page\u00A0: ",
 	"InDev": "Cette page est actuellement en dévelopement",
@@ -101,8 +105,9 @@
 	"EU_EC_ECI": {
 		"Name": "Initiative citoyenne européenne",
 		"INDEX": {
-			"Name": "Liste des Initiative citoyenne européenne",
-			"PageDescription": "La liste complète de toute les initiative citoyenne européenne"
+			"Name": "Liste des Initiatives Citoyennes Européennes / ICE",
+			"PageDescription": "La liste complète de toute les initiative citoyenne européenne",
+			"Help": "L'initiative citoyenne européenne est une sorte de pétition. Si elle dépasse un million de signatures, la Commission européenne doit présenter une réponse motivée potentiellement par des actes législatifs."
 		},
 		"ONE": {
 			"Status": "Status\u00A0: ",

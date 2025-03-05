@@ -1,23 +1,24 @@
 package eu_ec_eci
 
 import (
+	"cmp"
 	"fmt"
+	"slices"
 	"sniffle/tool"
 	"sniffle/tool/render"
 )
 
 func Do(t *tool.Tool) {
 	eciSlice := fetchAll(t)
+	eciByYear := yearGroupingECI(eciSlice)
 
 	t.LangRedirect("/eu/ec/eci/index.html")
 	for _, l := range t.Languages {
-		renderIndex(t, eciSlice, l)
+		renderIndex(t, eciByYear, l)
 	}
 	renderSchema(t)
 
-	years := make(map[int]bool)
 	for _, eci := range eciSlice {
-		years[eci.Year] = true
 		t.LangRedirect(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number))
 		for _, l := range t.Languages {
 			renderOne(t, eci, l)
@@ -30,7 +31,7 @@ func Do(t *tool.Tool) {
 		}
 	}
 
-	for y := range years {
+	for y := range eciByYear {
 		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/index.html", y), render.Back)
 	}
 }
@@ -50,4 +51,19 @@ func fetchAll(t *tool.Tool) []*ECIOut {
 	}
 
 	return eciSlice
+}
+
+func yearGroupingECI(eciSlice []*ECIOut) map[int][]*ECIOut {
+	slices.SortFunc(eciSlice, func(a, b *ECIOut) int {
+		return cmp.Or(
+			cmp.Compare(b.Year, a.Year),
+			cmp.Compare(b.Number, a.Number),
+		)
+	})
+
+	eciByYear := make(map[int][]*ECIOut)
+	for _, eci := range eciSlice {
+		eciByYear[eci.Year] = append(eciByYear[eci.Year], eci)
+	}
+	return eciByYear
 }

@@ -129,6 +129,18 @@ func TestMap(t *testing.T) {
 		`</ul>`,
 		string(h))
 }
+func TestMapReverse(t *testing.T) {
+	m := map[int]bool{2: false, 1: true}
+	h := Merge(N("ul", MapReverse(m, func(k int, v bool) Node {
+		return N("li", "k:", k, " => v:", v)
+	})))
+	assert.Equal(t, `<!DOCTYPE html>`+
+		`<ul>`+
+		`<li>k:2 =&gt; v:false</li>`+
+		`<li>k:1 =&gt; v:true</li>`+
+		`</ul>`,
+		string(h))
+}
 
 func TestSlice(t *testing.T) {
 	s := []bool{true, false}
