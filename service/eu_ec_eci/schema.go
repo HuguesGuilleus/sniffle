@@ -19,7 +19,7 @@ var statusType, statusTypeDef = sch.Def("Status", sch.EnumString("ANSWERED", "CL
 
 var docType, docTypeDef = sch.Def("Document", sch.Map(
 	sch.FieldSR("id", sch.StrictPositiveInt()).Comment(
-		"Seel below to fetch document or image.",
+		"See below to fetch document or image.",
 	),
 	sch.FieldSR("mimeType", sch.MIME(`*/*`)),
 	sch.FieldSR("name", sch.NotEmptyString()),
@@ -159,6 +159,15 @@ var eciType = sch.Map(
 		sch.FieldSO("footnoteType", sch.String("AFTER_SUBMISSION_CERTIFICATES")),
 	), false),
 	sch.FieldSO("logo", docImage),
+	sch.FieldSO("preAnswer", sch.Map(
+		sch.FieldSR("links", sch.ArraySize(1,
+			sch.Map(
+				sch.FieldSR("defaultLanguageCode", sch.String("EN")),
+				sch.FieldSR("defaultName", sch.String("EXAMIN_STEPS")),
+				sch.FieldSR("defaultLink", sch.URL("https://citizens-initiative.europa.eu/**")),
+			),
+		)).Comment("Only view for ECI 2019/7. View 2025-03-11"),
+	)),
 	sch.FieldSO("answer", sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("decisionDate", dateType),
@@ -271,30 +280,30 @@ func renderSchema(t *tool.Tool) {
 				render.N("div.wc",
 					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative. It is full empiric, and official team can do some API change."),
 
-					render.N("h1", "Common types"),
-					render.N("h2", "Enumerations types"),
+					render.N("h1", "Enumerations types"),
 					render.N("pre.sch",
-						render.N("span.sch-comment", "// Some types used many times."),
 						countriesUpperDef,
 						countriesLowerDef,
 						langsDef,
 						statusTypeDef,
 					),
-					render.N("h2", "File types"),
+
+					render.N("h1", "Logo or document"),
+					render.N("h2", "Types"),
 					render.N("pre.sch",
 						docImageDef,
 						docPDFDef,
 						docPDFOrMSWordDef,
 						docTypeDef,
 					),
-
-					render.N("h1", "Get logo or document"),
+					render.N("h2", "Fetch the file"),
 					render.N("pre.sch",
 						render.N("span.sch-comment", "// Fetch a logo:\n"),
 						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/logo/{logoID}").N("https://register.eci.ec.europa.eu/core/api/register/logo/{logoID}"), "\n",
-						render.N("span.sch-comment", "// or to fetch a document:\n"),
-						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/document/{docID}").N("https://register.eci.ec.europa.eu/core/api/register/document/{docID}"),
-						"\n\n200 OK\n",
+						render.N("span.sch-comment", "// Fetch a document:"), "\n",
+						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/document/{docID}").N("https://register.eci.ec.europa.eu/core/api/register/document/{docID}"), "\n",
+						render.N("span.sch-comment", "// Response:"), "\n",
+						"200 OK\n",
 						`Content-Disposition: attachment; filename ="..."`, "\n",
 						"Content-Type: application/octet-stream",
 						render.N("hr"),
@@ -305,7 +314,8 @@ func renderSchema(t *tool.Tool) {
 						"https://register.eci.ec.europa.eu/core/api/register/logo/1979",
 					),
 
-					render.N("h1", "Get index range (not used)"),
+					render.N("h1", "Get index"),
+					render.N("h2", "Get only a range (not used)"),
 					render.N("pre.sch",
 						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/{begin}/{end}").N("https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/{begin}/{end}"),
 
@@ -313,7 +323,7 @@ func renderSchema(t *tool.Tool) {
 						"Content-Type: application/json\n\n",
 						"[Same as all index schema below]"),
 
-					render.N("h1", "Get all index"),
+					render.N("h2", "Get full index"),
 					render.N("pre.sch",
 						"GET ", render.Na("a.block", "href", indexURL).N(indexURL),
 						"\n\n200 OK\n",
