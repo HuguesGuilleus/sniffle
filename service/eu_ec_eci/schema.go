@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"sniffle/front/component"
-	"sniffle/tool"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"sniffle/tool/sch"
@@ -314,7 +313,7 @@ var detailedMember, detailedMemberDef = sch.Def("DetailedMember", sch.Or(
 	),
 ))
 
-func renderSchema(t *tool.Tool) {
+var schemaPage = func() []byte {
 	lang := language.AllEnglish
 	title := "European Citizens' Initiative crawling method"
 	description := "Our usage of the https://citizens-initiative.europa.eu/ website to crawl data."
@@ -322,7 +321,7 @@ func renderSchema(t *tool.Tool) {
 	oneURLTempl := "https://register.eci.ec.europa.eu/core/api/register/details/{year}/{number:%06d}"
 	oneURLEx := "https://register.eci.ec.europa.eu/core/api/register/details/2022/000002"
 
-	t.WriteFile("/eu/ec/eci/schema.html", render.Merge(render.Na("html", "lang", "en").N(
+	return render.Merge(render.Na("html", "lang", "en").N(
 		render.N("head",
 			component.HeadBegin,
 			render.N("title", title),
@@ -341,39 +340,39 @@ func renderSchema(t *tool.Tool) {
 			render.N("main.wt.wide",
 				component.Toc,
 				render.N("div.wc",
-					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative. It is full empiric, and official team can do some API change."),
+					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative. It is full empiric, be careful!"),
 
 					render.N("h1", "Enumerations types"),
 					render.N("pre.sch",
-						countriesUpperDef,
-						countriesLowerDef,
-						langsDef,
+						countriesUpperDef, "\n\n",
+						countriesLowerDef, "\n\n",
+						langsDef, "\n\n",
 						statusTypeDef,
 					),
 
 					render.N("h1", "Logo or document"),
 					render.N("h2", "Types"),
 					render.N("pre.sch",
-						docImageDef,
-						docPDFDef,
+						docTypeDef, "\n\n",
+						docImageDef, "\n\n",
+						docPDFDef, "\n\n",
 						docPDFOrMSWordDef,
-						docTypeDef,
 					),
 					render.N("h2", "Fetch the file"),
 					render.N("pre.sch",
-						render.N("span.sch-comment", "// Fetch a logo:\n"),
+						component.SchComment("Fetch a logo:"),
 						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/logo/{logoID}").N("https://register.eci.ec.europa.eu/core/api/register/logo/{logoID}"), "\n",
-						render.N("span.sch-comment", "// Fetch a document:"), "\n",
+						component.SchComment("Fetch a document:"),
 						"GET ", render.Na("a.block", "href", "https://register.eci.ec.europa.eu/core/api/register/document/{docID}").N("https://register.eci.ec.europa.eu/core/api/register/document/{docID}"), "\n",
-						render.N("span.sch-comment", "// Response:"), "\n",
+						component.SchComment("Response:"),
 						"200 OK\n",
 						`Content-Disposition: attachment; filename ="..."`, "\n",
 						"Content-Type: application/octet-stream",
 						render.N("hr"),
-						render.N("span.sch-comment", "Example: ", render.Na("a", "href", "/eu/ec/eci/2022/2/").N("ECI 2022/2 Fur Free Europe")),
-						"\n", render.N("span.sch-comment", "// Financial document:"), "\n",
-						"https://register.eci.ec.europa.eu/core/api/register/document/9122",
-						"\n", render.N("span.sch-comment", "// Logo:"), "\n",
+						component.SchComment("Example: ", render.Na("a", "href", "/eu/ec/eci/2022/2/").N("ECI 2022/2 Fur Free Europe")),
+						component.SchComment("- Financial document:"),
+						"https://register.eci.ec.europa.eu/core/api/register/document/9122\n",
+						component.SchComment("- Logo:"),
 						"https://register.eci.ec.europa.eu/core/api/register/logo/1979",
 					),
 
@@ -416,5 +415,5 @@ func renderSchema(t *tool.Tool) {
 			),
 			component.Footer(lang, component.JsSchema|component.JsToc),
 		),
-	)))
-}
+	))
+}()

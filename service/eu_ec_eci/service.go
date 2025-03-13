@@ -16,7 +16,8 @@ func Do(t *tool.Tool) {
 	for _, l := range t.Languages {
 		renderIndex(t, eciByYear, l)
 	}
-	renderSchema(t)
+
+	t.WriteFile("/eu/ec/eci/schema.html", schemaPage)
 
 	for _, eci := range eciSlice {
 		t.LangRedirect(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number))
