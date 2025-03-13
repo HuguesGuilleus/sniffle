@@ -11,7 +11,6 @@ func Do(t *tool.Tool) {
 	t.LangRedirect("/index.html")
 	for _, l := range translate.Langs {
 		tr := translate.T[l]
-
 		t.WriteFile(l.Path("/"), render.Merge(render.Na("html", "lang", l.String()).N(
 			component.Head(l, t.HostURL+"/", tr.HOME.Name, tr.HOME.PageDescription),
 			render.N("body",

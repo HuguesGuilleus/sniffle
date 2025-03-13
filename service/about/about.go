@@ -25,7 +25,14 @@ func Do(t *tool.Tool) {
 					render.N("div.headerTitle", tr.ABOUT.PageTitle),
 					component.HeaderLangs(l, ""),
 				),
-				render.N("div.w", tr.ABOUT.Text),
+				render.N("div.w",
+					render.S(tr.ABOUT.Intro, "", func(p render.H) render.Node {
+						return render.N("p", p)
+					}),
+					render.N("hr"),
+					render.N("p.noindent", tr.ABOUT.Mail, "ghugues[at]netc[dot]fr"),
+					render.N("p.noindent", tr.ABOUT.Host, "OVH SAS\u202F; 2 rue Kellermann, 59100 Roubaix. France."),
+				),
 				component.Footer(l, 0),
 			),
 		)))

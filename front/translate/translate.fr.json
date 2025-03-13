@@ -76,14 +76,13 @@
 	"ABOUT": {
 		"PageTitle": "À propos de ce site web",
 		"PageDescription": "Page d'information sur ce site web",
-		"Text": [
-			"<p>Ce site web extrait des informations légales de l'Union européenne pour les présenter simplement. Le but est une meilleure compréhension de cette organisation en suivant son activité. Étant en construction, il ne présente pas toutes les procédures.</p>",
-			"<p>Il ne présentera pas d'article éditorialisé (analyse, entretient...). Mais, il contiendra des indications en mauve sur la nature des objets affichés (ce qu'est un règlement, un amendement...).</p>",
-			"<hr>",
-			"<p class=noindent>Ce site web est créé par un citoyen français.</p>",
-			"<p class=noindent>Contact\u00A0: ghugues[at]netc[dot]fr</p>",
-			"<p class=noindent>Hébergeur\u00A0: OVH SAS\u202F; 2 rue Kellermann, 59100 Roubaix. France.</p>"
-		]
+		"Intro": [
+			"Ce site web aspire des informations légales de l'Union Européenne pour les présenter simplement dans le but d'une meilleure compréhension. Étant en construction, il ne présente pas toutes les procédures.",
+			"Il ne présentera pas d'article éditorialisé (analyse, entretient...). Mais, il contiendra des bulles d'information en mauve sur la nature des objets affichés (ce qu'est un règlement, un amendement...).",
+			"Ce site web est créé par un citoyen français militant à la France Insoumise."
+		],
+		"Mail": "Courriel\u00A0: ",
+		"Host": "Hébergeur\u00A0: "
 	},
 
 	"HOME": {
@@ -127,7 +126,7 @@
 			"CollectionEarlyClosure": "Collecte clôturée de manière anticipée par les organisateurs.",
 
 			"H1Signature": "Signature",
-			"SignatureSum": "Nombre total de signature",
+			"SignatureSum": "Nombre total de signatures",
 			"ValidatedSignature": "Les signatures ont été validées.",
 			"PaperSignaturesUpdate": "Dernière mise à jour des signatures papiers\u00A0: ",
 			"CountryOverThreshold": "Pays dépassant le seuil de signature",

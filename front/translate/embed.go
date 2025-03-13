@@ -31,7 +31,9 @@ type Translation struct {
 	ABOUT struct {
 		PageTitle       string     `help:"Header title"`
 		PageDescription string     `help:"head description"`
-		Text            []render.H `help:"page content"`
+		Intro           []render.H `help:"page content"`
+		Mail            render.H
+		Host            render.H
 	} `help:"Website about page"`
 
 	HOME struct {

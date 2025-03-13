@@ -76,14 +76,13 @@
 	"ABOUT": {
 		"PageTitle": "About this website",
 		"PageDescription": "About website page",
-		"Text": [
-			"<p>This website copies legal information from the European Union and presents it in a simple style to facilitate a better understanding of this organisation and its activities. It is still under construction, so it does not yet show all procedures.</p>",
-			"<p>It does not create press articles (analysis, talks...). However, it may contain text indications (in purple) about the nature of some displayed objects (regulations, amendments...).</p>",
-			"<hr>",
-			"<p class=noindent>This website is created by a french citizen.</p>",
-			"<p class=noindent>Contact: ghugues[at]netc[dot]fr</p>",
-			"<p class=noindent>Host: OVH SAS; 2 rue Kellermann, 59100 Roubaix. France.</p>"
-		]
+		"Intro": [
+			"This website copies legal information from the European Union and print it in a simple style for a better understanding. It is still under construction, so it does not yet show all procedures.",
+			"It does not create press articles (analysis, talks...). However, it may contain text indications (in purple) about the nature of some displayed objects (regulations, amendments...).",
+			"This website is created by a french citizen activist in La France Insoumise (radical left movement)."
+		],
+		"Mail": "Mail: ",
+		"Host": "Host: "
 	},
 
 	"HOME": {
@@ -114,8 +113,8 @@
 			"Categorie": "Categorie: ",
 			"LastUpdate": "Last update: ",
 			"DescriptionOriginalLangage": "Description original langage: ",
-			"LinkSupport": "Signature page",
 			"LinkFollowUp": "Follow up page",
+			"LinkSignature": "Signature page",
 			"LinkWebsite": "Organisator website",
 			"H1Description": "Description",
 			"H1DescriptionAnnex": "Description annex",
@@ -127,7 +126,7 @@
 			"CollectionEarlyClosure": "Collection closed earlier by organizer.",
 
 			"H1Signature": "Signature",
-			"SignatureSum": "Signature total",
+			"SignatureSum": "Signature sum",
 			"ValidatedSignature": "The signatures are validate.",
 			"PaperSignaturesUpdate": "Paper signature last update: ",
 			"CountryOverThreshold": "Country over the threshold",
