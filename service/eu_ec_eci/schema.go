@@ -1,6 +1,7 @@
 package eu_ec_eci
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"sniffle/front/component"
@@ -156,12 +157,23 @@ var eciType = sch.Map(
 				sch.FieldSR("anonymized", sch.AnyBool()),
 				sch.FieldSO("otherSupport", sch.String("Research and Network")).Comment("Found only in ECI 2025/1"),
 			))),
-			sch.FieldSR("totalAmount", sch.PositiveFloat()),
+			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(``, func(this map[string]any, field any) error {
+				totalAmount, _ := field.(json.Number).Float64()
+				sum := float64(0)
+				for _, sponsors := range this["sponsors"].([]any) {
+					f, _ := sponsors.(map[string]any)["amount"].(json.Number).Float64()
+					sum += f
+				}
+				sum = math.Round(sum*100) / 100
+				if sum != totalAmount {
+					return fmt.Errorf("totalAmount %f != sum(sponsors[*].amount) %f", totalAmount, sum)
+				}
+				return nil
+			}),
 			sch.FieldSO("document", docPDF),
 		),
 	)),
 	sch.Field(sch.EnumString("submission", "sosReport"), sch.Map(
-		sch.FieldSR("totalSignatures", sch.PositiveInt()),
 		sch.FieldSO("updateDate", dateType),
 		sch.FieldSR("entry", sch.ArrayRange(3, 28, sch.Map(
 			sch.FieldSR("countryCodeType", countriesUpper),
@@ -169,6 +181,21 @@ var eciType = sch.Map(
 			sch.FieldSO("afterSubmission", sch.AnyBool()),
 		))),
 		sch.FieldSO("footnoteType", sch.String("AFTER_SUBMISSION_CERTIFICATES")),
+		sch.FieldSR("totalSignatures", sch.PositiveInt()).Assert(`totalSignatures == sum(entry[*].total without .afterSubmission==true)`, func(this map[string]any, field any) error {
+			totalSignatures, _ := field.(json.Number).Int64()
+			sum := int64(0)
+			for _, entry := range this["entry"].([]any) {
+				if after := entry.(map[string]any)["afterSubmission"]; after != nil && after.(bool) == true {
+					continue
+				}
+				total, _ := entry.(map[string]any)["total"].(json.Number).Int64()
+				sum += total
+			}
+			if totalSignatures != sum {
+				return fmt.Errorf("totalSignatures %d != sum(entry[*].total) %d", totalSignatures, sum)
+			}
+			return nil
+		}),
 	), false),
 	sch.FieldSO("logo", docImage),
 	sch.FieldSO("preAnswer", sch.Map(
