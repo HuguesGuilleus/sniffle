@@ -15,6 +15,11 @@ type MapField struct {
 	fieldValue Type
 	required   bool
 	comments   []string
+	asserts    []assertFunc
+}
+type assertFunc struct {
+	name string
+	test func(this map[string]any, field any) error
 }
 
 func Map(fields ...MapField) Type      { return &mapType{fields, false} }
@@ -22,7 +27,7 @@ func MapExtra(fields ...MapField) Type { return &mapType{fields, true} }
 
 // Add a field to the map.
 func Field(key TypeStringer, value Type, required bool) MapField {
-	return MapField{key, value, required, nil}
+	return MapField{key, value, required, nil, nil}
 }
 
 // Add a required field to the map.
@@ -37,7 +42,17 @@ func FieldSO(key string, value Type) MapField {
 	return Field(String(key), value, false)
 }
 
-// Add a comments
+func Assert(name string, test func(this map[string]any, _ any) error) MapField {
+	return MapField{nil, nil, false, nil, []assertFunc{{name, test}}}
+}
+
+// TODO: add in method
+func (f MapField) Assert(name string, test func(this map[string]any, field any) error) MapField {
+	f.asserts = append(f.asserts, assertFunc{name, test})
+	return f
+}
+
+// Comment appends some comment line to this field.
 func (f MapField) Comment(c ...string) MapField {
 	f.comments = append(f.comments, c...)
 	return f
@@ -56,13 +71,29 @@ func (m *mapType) Match(v any) error {
 
 	errs := make(ErrorSlice, 0, len(mv)+len(keys))
 	for _, field := range m.fields {
+		if field.fieldKey == nil && len(errs) == 0 {
+			for _, assert := range field.asserts {
+				if err := assert.test(mv, nil); err != nil {
+					errs = append(errs, err)
+				}
+			}
+			continue
+		}
+
 		key, ok := m.searchKey(&field, keys)
 		if !ok && field.required {
 			errs = append(errs, fmt.Errorf("not found field for %s", field.fieldKey))
+			continue
 		} else if !ok {
 			continue
-		} else if err := field.fieldValue.Match(mv[key]); err != nil {
+		}
+		fieldValue := mv[key]
+		if err := field.fieldValue.Match(fieldValue); err != nil {
 			errs.Append(key, err)
+		} else {
+			for _, assert := range field.asserts {
+				errs.Append(key, assert.test(mv, fieldValue))
+			}
 		}
 	}
 
@@ -91,17 +122,6 @@ func (m *mapType) HTML(indent string) render.Node {
 		} else {
 			return render.N("", "{}")
 		}
-	} else if len(m.fields) == 1 && len(m.fields[0].comments) == 0 {
-		field := m.fields[0]
-		sep := ": "
-		if !field.required {
-			sep = "?: "
-		}
-		return render.N("", "{ ",
-			field.fieldKey.HTML(indent), sep,
-			field.fieldValue.HTML(indent),
-			render.If(m.extraFields, func() render.Node { return render.N("", ", ...") }),
-			" }")
 	}
 
 	indentAdd := indent + "\t"
@@ -116,10 +136,17 @@ func (m *mapType) HTML(indent string) render.Node {
 				render.S(field.comments, "", func(c string) render.Node {
 					return render.N("", indentAdd, render.N("span.sch-comment", "// ", c), "\n")
 				}),
-				indentAdd,
-				field.fieldKey.HTML(indentAdd), sep,
-				field.fieldValue.HTML(indentAdd),
-				",\n")
+				render.If(field.fieldKey != nil, func() render.Node {
+					return render.N("", indentAdd,
+						field.fieldKey.HTML(indentAdd), sep,
+						field.fieldValue.HTML(indentAdd),
+					)
+				}),
+				render.S(field.asserts, "", func(a assertFunc) render.Node {
+					return render.N("", " #assert ", render.N("span.sch-assert", a.name))
+				}),
+				render.IfS(field.fieldKey != nil, render.N("", ",\n")),
+			)
 		}),
 		render.IfS(m.extraFields, render.N("", indentAdd, "...\n")),
 		render.N("", indent, `}`),

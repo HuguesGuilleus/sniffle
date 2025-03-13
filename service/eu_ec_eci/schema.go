@@ -1,6 +1,7 @@
 package eu_ec_eci
 
 import (
+	"fmt"
 	"math"
 	"sniffle/front/component"
 	"sniffle/tool"
@@ -59,7 +60,13 @@ var indexType = sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("year", sch.IntervalStringInt(2012, math.MaxInt64)),
 		sch.FieldSR("number", sch.StrictPositiveStringInt()),
-		sch.FieldSR("pubRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)),
+		sch.FieldSR("pubRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)).Assert(`== "ECI(year)number"`, func(this map[string]any, field any) error {
+			expected := fmt.Sprintf("ECI(%s)%s", this["year"], this["number"])
+			if field.(string) != expected {
+				return fmt.Errorf("%q != %q", field, expected)
+			}
+			return nil
+		}),
 		sch.FieldSR("languageCode", sch.String("EN")),
 		sch.FieldSR("lastCall", sch.AnyBool()),
 		sch.FieldSR("latestUpdateDate", timeType),
@@ -89,8 +96,6 @@ var eciType = sch.Map(
 		sch.FieldSR("objectives", sch.NotEmptyString()),
 		sch.FieldSO("annexText", sch.NotEmptyString()),
 		sch.FieldSO("treaties", sch.NotEmptyString()),
-		sch.FieldSO("website", sch.AnyURL()),
-		sch.FieldSO("supportLink", sch.AnyURL()),
 		sch.FieldSR("commissionDecision", sch.Or(
 			sch.Map(
 				sch.FieldSR("document", docPDF),
@@ -103,6 +108,8 @@ var eciType = sch.Map(
 		)),
 		sch.FieldSO("additionalDocument", docPDFOrMSWord),
 		sch.FieldSO("draftLegal", docPDFOrMSWord),
+		sch.FieldSO("website", sch.AnyURL()),
+		sch.FieldSO("supportLink", sch.AnyURL()),
 	))),
 	sch.FieldSO("categories", sch.ArrayMin(1, sch.Map(
 		sch.FieldSR("categoryType", sch.EnumString("AGRI", "CULT", "DECO", "DEVCO", "EDU", "EMPL", "ENER", "ENV", "EURO", "JUST", "MARE", "MIGR", "REGIO", "RSH", "SANTE", "SEC", "TRA", "TRADE")),
@@ -130,7 +137,12 @@ var eciType = sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
 		sch.FieldSR("name", statusType),
 		sch.FieldSO("date", dateType),
-		sch.FieldSO("footnoteType", sch.String("COLLECTION_EARLY_CLOSURE")),
+		sch.FieldSO("footnoteType", sch.String("COLLECTION_EARLY_CLOSURE")).Assert(`this.name == "CLOSED"`, func(this map[string]any, field any) error {
+			if this["name"] != "CLOSED" {
+				return fmt.Errorf("expect this.name == CLOSED, but get %q", this["name"])
+			}
+			return nil
+		}),
 	))),
 	sch.FieldSR("funding", sch.Or(
 		sch.Map(),
@@ -166,8 +178,14 @@ var eciType = sch.Map(
 				sch.FieldSR("defaultName", sch.String("EXAMIN_STEPS")),
 				sch.FieldSR("defaultLink", sch.URL("https://citizens-initiative.europa.eu/**")),
 			),
-		)).Comment("Only view for ECI 2019/7. View 2025-03-11"),
-	)),
+		)),
+	)).Comment("Only view for ECI 2019/7. View 2025-03-11").
+		Assert(`this.status == "SUBMITED"`, func(this map[string]any, _ any) error {
+			if this["status"] != "SUBMITTED" {
+				return fmt.Errorf("expect SUBMITTED status, but get %q", this["status"])
+			}
+			return nil
+		}),
 	sch.FieldSO("answer", sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("decisionDate", dateType),
@@ -180,7 +198,12 @@ var eciType = sch.Map(
 				sch.FieldSR("link", sch.URL("https://**europa.eu/**")),
 			))),
 		))),
-	)),
+	)).Assert(`this.status == "ANSWERED"`, func(this map[string]any, _ any) error {
+		if this["status"] != "ANSWERED" {
+			return fmt.Errorf("expect SUBMITTED status, but get %q", this["status"])
+		}
+		return nil
+	}),
 )
 
 var detailedMember, detailedMemberDef = sch.Def("DetailedMember", sch.Or(

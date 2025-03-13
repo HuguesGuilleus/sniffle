@@ -11,6 +11,10 @@ pre.sch {
 	display: inline-block;
 }
 
+.sch-assert {
+	color: #624d00;
+}
+
 .sch-base {
 	color: #66008b;
 }
