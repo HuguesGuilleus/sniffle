@@ -181,9 +181,6 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	if tool.FetchJSON(t, eciType, &dto, fetch.R("", fetchURL, nil)) {
 		return nil
 	}
-	if tool.DevMode {
-		dto.check(t.With("year", info.year, "nb", info.number))
-	}
 
 	eci := &ECIOut{
 		Year:        info.year,

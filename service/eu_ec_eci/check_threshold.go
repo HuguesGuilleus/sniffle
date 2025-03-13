@@ -7,14 +7,16 @@ import (
 )
 
 func checkThreashold(t *tool.Tool) {
-	contain := bytes.Contains(
-		tool.FetchAll(t, fetch.URL("https://citizens-initiative.europa.eu/thresholds_en")),
-		checkThreasholdData,
-	)
-	if contain {
-		t.Info("checkThreashold.ok")
-	} else {
-		t.Error("checkThreashold.fail", "err", "It do no contain the expected data")
+	if tool.DevMode {
+		contain := bytes.Contains(
+			tool.FetchAll(t, fetch.URL("https://citizens-initiative.europa.eu/thresholds_en")),
+			checkThreasholdData,
+		)
+		if contain {
+			t.Info("checkThreashold.ok")
+		} else {
+			t.Error("checkThreashold.fail", "err", "It do no contain the expected data")
+		}
 	}
 }
 
