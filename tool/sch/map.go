@@ -25,6 +25,11 @@ type assertFunc struct {
 func Map(fields ...MapField) Type      { return &mapType{fields, false} }
 func MapExtra(fields ...MapField) Type { return &mapType{fields, true} }
 
+// Add a black line
+func BlankField() MapField {
+	return Field(nil, nil, false)
+}
+
 // Add a field to the map.
 func Field(key TypeStringer, value Type, required bool) MapField {
 	return MapField{key, value, required, nil, nil}
@@ -135,6 +140,9 @@ func (m *mapType) HTML(indent string) render.Node {
 				return render.N("", "#assert ", render.N("span.sch-assert", a.name))
 			})
 			if field.fieldKey == nil {
+				if len(asserts) == 0 {
+					return render.N("", comments, "\n")
+				}
 				return render.N("",
 					comments,
 					indentAdd, asserts, "\n",

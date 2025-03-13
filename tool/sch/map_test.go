@@ -75,4 +75,6 @@ func TestMap(t *testing.T) {
 
 	assert.Equal(t, "{}", genHTML(Map()))
 	assert.Equal(t, "{...}", genHTML(MapExtra()))
+
+	assert.Equal(t, "{\n\n\t}", genHTML(Map(BlankField())))
 }

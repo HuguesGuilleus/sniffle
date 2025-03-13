@@ -60,8 +60,8 @@ var indexType = sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("year", sch.IntervalStringInt(2012, math.MaxInt64)),
 		sch.FieldSR("number", sch.StrictPositiveStringInt()),
-		sch.FieldSR("pubRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)).Assert(`== "ECI(year)number"`, func(this map[string]any, field any) error {
-			expected := fmt.Sprintf("ECI(%s)%s", this["year"], this["number"])
+		sch.FieldSR("pubRegNum", sch.Regexp(`^ECI\(\d{4}\)\d{6}$`)).Assert(`== "ECI(year)number"`, func(eci map[string]any, field any) error {
+			expected := fmt.Sprintf("ECI(%s)%s", eci["year"], eci["number"])
 			if field.(string) != expected {
 				return fmt.Errorf("%q != %q", field, expected)
 			}
@@ -75,7 +75,12 @@ var indexType = sch.Map(
 		sch.FieldSO("supportLink", sch.AnyURL()),
 		sch.FieldSR("title", sch.NotEmptyString()),
 		sch.FieldSR("totalSupporters", sch.PositiveInt()),
-	))),
+	))).Assert(sch.AssertKey("id", func(eci any) int64 {
+		id, _ := eci.(map[string]any)["id"].(json.Number).Int64()
+		return id
+	})).Assert(sch.AssertKey("pubRegNum", func(eci any) string {
+		return eci.(map[string]any)["pubRegNum"].(string)
+	})),
 )
 
 var eciType = sch.Map(
@@ -89,6 +94,8 @@ var eciType = sch.Map(
 	sch.FieldSO("startCollectionDate", dateType),
 	sch.FieldSO("earlyClosureDate", sch.Or(sch.String(""), dateType)),
 	sch.FieldSR("partiallyRegistered", sch.AnyBool()),
+	sch.FieldSO("logo", docImage),
+	sch.BlankField(),
 	sch.FieldSR("linguisticVersions", sch.ArrayRange(3, 24, sch.Map(
 		sch.FieldSR("original", sch.AnyBool()),
 		sch.FieldSR("languageCode", langs),
@@ -110,11 +117,18 @@ var eciType = sch.Map(
 		sch.FieldSO("draftLegal", docPDFOrMSWord),
 		sch.FieldSO("website", sch.AnyURL()),
 		sch.FieldSO("supportLink", sch.AnyURL()),
-	))),
+	))).Assert(sch.AssertKey(`languageCode`, func(desc any) string {
+		return desc.(map[string]any)["languageCode"].(string)
+	})).Assert(sch.AssertOnlyOneTrue("original", func(desc any) bool {
+		return desc.(map[string]any)["original"].(bool)
+	})),
+	sch.BlankField(),
 	sch.FieldSO("categories", sch.ArrayMin(1, sch.Map(
 		sch.FieldSR("categoryType", sch.EnumString("AGRI", "CULT", "DECO", "DEVCO", "EDU", "EMPL", "ENER", "ENV", "EURO", "JUST", "MARE", "MIGR", "REGIO", "RSH", "SANTE", "SEC", "TRA", "TRADE")),
-	))),
-
+	))).Assert(sch.AssertKey("categoryType", func(category any) string {
+		return category.(map[string]any)["categoryType"].(string)
+	})),
+	sch.BlankField(),
 	sch.FieldSR("members", sch.ArrayMin(7, sch.And(detailedMember, sch.Map(
 		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSR("privacyApplied", sch.AnyBool()),
@@ -132,7 +146,7 @@ var eciType = sch.Map(
 		sch.FieldSO("residenceCountry", countriesLower),
 		sch.FieldSO("startingDate", dateType),
 	)))),
-
+	sch.BlankField(),
 	sch.FieldSR("progress", sch.ArrayMin(2, sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
 		sch.FieldSR("name", statusType),
@@ -143,7 +157,24 @@ var eciType = sch.Map(
 			}
 			return nil
 		}),
-	))),
+	))).Assert(sch.AssertKey("name", func(progress any) string {
+		return progress.(map[string]any)["name"].(string)
+	})).Assert(sch.AssertOnlyOneTrue("active", func(progress any) bool {
+		return progress.(map[string]any)["active"].(bool)
+	})),
+	sch.Assert(`eci.status == this.progress[with .active].name  `, func(eci map[string]any, _ any) error {
+		eciStatus := eci["status"].(string)
+		for _, p := range eci["progress"].([]any) {
+			if progress := p.(map[string]any); progress["active"].(bool) {
+				if active := progress["name"].(string); active != eciStatus {
+					return fmt.Errorf("Not same status: eci.status:%q, active:%q", eciStatus, active)
+				}
+				break
+			}
+		}
+		return nil
+	}),
+	sch.BlankField(),
 	sch.FieldSR("funding", sch.Or(
 		sch.Map(),
 		sch.Map(
@@ -156,7 +187,7 @@ var eciType = sch.Map(
 				sch.FieldSR("anonymized", sch.AnyBool()),
 				sch.FieldSO("otherSupport", sch.String("Research and Network")).Comment("Found only in ECI 2025/1"),
 			))),
-			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(``, func(this map[string]any, field any) error {
+			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(`totalAmount == sum(sponsors[*].amount)`, func(this map[string]any, field any) error {
 				totalAmount, _ := field.(json.Number).Float64()
 				sum := float64(0)
 				for _, sponsors := range this["sponsors"].([]any) {
@@ -172,6 +203,7 @@ var eciType = sch.Map(
 			sch.FieldSO("document", docPDF),
 		),
 	)),
+	sch.BlankField(),
 	sch.Field(sch.EnumString("submission", "sosReport"), sch.Map(
 		sch.FieldSO("updateDate", dateType),
 		sch.FieldSR("entry", sch.ArrayRange(3, 28, sch.Map(
@@ -209,22 +241,23 @@ var eciType = sch.Map(
 			return nil
 		}),
 	), false),
-	sch.FieldSO("logo", docImage),
+	sch.BlankField(),
 	sch.FieldSO("preAnswer", sch.Map(
 		sch.FieldSR("links", sch.ArraySize(1,
 			sch.Map(
 				sch.FieldSR("defaultLanguageCode", sch.String("EN")),
 				sch.FieldSR("defaultName", sch.String("EXAMIN_STEPS")),
-				sch.FieldSR("defaultLink", sch.URL("https://citizens-initiative.europa.eu/**")),
+				sch.FieldSR("defaultLink", sch.URL("https://citizens-initiative.europa.eu/**?")),
 			),
 		)),
 	)).Comment("Only view for ECI 2019/7. View 2025-03-11").
-		Assert(`this.status == "SUBMITED"`, func(this map[string]any, _ any) error {
-			if this["status"] != "SUBMITTED" {
-				return fmt.Errorf("expect SUBMITTED status, but get %q", this["status"])
+		Assert(`eci.status == "SUBMITED"`, func(eci map[string]any, _ any) error {
+			if eci["status"] != "SUBMITTED" {
+				return fmt.Errorf("expect SUBMITTED status, but get %q", eci["status"])
 			}
 			return nil
 		}),
+	sch.BlankField(),
 	sch.FieldSO("answer", sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
 		sch.FieldSR("decisionDate", dateType),
@@ -235,11 +268,15 @@ var eciType = sch.Map(
 			sch.FieldSO("link", sch.ArraySize(24, sch.Map(
 				sch.FieldSR("languageCode", langs),
 				sch.FieldSR("link", sch.URL("https://**europa.eu/**")),
-			))),
-		))),
-	)).Assert(`this.status == "ANSWERED"`, func(this map[string]any, _ any) error {
-		if this["status"] != "ANSWERED" {
-			return fmt.Errorf("expect SUBMITTED status, but get %q", this["status"])
+			))).Assert(sch.AssertKey("languageCode", func(link any) string {
+				return link.(map[string]any)["languageCode"].(string)
+			})),
+		))).Assert(sch.AssertKey("defaultName", func(links any) string {
+			return links.(map[string]any)["defaultName"].(string)
+		})),
+	)).Assert(`eci.status == "ANSWERED"`, func(eci map[string]any, _ any) error {
+		if eci["status"] != "ANSWERED" {
+			return fmt.Errorf("expect SUBMITTED status, but get %q", eci["status"])
 		}
 		return nil
 	}),
