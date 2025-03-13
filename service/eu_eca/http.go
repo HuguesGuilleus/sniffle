@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
@@ -39,7 +40,7 @@ func Do(t *tool.Tool) {
 
 	t.LangRedirect("/eu/eca/annual-report/index.html")
 	reports := fetchReports(t, language.French)
-	for _, l := range t.Languages {
+	for _, l := range translate.Langs {
 		renderReportIndex(t, l, reports)
 	}
 }

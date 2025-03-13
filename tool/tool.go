@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"os"
+	"sniffle/front/translate"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
 	"sniffle/tool/render"
@@ -57,7 +58,8 @@ type Tool struct {
 
 	// The host URL, without the training slash.
 	// Ex: https://www.example.com
-	HostURL   string
+	HostURL string
+	// Deprecated: use translate.Langs instead.
 	Languages []language.Language
 
 	// A file, to be put as .../index.html to redirect user with js to .../[lang].html page.
@@ -166,7 +168,7 @@ func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool)
 	wf := writefile.T{}
 	return wf, New(&Config{
 		HostURL:   "https://example.com",
-		Languages: []language.Language{language.English, language.French},
+		Languages: translate.Langs,
 
 		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelWarn,

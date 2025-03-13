@@ -3,7 +3,9 @@ package eu_ec_eci
 import (
 	"io"
 	"log/slog"
+	"sniffle/front/translate"
 	"sniffle/tool"
+	"sniffle/tool/language"
 	"sniffle/tool/writefile"
 	"testing"
 
@@ -11,6 +13,9 @@ import (
 )
 
 func TestService(t *testing.T) {
+	defer func(langs []language.Language) { translate.Langs = langs }(translate.Langs)
+	translate.Langs = []language.Language{language.English, language.French}
+
 	wf, to := tool.NewTestTool(fetcher)
 	to.Logger = slog.New(slog.NewTextHandler(io.Discard, nil))
 	Do(to)

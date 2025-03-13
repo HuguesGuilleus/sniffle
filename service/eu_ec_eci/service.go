@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
 )
@@ -13,7 +14,7 @@ func Do(t *tool.Tool) {
 	eciByYear := yearGroupingECI(eciSlice)
 
 	t.LangRedirect("/eu/ec/eci/index.html")
-	for _, l := range t.Languages {
+	for _, l := range translate.Langs {
 		renderIndex(t, eciByYear, l)
 	}
 
@@ -21,7 +22,7 @@ func Do(t *tool.Tool) {
 
 	for _, eci := range eciSlice {
 		t.LangRedirect(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number))
-		for _, l := range t.Languages {
+		for _, l := range translate.Langs {
 			renderOne(t, eci, l)
 		}
 		if img := eci.Image; img != nil {

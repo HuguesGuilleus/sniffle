@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"sniffle/common"
 	"sniffle/common/country"
+	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/language"
@@ -148,7 +149,6 @@ var fetcher = map[string]*fetch.TestResponse{
 				}
 		],
 		"categories": [
-			{ "categoryType": "SANTE" },
 			{ "categoryType": "TRADE" },
 			{ "categoryType": "SANTE" },
 			{ "categoryType": "AGRI" }
@@ -286,6 +286,9 @@ func TestFetchIndex(t *testing.T) {
 }
 
 func TestFetchDetail(t *testing.T) {
+	defer func(langs []language.Language) { translate.Langs = langs }(translate.Langs)
+	translate.Langs = []language.Language{language.English, language.French}
+
 	wf, to := tool.NewTestTool(fetcher)
 	eci := fetchDetail(to, indexItem{
 		year:   2024,
@@ -304,12 +307,6 @@ func TestFetchDetail(t *testing.T) {
 		Description: map[language.Language]*Description{
 			language.English: {
 				Title: "Title",
-				SupportLink: &url.URL{
-					Scheme:   "https",
-					Host:     "eci.ec.europa.eu",
-					Path:     "/043/public/",
-					RawQuery: "lg=fr",
-				},
 				Website: &url.URL{
 					Scheme: "https",
 					Host:   "furfreeeurope.eu",

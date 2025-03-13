@@ -9,7 +9,7 @@ import (
 
 func Do(t *tool.Tool) {
 	t.LangRedirect("/index.html")
-	for _, l := range t.Languages {
+	for _, l := range translate.Langs {
 		tr := translate.T[l]
 
 		t.WriteFile(l.Path("/"), render.Merge(render.Na("html", "lang", l.String()).N(
