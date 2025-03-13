@@ -128,25 +128,34 @@ func (m *mapType) HTML(indent string) render.Node {
 	return render.N("",
 		render.N("", `{`, "\n"),
 		render.S(m.fields, "", func(field MapField) render.Node {
-			sep := ": "
-			if !field.required {
-				sep = "?: "
+			comments := render.S(field.comments, "", func(c string) render.Node {
+				return render.N("", indentAdd, render.N("span.sch-comment", "// ", c), "\n")
+			})
+			asserts := render.S(field.asserts, " ", func(a assertFunc) render.Node {
+				return render.N("", "#assert ", render.N("span.sch-assert", a.name))
+			})
+			if field.fieldKey == nil {
+				return render.N("",
+					comments,
+					indentAdd, asserts, "\n",
+				)
+			} else {
+				sep := ": "
+				if !field.required {
+					sep = "?: "
+				}
+				return render.N("",
+					comments,
+					render.If(field.fieldKey != nil, func() render.Node {
+						return render.N("", indentAdd,
+							field.fieldKey.HTML(indentAdd), sep,
+							field.fieldValue.HTML(indentAdd),
+						)
+					}),
+					render.IfS(len(asserts) > 0, render.N("", " ", asserts)),
+					",\n",
+				)
 			}
-			return render.N("",
-				render.S(field.comments, "", func(c string) render.Node {
-					return render.N("", indentAdd, render.N("span.sch-comment", "// ", c), "\n")
-				}),
-				render.If(field.fieldKey != nil, func() render.Node {
-					return render.N("", indentAdd,
-						field.fieldKey.HTML(indentAdd), sep,
-						field.fieldValue.HTML(indentAdd),
-					)
-				}),
-				render.S(field.asserts, "", func(a assertFunc) render.Node {
-					return render.N("", " #assert ", render.N("span.sch-assert", a.name))
-				}),
-				render.IfS(field.fieldKey != nil, render.N("", ",\n")),
-			)
 		}),
 		render.IfS(m.extraFields, render.N("", indentAdd, "...\n")),
 		render.N("", indent, `}`),

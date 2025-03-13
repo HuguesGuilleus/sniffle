@@ -181,6 +181,19 @@ var eciType = sch.Map(
 			sch.FieldSO("afterSubmission", sch.AnyBool()),
 		))),
 		sch.FieldSO("footnoteType", sch.String("AFTER_SUBMISSION_CERTIFICATES")),
+		sch.Assert(`footnoteType exist <=> some(entry[$].afterSubmission == true)`, func(this map[string]any, _ any) error {
+			someAfterSubmission := false
+			for _, entry := range this["entry"].([]any) {
+				if after := entry.(map[string]any)["afterSubmission"]; after != nil {
+					someAfterSubmission = someAfterSubmission || after.(bool)
+				}
+			}
+			footnoteType := (this["footnoteType"] != nil)
+			if someAfterSubmission != footnoteType {
+				return fmt.Errorf("someAfterSubmission %t != footnoteType existance %t", someAfterSubmission, footnoteType)
+			}
+			return nil
+		}),
 		sch.FieldSR("totalSignatures", sch.PositiveInt()).Assert(`totalSignatures == sum(entry[*].total without .afterSubmission==true)`, func(this map[string]any, field any) error {
 			totalSignatures, _ := field.(json.Number).Int64()
 			sum := int64(0)

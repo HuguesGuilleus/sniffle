@@ -49,6 +49,7 @@ func TestMap(t *testing.T) {
 			Comment("c1", "c2").
 			Assert(`a1`, func(this map[string]any, field any) error { return nil }).
 			Assert(`a2`, func(this map[string]any, field any) error { return nil }),
+		Assert(`alone`, func(this map[string]any, _ any) error { return nil }),
 	)
 	assert.NoError(t, m.Match(map[string]any{"k1": false}))
 	assert.NoError(t, m.Match(map[string]any{"k1": false, "x": nil}))
@@ -61,6 +62,7 @@ func TestMap(t *testing.T) {
 		" #assert <span class=sch-assert>a1</span>"+
 		" #assert <span class=sch-assert>a2</span>"+
 		","+
+		"\n\t\t#assert <span class=sch-assert>alone</span>"+
 		"\n\t\t..."+
 		"\n\t}", genHTML(m))
 
