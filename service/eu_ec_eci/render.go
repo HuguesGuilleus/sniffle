@@ -91,11 +91,11 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						render.Na("a.box", "href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l)).
 							N(tr.LinkOfficial),
+						render.If(desc.SupportLink != nil, func() render.Node {
+							return render.Na("a.box", "href", desc.SupportLink.String()).N(ONE.LinkSignature)
+						}),
 						render.If(desc.FollowUp != nil, func() render.Node {
 							return render.Na("a.box", "href", desc.FollowUp.String()).N(ONE.LinkFollowUp)
-						}),
-						render.If(desc.FollowUp == nil && desc.SupportLink != nil, func() render.Node {
-							return render.Na("a.box", "href", desc.SupportLink.String()).N(ONE.LinkSupport)
 						}),
 						render.If(desc.Website != nil, func() render.Node {
 							return render.Na("a.box", "href", desc.Website.String()).N(ONE.LinkWebsite)

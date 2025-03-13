@@ -200,7 +200,6 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		eci.Categorie = append(eci.Categorie, entry.CategoryType)
 	}
 	slices.Sort(eci.Categorie)
-	eci.Categorie = slices.Compact(eci.Categorie)
 
 	// Description
 	registrationDoc := new([language.Len]*Document)
@@ -286,6 +285,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 					u.Path += "_" + l.String()
 				}
 				desc.FollowUp = u
+				desc.SupportLink = nil
 			}
 		case "PRESS_RELEASE":
 			answer.AnswerPressRelease = translation

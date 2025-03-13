@@ -62,9 +62,9 @@ type Translation struct {
 			Categorie                  render.H
 			LastUpdate                 render.H
 			DescriptionOriginalLangage render.H
-			LinkSupport                render.H `help:"Support page link"`
+			LinkSignature              render.H `help:"Link to signature page"`
 			LinkFollowUp               render.H
-			LinkWebsite                render.H `help:"Organisator website link"`
+			LinkWebsite                render.H `help:"Link to organisator"`
 			H1Description              render.H
 			H1DescriptionAnnex         render.H
 			AnnexDocument              render.H
