@@ -515,7 +515,7 @@ var schemaPage = func() []byte {
 					render.N("h2", "Detailed member"),
 					render.N("pre.sch", detailedMemberDef),
 
-					render.N("h1", "Refused"),
+					render.N("h2", "Refused"),
 					render.N("pre.sch", refusedOneType.HTML("")),
 
 					render.N("h1", "Thresholds data"),

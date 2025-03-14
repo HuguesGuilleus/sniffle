@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"sniffle/front/lredirect"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -38,7 +39,7 @@ func Do(t *tool.Tool) {
 	// ))
 	// token := v.D.GetContextWebInformation.FormDigestValue
 
-	t.LangRedirect("/eu/eca/annual-report/index.html")
+	t.WriteFile("/eu/eca/annual-report/index.html", lredirect.All)
 	reports := fetchReports(t, language.French)
 	for _, l := range translate.Langs {
 		renderReportIndex(t, l, reports)

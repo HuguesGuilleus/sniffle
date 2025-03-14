@@ -21,7 +21,6 @@ func main() {
 	config := tool.CLI(map[string]time.Duration{"": time.Millisecond * 100})
 
 	config.HostURL = *host
-	config.Languages = translate.Langs
 
 	config.LongTasksMap = map[string]func([]byte) ([]byte, error){
 		resize0.Name: resize0.Resize,

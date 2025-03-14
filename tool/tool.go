@@ -8,9 +8,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"os"
-	"sniffle/front/translate"
 	"sniffle/tool/fetch"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"sniffle/tool/writefile"
 	"strings"
@@ -21,8 +19,7 @@ import (
 type Config struct {
 	Logger *slog.Logger
 
-	HostURL   string
-	Languages []language.Language
+	HostURL string
 
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
@@ -35,10 +32,7 @@ func New(config *Config) *Tool {
 	return &Tool{
 		Logger: config.Logger,
 
-		HostURL:   strings.TrimRight(config.HostURL, "/"),
-		Languages: config.Languages,
-
-		langRedirect: langRedirect(config.Languages),
+		HostURL: strings.TrimRight(config.HostURL, "/"),
 
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
@@ -59,12 +53,6 @@ type Tool struct {
 	// The host URL, without the training slash.
 	// Ex: https://www.example.com
 	HostURL string
-	// Deprecated: use translate.Langs instead.
-	Languages []language.Language
-
-	// A file, to be put as .../index.html to redirect user with js to .../[lang].html page.
-	// It generated from Languages.
-	langRedirect []byte
 
 	writeSum  uint64
 	writefile writefile.WriteFile
@@ -82,7 +70,7 @@ type Tool struct {
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
-	if strings.HasSuffix(path, ".html") && !(bytes.Equal(data, render.Back) || bytes.Equal(data, t.langRedirect)) {
+	if strings.HasSuffix(path, ".html") && !(bytes.Equal(data, render.Back) || bytes.Contains(data, []byte(`<meta name=robots content=noindex>`))) {
 		t.htmlFileMutex.Lock()
 		t.htmlFiles = append(t.htmlFiles, path)
 		t.htmlFileMutex.Unlock()
@@ -167,8 +155,7 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool) {
 	wf := writefile.T{}
 	return wf, New(&Config{
-		HostURL:   "https://example.com",
-		Languages: translate.Langs,
+		HostURL: "https://example.com",
 
 		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelWarn,
@@ -177,37 +164,4 @@ func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool)
 		Writefile: wf,
 		Fetcher:   []fetch.Fetcher{fetch.Test(fetcherMap)},
 	})
-}
-
-// Write a ".../index.html" file that redirect user with js.
-// Redirect will be ".../[lang].html".
-func (t *Tool) LangRedirect(path string) {
-	t.WriteFile(path, t.langRedirect)
-}
-
-func langRedirect(langs []language.Language) []byte {
-	langsStrings := make([]string, len(langs))
-	for i, l := range langs {
-		langsStrings[i] = l.String()
-	}
-
-	s := `<!DOCTYPE html>` +
-		`<html>` +
-		`<head>` +
-		`<meta charset=utf-8>` +
-		`<meta name=robots content=noindex>` +
-		`<script>` +
-		`for(a of navigator.languages)` +
-		`if("` + strings.Join(langsStrings, "/") + `".split("/").includes(a=a.replace(/-\w+/,"")))` +
-		`{location=a+".html";break}` +
-		`</script>` +
-		`</head>` +
-		`<body>` +
-		`<p>Choose a language:</p>`
-
-	for _, l := range langs {
-		s += `<a href=` + l.String() + `.html>` + l.Human() + `</a><br>`
-	}
-
-	return []byte(s)
 }

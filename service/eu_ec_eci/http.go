@@ -241,7 +241,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 
-	for _, l := range t.Languages {
+	for _, l := range translate.Langs {
 		if eci.Description[l] == nil {
 			eci.Description[l] = eci.Description[eci.DescriptionOriginalLangage]
 		}

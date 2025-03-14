@@ -2,6 +2,7 @@ package about
 
 import (
 	"sniffle/front/component"
+	"sniffle/front/lredirect"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
@@ -9,9 +10,9 @@ import (
 
 // Write about pages.
 func Do(t *tool.Tool) {
-	basePath := "/about/"
-	t.LangRedirect("/about/index.html")
+	t.WriteFile("/about/index.html", lredirect.All)
 
+	basePath := "/about/"
 	for _, l := range translate.Langs {
 		tr := translate.T[l]
 		t.WriteFile(l.Path(basePath), render.Merge(render.Na("html", "lang", l.String()).N(

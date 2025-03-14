@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"sniffle/front/lredirect"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
@@ -14,7 +15,7 @@ func Do(t *tool.Tool) {
 	ExploreRefused(t)
 	eciByYear := yearGroupingECI(eciSlice)
 
-	t.LangRedirect("/eu/ec/eci/index.html")
+	t.WriteFile("/eu/ec/eci/index.html", lredirect.All)
 	for _, l := range translate.Langs {
 		renderIndex(t, eciByYear, l)
 	}
@@ -22,7 +23,7 @@ func Do(t *tool.Tool) {
 	t.WriteFile("/eu/ec/eci/schema.html", schemaPage)
 
 	for _, eci := range eciSlice {
-		t.LangRedirect(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number))
+		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number), lredirect.All) // TODO: the language can be unavailable
 		for _, l := range translate.Langs {
 			renderOne(t, eci, l)
 		}
