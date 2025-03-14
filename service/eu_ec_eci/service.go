@@ -11,6 +11,7 @@ import (
 
 func Do(t *tool.Tool) {
 	eciSlice := fetchAll(t)
+	ExploreRefused(t)
 	eciByYear := yearGroupingECI(eciSlice)
 
 	t.LangRedirect("/eu/ec/eci/index.html")

@@ -41,6 +41,17 @@ var docPDFOrMSWord, docPDFOrMSWordDef = sch.Def("DocumentPDFOrMSWord", sch.And(
 	))),
 ))
 
+var docApplication, docApplicationDef = sch.Def("DocumentPDFOrMSWord", sch.And(
+	docType,
+	sch.MapExtra(sch.FieldSR("mimeType", sch.Or(
+		sch.MIME("application/pdf"),
+		sch.MIME("application/msword"),
+		sch.MIME("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+		sch.MIME("application/force-download"),
+		sch.MIME("application/octet-stream"),
+	))),
+))
+
 var docImage, docImageDef = sch.Def("DocumentImage", sch.And(
 	docType,
 	sch.MapExtra(
@@ -350,13 +361,59 @@ var detailedMember, detailedMemberDef = sch.Def("DetailedMember", sch.Or(
 	),
 ))
 
+var refusedIndexType = sch.Map(
+	sch.FieldSR("requests", sch.PositiveInt()),
+	sch.FieldSR("registered", sch.PositiveInt()),
+	sch.FieldSR("successful", sch.PositiveInt()),
+	sch.FieldSR("ongoing", sch.PositiveInt()),
+	sch.FieldSR("answered", sch.PositiveInt()),
+	sch.FieldSR("all", sch.PositiveInt()),
+	sch.FieldSR("recordsFound", sch.PositiveInt()),
+	sch.FieldSR("entries", sch.Array(sch.Map(
+		sch.FieldSR("id", sch.PositiveInt()),
+		sch.FieldSR("status", sch.String("REJECTED")),
+		sch.FieldSR("languageCode", langs),
+		sch.FieldSR("title", sch.NotEmptyString()),
+		sch.FieldSR("totalSupporters", sch.ConstInt(0)),
+		sch.FieldSR("latestUpdateDate", timeType),
+		sch.FieldSR("lastCall", sch.False()),
+	))),
+)
+
+var refusedOneType = sch.Map(
+	sch.FieldSR("id", sch.PositiveInt()),
+	sch.FieldSR("latestUpdateDate", timeType),
+	sch.FieldSR("lastCall", sch.False()),
+	sch.FieldSR("refusalDate", dateType),
+	sch.FieldSR("refusalDocument", docPDF),
+	sch.FieldSR("linguisticVersions", sch.ArraySize(1, sch.Map(
+		sch.FieldSR("original", sch.True()),
+		sch.FieldSR("languageCode", langs),
+		sch.FieldSR("title", sch.NotEmptyString()),
+		sch.FieldSR("objectives", sch.NotEmptyString()),
+		sch.FieldSO("annexText", sch.NotEmptyString()),
+		sch.FieldSR("treaties", sch.NotEmptyString()),
+		sch.FieldSO("website", sch.AnyURL()),
+		sch.FieldSO("supportLink", sch.AnyURL()),
+		sch.FieldSO("additionalDocument", docApplication),
+		sch.FieldSO("draftLegal", docPDFOrMSWord),
+		sch.FieldSR("commissionDecision", sch.Map(
+			sch.FieldSR("document", docPDF),
+			sch.FieldSO("celex", sch.NotEmptyString()),
+		)),
+	))),
+	sch.FieldSO("refusalReasons", sch.ArraySize(1, sch.String("reason.action.registration.reject.competences"))),
+)
+
 var schemaPage = func() []byte {
 	lang := language.AllEnglish
 	title := "European Citizens' Initiative crawling method"
 	description := "Our usage of the https://citizens-initiative.europa.eu/ website to crawl data."
 
 	oneURLTempl := "https://register.eci.ec.europa.eu/core/api/register/details/{year}/{number:%06d}"
-	oneURLEx := "https://register.eci.ec.europa.eu/core/api/register/details/2022/000002"
+	oneURLTemplId := "https://register.eci.ec.europa.eu/core/api/register/details/{id}"
+	oneURLExyear := "https://register.eci.ec.europa.eu/core/api/register/details/2022/000002"
+	oneURLExId := "https://register.eci.ec.europa.eu/core/api/register/details/1979"
 
 	return render.Merge(render.Na("html", "lang", "en").N(
 		render.N("head",
@@ -430,17 +487,36 @@ var schemaPage = func() []byte {
 						indexType.HTML(""),
 					),
 
-					render.N("h1", "Get details"),
+					render.N("h2", "Get refused index"),
 					render.N("pre.sch",
-						"GET ", render.Na("a.block", "href", oneURLTempl).N(oneURLTempl),
-						"\n\n# Example: ", render.Na("a.block", "href", oneURLEx).N(oneURLEx),
+						"GET ", render.Na("a.block", "href", refusedIndexURL).N(refusedIndexURL),
 						"\n\n200 OK\n",
 						"Content-Type: application/json\n\n",
-						eciType.HTML(""),
+						refusedIndexType.HTML(""),
 					),
+
+					render.N("h1", "Get details"),
+					render.N("h2", "Fetch"),
+					render.N("pre.sch",
+						"GET ", render.Na("a.block", "href", oneURLTemplId).N(oneURLTemplId), " ",
+						component.SchComment("For all ECI"),
+						"GET ", render.Na("a.block", "href", oneURLTempl).N(oneURLTempl), " ",
+						component.SchComment("Only for non refused ICE"),
+						"\n200 OK\n",
+						"Content-Type: application/json\n\n{...}",
+						render.N("hr"),
+						"# Example: Fur Free Europe\n",
+						render.Na("a.block", "href", oneURLExyear).N(oneURLExyear), "\n",
+						render.Na("a.block", "href", oneURLExId).N(oneURLExId),
+					),
+					render.N("h2", "Not refused"),
+					render.N("pre.sch", eciType.HTML("")),
 
 					render.N("h2", "Detailed member"),
 					render.N("pre.sch", detailedMemberDef),
+
+					render.N("h1", "Refused"),
+					render.N("pre.sch", refusedOneType.HTML("")),
 
 					render.N("h1", "Thresholds data"),
 					render.N("p.noindent",
