@@ -2,9 +2,9 @@ package release
 
 import (
 	"fmt"
+	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/tool"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"strconv"
 	"time"

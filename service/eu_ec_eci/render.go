@@ -3,10 +3,10 @@ package eu_ec_eci
 import (
 	"fmt"
 	"sniffle/common/country"
+	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 )
 

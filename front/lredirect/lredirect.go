@@ -4,8 +4,8 @@ package lredirect
 import (
 	"bytes"
 	"html"
+	"sniffle/common/language"
 	"sniffle/front/translate"
-	"sniffle/tool/language"
 )
 
 // A page with all available translate languages. No official link.

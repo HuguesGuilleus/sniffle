@@ -2,7 +2,7 @@ package eu_ec_eci
 
 import (
 	"sniffle/common/country"
-	"sniffle/tool/language"
+	"sniffle/common/language"
 )
 
 type detailDTO struct {

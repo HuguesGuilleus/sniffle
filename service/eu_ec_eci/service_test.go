@@ -3,9 +3,9 @@ package eu_ec_eci
 import (
 	"io"
 	"log/slog"
+	"sniffle/common/language"
 	"sniffle/front/translate"
 	"sniffle/tool"
-	"sniffle/tool/language"
 	"sniffle/tool/writefile"
 	"testing"
 

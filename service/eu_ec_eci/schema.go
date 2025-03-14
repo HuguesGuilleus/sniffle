@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"sniffle/common/language"
 	"sniffle/front/component"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"sniffle/tool/sch"
 )

@@ -1,7 +1,7 @@
 package component
 
 import (
-	"sniffle/tool/language"
+	"sniffle/common/language"
 	"sniffle/tool/render"
 	"testing"
 

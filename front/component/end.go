@@ -2,9 +2,9 @@ package component
 
 import (
 	_ "embed"
+	"sniffle/common/language"
 	"sniffle/front/translate"
 	"sniffle/tool/fronttool"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 	"time"
 )

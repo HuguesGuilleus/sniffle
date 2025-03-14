@@ -5,7 +5,7 @@ import (
 	"os"
 	"reflect"
 	"slices"
-	"sniffle/tool/language"
+	"sniffle/common/language"
 	"sniffle/tool/render"
 	"strings"
 	"testing"

@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"sniffle/common/country"
-	"sniffle/tool/language"
+	"sniffle/common/language"
 	"sniffle/tool/render"
 )
 

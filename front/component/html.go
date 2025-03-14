@@ -1,9 +1,9 @@
 package component
 
 import (
+	"sniffle/common/language"
 	"sniffle/front"
 	"sniffle/front/translate"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 )
 

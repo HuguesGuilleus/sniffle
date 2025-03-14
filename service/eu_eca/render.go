@@ -1,10 +1,10 @@
 package eu_eca
 
 import (
+	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
-	"sniffle/tool/language"
 	"sniffle/tool/render"
 )
 
