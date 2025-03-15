@@ -1,3 +1,6 @@
+// render is a lib for render secure HTML within go code.
+//
+// This package is full cover tested.
 package render
 
 import (
@@ -32,7 +35,7 @@ type NodeAttrBuilder struct {
 	attr attributes
 }
 
-// Create a node builde to add some attributes then create a Node
+// Create a node builder to add some attributes then create a Node
 //
 // Usage: Na("a.class1.class2", "href", "https://github.com/").A("title", "GitHub website").N(N("span", "GitHub ..."))
 func Na(tags string, key, value string) NodeAttrBuilder {
@@ -42,6 +45,9 @@ func (na NodeAttrBuilder) A(key, value string) NodeAttrBuilder {
 	na.attr = append(na.attr, [2]string{key, value})
 	return na
 }
+
+// N method create a Node with configurate tag and attribute.
+// N is equivalent of N function for children.
 func (na NodeAttrBuilder) N(children ...any) Node {
 	return Node{na.tags, na.attr, children}
 }
@@ -58,6 +64,17 @@ type Node struct {
 // Create a Node.
 // Tags pattern is: tagName.class1.class2.class3
 // If tags == "", to print only the children without tag.
+//
+// Support children type:
+//   - []any
+//   - Node, NodeAttrBuilder, []Node: render as sub element
+//   - H, []H: append without change
+//   - Z, nil: do nothing
+//   - string: escape and print
+//   - Int: decimal print without space
+//   - int, uint: decimal print with narrow no-break space between thousand
+//   - time.Time: print in a <time datetime> element according to time zone.
+//   - other: call fmt.Sprint
 func N(tags string, children ...any) Node { return Node{tags, nil, children} }
 
 // A zero node who output nothing.
@@ -90,6 +107,7 @@ func IfElse(b bool, yes, no func() Node) Node {
 
 // Merge all nodes to a HTML page.
 // So the root should be a HTML tag.
+// Add doctype tag.
 func Merge(root Node) []byte {
 	h := make([]byte, 0)
 	h = append(h, `<!DOCTYPE html>`...)
@@ -215,7 +233,7 @@ func renderChild(h []byte, child any) []byte {
 			h = renderChild(h, subChild)
 		}
 	default:
-		h = append(h, fmt.Sprint(child)...)
+		h = append(h, html.EscapeString(fmt.Sprint(child))...)
 	}
 	return h
 }
@@ -267,6 +285,8 @@ func mapCall[K cmp.Ordered, V any](keys []K, m map[K]V, f func(k K, v V) Node) [
 	return children
 }
 
+// S render a slice with f(item) result and between the separator.
+// Return nil is the slice is empty.
 func S[V any](s []V, separator H, f func(v V) Node) []Node {
 	if len(s) == 0 {
 		return nil
@@ -283,6 +303,8 @@ func S[V any](s []V, separator H, f func(v V) Node) []Node {
 	return nodes
 }
 
+// S render a slice with f(index, item) result and between the separator.
+// Return nil is the slice is empty.
 func S2[V any](s []V, separator H, f func(i int, v V) Node) []Node {
 	if len(s) == 0 {
 		return nil

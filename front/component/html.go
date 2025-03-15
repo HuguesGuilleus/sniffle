@@ -1,3 +1,4 @@
+// component to render common elements.
 package component
 
 import (

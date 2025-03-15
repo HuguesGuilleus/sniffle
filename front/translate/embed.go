@@ -1,3 +1,4 @@
+// translate contains texts in multiple languages.
 package translate
 
 import (

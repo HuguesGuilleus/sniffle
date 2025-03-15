@@ -1,3 +1,4 @@
+// resize0 is long task function to resize and encode image in AVIF.
 package resize0
 
 const Name = "resize0"
@@ -5,6 +6,7 @@ const Extension = ".avif"
 const MIME = "image/avif"
 const Size uint = 200
 
+// NewDimension calculate the width and heigh max by [Size].
 func NewDimension(width, height int) (int, int) {
 	const size = int(Size)
 

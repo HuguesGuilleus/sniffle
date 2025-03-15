@@ -12,7 +12,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-// Resize image and save it as AVIF format.
+// Resize image and encode it in AVIF.
 func Resize(data []byte) ([]byte, error) {
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {

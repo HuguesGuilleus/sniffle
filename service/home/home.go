@@ -1,3 +1,4 @@
+// home service for /*.html static pages.
 package home
 
 import (

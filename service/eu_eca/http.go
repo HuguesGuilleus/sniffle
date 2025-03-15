@@ -1,3 +1,4 @@
+// eu_eca is service for European Court of Auditors (composition and reports).
 package eu_eca
 
 import (

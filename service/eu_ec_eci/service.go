@@ -1,3 +1,4 @@
+// eu_ec_eci service for European Citizens' Initiative.
 package eu_ec_eci
 
 import (

@@ -1,3 +1,4 @@
+// language manage UE speaken languages as integer constants.
 package language
 
 import (
@@ -8,7 +9,7 @@ import (
 type Language uint
 
 // Langue constants.
-// The order can change, and can be undense.
+// The order can change.
 // Invalid is always == 0
 const (
 	Invalid Language = iota
@@ -74,13 +75,12 @@ var language2iso = [Len]string{
 }
 
 // Two ascii letter of the ISO language code.
-// If unknwo return "??"
+// If unknwon return "??".
 func (l Language) String() string {
-	s := language2iso[l]
-	if s == "" {
+	if l == Invalid || l >= Len {
 		return "??"
 	}
-	return s
+	return language2iso[l]
 }
 
 var iso2language = map[string]Language{
@@ -110,6 +110,8 @@ var iso2language = map[string]Language{
 	"sv": Swedish,
 }
 
+// UnmarshalText is reverse of Language.String().
+// It take two letter (case insensitive) and convert is language.
 func (l *Language) UnmarshalText(data []byte) error {
 	s := string(data)
 	*l = iso2language[strings.ToLower(s)]
@@ -144,20 +146,18 @@ var language2human = [Len]string{
 	Slovene:    "Slovenščina",
 	Finnish:    "Suomi",
 	Swedish:    "Svenska",
+	AllEnglish: "English",
 }
 
 // The name of the langue in this langue.
 func (l Language) Human() string {
-	s := language2human[l]
-	if s == "" {
+	if l == Invalid || l >= Len {
 		return "_LANGUAGE_"
 	}
-	return s
+	return language2human[l]
 }
 
 // Create path.
-// Example: English.Path("/eu/ec/eci/scheme.") => "/eu/ec/eci/scheme.en.html"
-//
 // If l == [AllEnglish], return without change.
 // Is this case, the basePath must ends with a '/', else panic.
 func (l Language) Path(basePath string) string {

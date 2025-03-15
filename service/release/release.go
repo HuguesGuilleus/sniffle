@@ -1,3 +1,4 @@
+// release service for /release/ static pages.
 package release
 
 import (

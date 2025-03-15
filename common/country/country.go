@@ -1,3 +1,4 @@
+// country manage UE Country as integer constants.
 package country
 
 import (

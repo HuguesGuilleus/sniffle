@@ -1,3 +1,4 @@
+// myhandler is a slog text handler.
 package myhandler
 
 import (

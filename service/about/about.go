@@ -1,3 +1,4 @@
+// about service for /about/*.html static pages.
 package about
 
 import (

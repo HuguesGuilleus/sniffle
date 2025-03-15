@@ -1,3 +1,4 @@
+// front contains all assets and tools to render page.
 package front
 
 import (

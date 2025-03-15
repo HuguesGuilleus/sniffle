@@ -1,3 +1,4 @@
+// sch check that data observe a schema.
 package sch
 
 import "sniffle/tool/render"
