@@ -24,7 +24,6 @@ import (
 )
 
 const (
-	indexURL  = "https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/0/0"
 	detailURL = "https://register.eci.ec.europa.eu/core/api/register/details/%d/%06d"
 	logoURL   = "https://register.eci.ec.europa.eu/core/api/register/logo/%d"
 )
@@ -127,46 +126,6 @@ type Sponsor struct {
 	Name   string
 	Amount float64
 	Date   time.Time
-}
-
-type indexItem struct {
-	year   int
-	number int
-	logoID int
-}
-
-// Get all ECI item to after get all details.
-func fetchIndex(t *tool.Tool) (items []indexItem) {
-	dto := struct {
-		Entries []struct {
-			Year   int `json:"year,string"`
-			Number int `json:"number,string"`
-			Logo   *struct {
-				Id int `json:"id"`
-			} `json:"logo"`
-		} `json:"entries"`
-	}{}
-	if tool.DevMode {
-		t.WriteFile("/eu/ec/eci/src.json", tool.FetchAll(t, fetch.R("", indexURL, nil)))
-	}
-	if tool.FetchJSON(t, indexType, &dto, fetch.R("", indexURL, nil)) {
-		return nil
-	}
-
-	items = make([]indexItem, len(dto.Entries))
-	for i, dtoEntry := range dto.Entries {
-		logoID := 0
-		if dtoEntry.Logo != nil {
-			logoID = dtoEntry.Logo.Id
-		}
-		items[i] = indexItem{
-			year:   dtoEntry.Year,
-			number: dtoEntry.Number,
-			logoID: logoID,
-		}
-	}
-
-	return
 }
 
 func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
@@ -369,7 +328,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	}
 
 	// Set image
-	eci.fetchImage(t, info.logoID)
+	eci.fetchImage(t, dto.Logo.ID)
 
 	// set Members
 	eci.Members = make([]Member, len(dto.Members))

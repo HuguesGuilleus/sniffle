@@ -481,7 +481,7 @@ var schemaPage = func() []byte {
 
 					render.N("h2", "Get full index"),
 					render.N("pre.sch",
-						"GET ", render.Na("a.block", "href", indexURL).N(indexURL),
+						"GET ", render.Na("a.block", "href", acceptedIndexURL).N(acceptedIndexURL),
 						"\n\n200 OK\n",
 						"Content-Type: application/json\n\n",
 						indexType.HTML(""),

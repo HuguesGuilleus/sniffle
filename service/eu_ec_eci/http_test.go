@@ -58,16 +58,17 @@ var image3x1JPG = []byte{
 }
 
 var fetcher = map[string]*fetch.TestResponse{
-	indexURL: fetch.TRs(200, `{
+	acceptedIndexURL: fetch.TRs(200, `{
 		"entries": [
 			{
+				"id": 8846,
 				"year": "2024",
 				"number": "000008"
 			},
 			{
+				"id": 8845,
 				"year": "2024",
-				"number": "000009",
-				"logo": { "id": 8846 }
+				"number": "000009"
 			}
 		]
 	}`),
@@ -77,6 +78,7 @@ var fetcher = map[string]*fetch.TestResponse{
 		"status": "ONGOING",
 		"latestUpdateDate": "24/07/2024 13:52",
 		"deadline": "17/05/2025",
+		"logo": {"id": 8846},
 		"linguisticVersions": [
 			{
 				"original": true,
@@ -277,11 +279,11 @@ var fetcher = map[string]*fetch.TestResponse{
 
 func TestFetchIndex(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
-	items := fetchIndex(to)
+	items := fetchAcceptedIndex(to)
 	assert.True(t, wf.NoCalled())
 	assert.Equal(t, []indexItem{
-		{year: 2024, number: 8},
-		{year: 2024, number: 9, logoID: 8846},
+		{id: 8846, year: 2024, number: 8},
+		{id: 8845, year: 2024, number: 9},
 	}, items)
 }
 
@@ -293,7 +295,6 @@ func TestFetchDetail(t *testing.T) {
 	eci := fetchDetail(to, indexItem{
 		year:   2024,
 		number: 9,
-		logoID: 8846,
 	})
 	assert.True(t, wf.NoCalled())
 

@@ -6,9 +6,12 @@ import (
 )
 
 type detailDTO struct {
-	Status      string
-	LastUpdate  dtoTime `json:"latestUpdateDate"`
-	Deadline    dtoDate
+	Status     string
+	LastUpdate dtoTime `json:"latestUpdateDate"`
+	Deadline   dtoDate
+	Logo       struct {
+		ID int `json:"id"`
+	} `json:"logo"`
 	Categories  []struct{ CategoryType string }
 	Description []struct {
 		Original    bool
