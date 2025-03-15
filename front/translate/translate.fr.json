@@ -106,7 +106,8 @@
 		"INDEX": {
 			"Name": "Liste des Initiatives Citoyennes Européennes / ICE",
 			"PageDescription": "La liste complète de toute les initiative citoyenne européenne",
-			"Help": "L'initiative citoyenne européenne est une sorte de pétition. Si elle dépasse un million de signatures, la Commission européenne doit présenter une réponse motivée potentiellement par des actes législatifs."
+			"Help": "L'initiative citoyenne européenne est une sorte de pétition. Si elle dépasse un million de signatures, la Commission européenne doit présenter une réponse motivée potentiellement par des actes législatifs.",
+			"IndexLink": "Liste des ICE"
 		},
 		"ONE": {
 			"Status": "Status\u00A0: ",

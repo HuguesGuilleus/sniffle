@@ -106,7 +106,8 @@
 		"INDEX": {
 			"Name": "European Citizens' Initiative / ECI index",
 			"PageDescription": "The index of all european citizens' initiative",
-			"Help": "The European Citizens' Initiative is a sort of petition. If over one million signatures, the European Commission musts respond with his position and eventually add new legal act."
+			"Help": "The European Citizens' Initiative is a sort of petition. If over one million signatures, the European Commission musts respond with his position and eventually add new legal act.",
+			"IndexLink": "Index of ECI"
 		},
 		"ONE": {
 			"Status": "Status: ",

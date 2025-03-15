@@ -30,6 +30,7 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 						tr.EU_EC_ECI.INDEX.Help,
 					),
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.LinkOfficial),
+					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
 					render.Na("a.box", "href", "schema.html").N(tr.SchemaLink),
 				),
 				render.N("div.searchBlock",

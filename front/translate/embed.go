@@ -59,6 +59,7 @@ type Translation struct {
 			Name            string
 			PageDescription string
 			Help            render.H
+			IndexLink       render.H
 		} `help:"ECI index page"`
 		ONE struct {
 			Status                     render.H
