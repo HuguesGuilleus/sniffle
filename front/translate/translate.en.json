@@ -1,5 +1,6 @@
 {
 	"Global": {
+		"Byte": "byte",
 		"PageTop": "Top of the page",
 		"Presentation": "Presentation",
 		"SearchInside": "Search inside the page:"
@@ -13,7 +14,6 @@
 	"PageTop": "This is not an official European Union website.",
 	"SchemaLink": "Schema",
 	"HELP": "HELP",
-	"Byte": "byte",
 	"Source": "Source",
 
 	"$Country": {
@@ -163,10 +163,13 @@
 				"Name": "Funding",
 				"Total": "Total sum",
 				"Sponsor": "Sponsor",
+				"Kind": "Kind",
 				"Amount": "Amount",
 				"Date": "Date",
-				"PrivateSponsor": "Private sponsor",
-				"PrivateSponsorHelp": "Name is not published, as the private sponsor has chosen to remain anonymous.",
+				"Anonymous": "[Anonymous]",
+				"AnonymousHelp": "Name is not published, as the sponsor has chosen to remain anonymous.",
+				"KindPrivate": "Private",
+				"KindOrganisation": "Organisation",
 				"CaptionDate": "Date when the contribution was received. In case of in kind contributions, date when the in kind contribution started.",
 				"CaptionAmount": "Actual amount of funding provided or estimated value of in kind contribution.",
 				"Document": "Aditional financial document"

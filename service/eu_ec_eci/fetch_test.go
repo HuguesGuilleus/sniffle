@@ -477,21 +477,22 @@ func TestFetchDetail(t *testing.T) {
 		FundingTotal:  12867.1,
 		FundingDocument: &Document{
 			URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/9122"),
-			Language: language.English,
 			Name:     "2023_03_01_ffe_financial reporting.pdf",
 			Size:     500553,
 			MimeType: "application/pdf",
 		},
 		Sponsor: []Sponsor{
 			{
-				Name:   "Campaigns and Activism for Animals in the Industry",
-				Amount: 11986,
-				Date:   time.Date(2023, time.March, 1, 0, 0, 0, 0, render.DateZone),
+				Name:      "Campaigns and Activism for Animals in the Industry",
+				IsPrivate: false,
+				Amount:    11986,
+				Date:      time.Date(2023, time.March, 1, 0, 0, 0, 0, render.DateZone),
 			},
 			{
-				Name:   "",
-				Amount: 881.1,
-				Date:   time.Date(2024, time.August, 19, 0, 0, 0, 0, render.DateZone),
+				Name:      "",
+				IsPrivate: true,
+				Amount:    881.1,
+				Date:      time.Date(2024, time.August, 19, 0, 0, 0, 0, render.DateZone),
 			},
 		},
 	}, eci)
@@ -499,19 +500,16 @@ func TestFetchDetail(t *testing.T) {
 
 func TestFetchImageJPEG(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
-	eci := &ECIOut{}
-	eci.fetchImage(to, 8847)
-	assert.True(t, wf.NoCalled())
-	assert.Equal(t, &ECIOut{
-		Image: &common.ResizedImage{
-			Raw: common.Image{
-				Extension: ".jpg",
-				Width:     "3",
-				Height:    "1",
-				Data:      image3x1JPG,
-			},
+	assert.Equal(t, &common.ResizedImage{
+		Raw: common.Image{
+			Extension: ".jpg",
+			Width:     "3",
+			Height:    "1",
+			Data:      image3x1JPG,
 		},
-	}, eci)
+	}, fetchImage(to, 8847))
+	assert.Nil(t, fetchImage(to, 0))
+	assert.True(t, wf.NoCalled())
 }
 
 func newDate(year int, month time.Month, day int) time.Time {

@@ -11,6 +11,7 @@ import (
 
 type Translation struct {
 	Global struct {
+		Byte         render.H
 		PageTop      render.H
 		Presentation render.H
 		SearchInside string
@@ -25,7 +26,6 @@ type Translation struct {
 	SchemaLink    render.H `help:"Schema link"`
 
 	HELP   render.H
-	Byte   render.H
 	Source render.H
 
 	Country [country.Len]render.H  `json:"-"`
@@ -106,16 +106,19 @@ type Translation struct {
 			}
 
 			Funding struct {
-				Name               render.H
-				Total              render.H
-				Sponsor            render.H
-				Amount             render.H
-				Date               render.H
-				PrivateSponsor     render.H
-				PrivateSponsorHelp string
-				CaptionDate        render.H
-				CaptionAmount      render.H
-				Document           render.H
+				Name             render.H
+				Total            render.H
+				Sponsor          render.H
+				Kind             render.H
+				Amount           render.H
+				Date             render.H
+				KindPrivate      render.H
+				KindOrganisation render.H
+				Anonymous        render.H
+				AnonymousHelp    string
+				CaptionDate      render.H
+				CaptionAmount    render.H
+				Document         render.H
 			}
 		}
 		Status        map[string]render.H

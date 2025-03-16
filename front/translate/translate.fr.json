@@ -1,5 +1,6 @@
 {
 	"Global": {
+		"Byte": "octet",
 		"PageTop": "Haut de la page",
 		"Presentation": "Présentation",
 		"SearchInside": "Rechercher dans la page\u00A0:"
@@ -13,7 +14,6 @@
 	"PageTop": "Ce n'est pas un site officiel de l'Union Europénne.",
 	"SchemaLink": "Schéma",
 	"HELP": "AIDE",
-	"Byte": "octet",
 	"Source": "Source",
 
 	"$Country": {
@@ -163,10 +163,13 @@
 				"Name": "Financement",
 				"Total": "Somme total",
 				"Sponsor": "Donateur·trice",
+				"Kind": "Type",
 				"Amount": "Montant",
 				"Date": "Date",
-				"PrivateSponsor": "Donateur·trice privé·e",
-				"PrivateSponsorHelp": "Le nom du donateur·trice privé·e n'est pas publié, car iel a choisi de rester anonyme.",
+				"Anonymous": "[Anonyme]",
+				"AnonymousHelp": "Le nom du donateur·trice n'est pas publié, car iel a choisi de rester anonyme.",
+				"KindPrivate": "Humain·e",
+				"KindOrganisation": "Organisation",
 				"CaptionDate": "Date à laquelle la contribution a été reçue. S'il s'agit d'une contribution en nature, date à laquelle celle-ci a commencé.",
 				"CaptionAmount": "Montant réel du financement octroyé ou valeur estimée de la contribution en nature.",
 				"Document": "Document financier additionnel"

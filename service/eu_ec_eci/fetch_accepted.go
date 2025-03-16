@@ -6,7 +6,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"maps"
-	"mime"
 	"net/url"
 	"slices"
 	"sniffle/common"
@@ -121,37 +120,44 @@ type Member struct {
 	Replaced *Member
 }
 type Sponsor struct {
-	Name   string
-	Amount float64
-	Date   time.Time
+	// Name of the sponsor.
+	// If anonyous, the name is empty.
+	Name string
+	// IsPrivate or is an organisasion
+	IsPrivate bool
+	Amount    float64
+	Date      time.Time
 }
 
 func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
-	dto := detailDTO{}
-	fetchURL := fmt.Sprintf(detailURL, info.year, info.number)
+	request := fetch.URL(fmt.Sprintf(detailURL, info.year, info.number))
 	if tool.DevMode {
 		t.WriteFile(
 			fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),
-			tool.FetchAll(t, fetch.R("", fetchURL, nil)),
+			tool.FetchAll(t, request),
 		)
 	}
-	if tool.FetchJSON(t, eciType, &dto, fetch.R("", fetchURL, nil)) {
+	dto := acceptedDTO{}
+	if tool.FetchJSON(t, eciType, &dto, request) {
 		return nil
 	}
 
 	eci := &ECIOut{
-		Year:        info.year,
-		Number:      info.number,
-		LastUpdate:  dto.LastUpdate.Time,
-		Categorie:   make([]string, 0, len(dto.Categories)),
-		Status:      dto.Status,
+		Year:       info.year,
+		Number:     info.number,
+		LastUpdate: dto.LastUpdate.Time,
+		Status:     dto.Status,
+		Categorie:  make([]string, len(dto.Categories)),
+		Image:      fetchImage(t, dto.Logo.ID),
+
+		// TODO: move when used it
 		Description: make(map[language.Language]*Description),
 		Signature:   make(map[country.Country]uint),
 	}
 
 	// Categorie
-	for _, entry := range dto.Categories {
-		eci.Categorie = append(eci.Categorie, entry.CategoryType)
+	for i, entry := range dto.Categories {
+		eci.Categorie[i] = entry.CategoryType
 	}
 	slices.Sort(eci.Categorie)
 
@@ -325,9 +331,6 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		setSignature(dto.Submission.Entry)
 	}
 
-	// Set image
-	eci.fetchImage(t, dto.Logo.ID)
-
 	// set Members
 	eci.Members = make([]Member, len(dto.Members))
 	for i, entry := range dto.Members {
@@ -363,7 +366,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	if fund := dto.Funding; !fund.LastUpdate.Time.IsZero() {
 		eci.FundingUpdate = fund.LastUpdate.Time
 		eci.FundingTotal = fund.TotalAmount
-		eci.FundingDocument = fund.Document.Document(language.English)
+		eci.FundingDocument = fund.Document.Document(0)
 		eci.Sponsor = make([]Sponsor, len(fund.Sponsors))
 		for i, s := range fund.Sponsors {
 			name := s.Name
@@ -371,9 +374,10 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 				name = ""
 			}
 			eci.Sponsor[i] = Sponsor{
-				Name:   name,
-				Amount: s.Amount,
-				Date:   s.Date.Time,
+				Name:      name,
+				IsPrivate: s.PrivateSponsor,
+				Amount:    s.Amount,
+				Date:      s.Date.Time,
 			}
 		}
 	}
@@ -381,15 +385,16 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	return eci
 }
 
-func (eci *ECIOut) fetchImage(t *tool.Tool, logoID int) {
+func fetchImage(t *tool.Tool, logoID int) *common.ResizedImage {
 	if logoID == 0 {
-		return
+		return nil
 	}
-	eci.Image = common.FetchImage(t, fetch.URL(fmt.Sprintf(logoURL, logoID)))
+	return common.FetchImage(t, fetch.URL(fmt.Sprintf(logoURL, logoID)))
 }
 
-func (eci *ECIOut) countryByName(lang language.Language) []country.Country {
-	name := translate.T[lang].Country
+// Get country index sorted by their name in the language l.
+func (eci *ECIOut) countryByName(l language.Language) []country.Country {
+	name := translate.T[l].Country
 	return slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
 		return cmp.Compare(name[a], name[b])
 	})
@@ -437,10 +442,10 @@ func (dto *dtoTime) UnmarshalText(data []byte) error {
 }
 
 type docDTO struct {
-	Id       int
-	Name     string
-	Size     int
-	MimeType mimeTypeDTO
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Size     int    `json:"size"`
+	MimeType string `json:"mimeType"`
 }
 
 func (doc *docDTO) Document(lang language.Language) *Document {
@@ -458,16 +463,4 @@ func (doc *docDTO) Document(lang language.Language) *Document {
 		MimeType: string(doc.MimeType),
 		Size:     doc.Size,
 	}
-}
-
-type mimeTypeDTO string
-
-func (m *mimeTypeDTO) UnmarshalText(data []byte) error {
-	s := string(data)
-	mediatype, _, err := mime.ParseMediaType(s)
-	if err != nil {
-		return fmt.Errorf("mimeTypeDTO: %w", err)
-	}
-	*m = mimeTypeDTO(mediatype)
-	return nil
 }

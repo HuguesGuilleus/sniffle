@@ -5,14 +5,16 @@ import (
 	"sniffle/common/language"
 )
 
-type detailDTO struct {
-	Status     string
+type acceptedDTO struct {
+	Status     string  `json:"status"`
 	LastUpdate dtoTime `json:"latestUpdateDate"`
-	Deadline   dtoDate
+	Deadline   dtoDate `json:"deadline"`
 	Logo       struct {
 		ID int `json:"id"`
 	} `json:"logo"`
-	Categories  []struct{ CategoryType string }
+	Categories []struct {
+		CategoryType string `json:"categoryType"`
+	} `json:"categories"`
 	Description []struct {
 		Original    bool
 		Language    language.Language `json:"languageCode"`
@@ -58,18 +60,6 @@ type detailDTO struct {
 	Submission struct {
 		Entry []signatureDTO
 	}
-	Funding struct {
-		LastUpdate dtoDate
-		Sponsors   []struct {
-			Amount         float64
-			Date           dtoDate
-			Name           string
-			PrivateSponsor bool
-			Anonymized     bool
-		}
-		TotalAmount float64
-		Document    *docDTO
-	}
 	Answer struct {
 		Links []struct {
 			DefaultLanguageCode language.Language
@@ -80,6 +70,19 @@ type detailDTO struct {
 				Link         string
 			}
 		}
+	}
+
+	Funding struct {
+		LastUpdate dtoDate `json:"lastUpdate"`
+		Sponsors   []struct {
+			Amount         float64 `json:"amount"`
+			Date           dtoDate `json:"date"`
+			Name           string  `json:"name"`
+			PrivateSponsor bool    `json:"privateSponsor"`
+			Anonymized     bool    `json:"anonymized"`
+		}
+		TotalAmount float64 `json:"totalAmount"`
+		Document    *docDTO `json:"document"`
 	}
 }
 type signatureDTO struct {

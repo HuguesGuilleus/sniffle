@@ -109,8 +109,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.N("div.text", desc.Objective),
 				render.IfS(desc.Annex != "" || desc.AnnexDoc != nil, render.N("h2", ONE.H1DescriptionAnnex)),
 				render.IfS(desc.Annex != "", render.N("div.text", desc.Annex)),
-				desc.AnnexDoc.render(l, ONE.AnnexDocument),
-				desc.DraftLegal.render(l, ONE.DraftLegal),
+				renderDoc(l, desc.AnnexDoc, ONE.AnnexDocument),
+				renderDoc(l, desc.DraftLegal, ONE.DraftLegal),
 				render.If(desc.Treaty != "", func() render.Node {
 					return render.N("",
 						render.N("h2", ONE.H1Treaty),
@@ -125,14 +125,14 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						child := render.Z
 						switch t.Status {
 						case "REGISTERED":
-							child = t.Register[l].render(l, "Enregistrement")
+							child = renderDoc(l, t.Register[l], "Enregistrement")
 						case "CLOSED":
 							child = render.IfS(t.EarlyClose, render.N("div", ONE.CollectionEarlyClosure))
 						case "ANSWERED":
 							child = render.N("",
-								render.If(t.AnswerResponse != nil, func() render.Node { return t.AnswerResponse[l].render(l, ONE.AnswerKind.Response) }),
-								render.If(t.AnswerPressRelease != nil, func() render.Node { return t.AnswerPressRelease[l].render(l, ONE.AnswerKind.PressRelease) }),
-								render.If(t.AnswerAnnex != nil, func() render.Node { return t.AnswerAnnex[l].render(l, ONE.AnswerKind.Annex) }),
+								render.If(t.AnswerResponse != nil, func() render.Node { return renderDoc(l, t.AnswerResponse[l], ONE.AnswerKind.Response) }),
+								render.If(t.AnswerPressRelease != nil, func() render.Node { return renderDoc(l, t.AnswerPressRelease[l], ONE.AnswerKind.PressRelease) }),
+								render.If(t.AnswerAnnex != nil, func() render.Node { return renderDoc(l, t.AnswerAnnex[l], ONE.AnswerKind.Annex) }),
 							)
 						case "DEADLINE":
 							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date)
@@ -214,15 +214,21 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						render.N("table.right",
 							render.N("tr",
 								render.N("th", ONE.Funding.Sponsor),
+								render.N("th", ONE.Funding.Kind),
 								render.N("th", ONE.Funding.Amount),
 								render.N("th", ONE.Funding.Date),
 							),
 							render.S(eci.Sponsor, "", func(s Sponsor) render.Node {
-								privateSponsor := render.Na("i", "title", ONE.Funding.PrivateSponsorHelp).N(ONE.Funding.PrivateSponsor)
+								anonymous := render.Na("i", "title", ONE.Funding.AnonymousHelp).N(ONE.Funding.Anonymous)
 								return render.N("tr",
-									render.N("td", render.IfElse(s.Name != "", func() render.Node {
-										return render.N("", s.Name)
-									}, func() render.Node { return privateSponsor })),
+									render.N("td", render.IfElse(s.Name != "",
+										func() render.Node { return render.N("", s.Name) },
+										func() render.Node { return anonymous },
+									)),
+									render.N("td", render.IfElse(s.IsPrivate,
+										func() render.Node { return render.N("", ONE.Funding.KindPrivate) },
+										func() render.Node { return render.N("", ONE.Funding.KindOrganisation) },
+									)),
 									render.N("td", printEuros(s.Amount)),
 									render.N("td", s.Date.In(render.ShortDateZone)),
 								)
@@ -238,7 +244,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								),
 							),
 						),
-						eci.FundingDocument.render(l, ONE.Funding.Document),
+						renderDoc(l, eci.FundingDocument, ONE.Funding.Document),
 					)
 				}),
 			)),
@@ -258,7 +264,7 @@ func idNamespace(l language.Language) render.Node {
 	)
 }
 
-func (doc *Document) render(l language.Language, name render.H) render.Node {
+func renderDoc(l language.Language, doc *Document, name render.H) render.Node {
 	if doc == nil {
 		return render.Z
 	}
@@ -270,7 +276,7 @@ func (doc *Document) render(l language.Language, name render.H) render.Node {
 		}),
 		render.If(doc.Size != 0, func() render.Node {
 			return render.N("",
-				" (", doc.Size, " ", tr.Byte, ") ", doc.MimeType,
+				" (", doc.Size, " ", tr.Global.Byte, ") ", doc.MimeType,
 				render.N("div.docName", doc.Name),
 			)
 		}),

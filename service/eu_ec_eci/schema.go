@@ -195,7 +195,17 @@ var eciType = sch.Map(
 				sch.FieldSR("date", dateType),
 				sch.FieldSR("name", sch.NotEmptyString()),
 				sch.FieldSR("privateSponsor", sch.AnyBool()),
-				sch.FieldSR("anonymized", sch.AnyBool()),
+				sch.FieldSR("anonymized", sch.AnyBool()).Assert(`if anonymized => privateSponsor == true && name == "[ANONYMIZED]"`, func(this map[string]any, field any) error {
+					if field.(bool) {
+						if !this["privateSponsor"].(bool) {
+							return fmt.Errorf("The anonymized sponsor is not private")
+						}
+						if name := this["name"].(string); name != "[ANONYMIZED]" {
+							return fmt.Errorf("The sponsor name is not '[ANONYMIZED]', is %q", name)
+						}
+					}
+					return nil
+				}),
 				sch.FieldSO("otherSupport", sch.String("Research and Network")).Comment("Found only in ECI 2025/1"),
 			))),
 			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(`totalAmount == sum(sponsors[*].amount)`, func(this map[string]any, field any) error {
