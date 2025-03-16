@@ -33,10 +33,7 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
 					render.Na("a.box", "href", "schema.html").N(tr.SchemaLink),
 				),
-				render.N("div.searchBlock",
-					render.Na("label", "for", "s").N(tr.SearchInside),
-					render.Na("input", "id", "s").A("hidden", "").A("type", "search"),
-				),
+				component.SearchBlock(l),
 				render.N("div", render.MapReverse(eciByYear, func(year int, slice []*ECIOut) render.Node {
 					return render.N("div.sg",
 						render.N("h1", render.Int(year)),

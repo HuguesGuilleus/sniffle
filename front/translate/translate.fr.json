@@ -1,7 +1,8 @@
 {
 	"Global": {
+		"PageTop": "Haut de la page",
 		"Presentation": "Présentation",
-		"PageTop": "Haut de la page"
+		"SearchInside": "Rechercher dans la page\u00A0:"
 	},
 
 	"AboutTextLink": "À propos",
@@ -11,7 +12,6 @@
 	"LogoTitle": "Logo",
 	"PageTop": "Ce n'est pas un site officiel de l'Union Europénne.",
 	"SchemaLink": "Schéma",
-	"SearchInside": "Rechercher dans la page\u00A0:",
 	"HELP": "AIDE",
 	"Byte": "octet",
 	"Source": "Source",
@@ -107,7 +107,7 @@
 		"INDEX": {
 			"Name": "Liste des Initiatives Citoyennes Européennes / ICE",
 			"PageDescription": "La liste complète de toute les initiative citoyenne européenne",
-			"Help": "L'initiative citoyenne européenne est une sorte de pétition. Si elle dépasse un million de signatures, la Commission européenne doit présenter une réponse motivée potentiellement par des actes législatifs.",
+			"Help": "L'initiative citoyenne européenne est une sorte de pétition. Si elle dépasse un million de signatures, la Commission européenne doit présenter une réponse motivée potentiellement avec des propositions d'actes législatifs.",
 			"IndexLink": "Liste des ICE"
 		},
 		"ONE": {

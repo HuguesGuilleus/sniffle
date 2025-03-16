@@ -1,7 +1,8 @@
 {
 	"Global": {
+		"PageTop": "Top of the page",
 		"Presentation": "Presentation",
-		"PageTop": "Top of the page"
+		"SearchInside": "Search inside the page:"
 	},
 
 	"AboutTextLink": "About",
@@ -11,7 +12,6 @@
 	"LogoTitle": "Logo",
 	"PageTop": "This is not an official European Union website.",
 	"SchemaLink": "Schema",
-	"SearchInside": "Search inside the page:",
 	"HELP": "HELP",
 	"Byte": "byte",
 	"Source": "Source",

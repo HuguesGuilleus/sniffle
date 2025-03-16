@@ -32,14 +32,14 @@ type ECIOut struct {
 	// Identifier
 	Year   int
 	Number int
-
 	// Last update of information
 	LastUpdate time.Time
-
+	// Current status
 	Status string
-
 	// A sorted and uniq slice of categories
 	Categorie []string
+	// The image
+	Image *common.ResizedImage
 
 	// Description text in all language
 	Description map[language.Language]*Description
@@ -59,14 +59,12 @@ type ECIOut struct {
 	ThresholdPass         [country.Len]bool
 	ThresholdPassTotal    uint
 
-	Image *common.ResizedImage
+	Members []Member
 
 	FundingTotal    float64
 	FundingUpdate   time.Time
 	FundingDocument *Document
 	Sponsor         []Sponsor
-
-	Members []Member
 }
 type Description struct {
 	Title       string

@@ -1,5 +1,5 @@
 // DOM architecture:
-// input[type=search]
+// [hidden]>input[type=search]
 // .sg [ // search group: if any search item is display, hide the group
 //     .si [ // if any queries match searcg target, hide this item.
 //         .st // search target: use this string to math the queries.
@@ -23,7 +23,7 @@ const searchGroupArray = qsa(
 		],
 	),
 	_search = qsa("[type=search]", (input) => {
-		input[HIDDEN] = false;
+		input.parentNode[HIDDEN] = false;
 		input.focus();
 		input.oninput = (
 			_,

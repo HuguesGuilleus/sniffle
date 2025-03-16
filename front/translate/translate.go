@@ -11,8 +11,9 @@ import (
 
 type Translation struct {
 	Global struct {
-		Presentation render.H
 		PageTop      render.H
+		Presentation render.H
+		SearchInside string
 	}
 
 	AboutTextLink render.H `help:"About text for link"`
@@ -22,10 +23,10 @@ type Translation struct {
 	LogoTitle     string   `help:"Logo title and alt attribute"`
 	PageTop       render.H `help:"Page header to indicated that this website is not official"`
 	SchemaLink    render.H `help:"Schema link"`
-	SearchInside  string
-	HELP          render.H
-	Byte          render.H
-	Source        render.H
+
+	HELP   render.H
+	Byte   render.H
+	Source render.H
 
 	Country [country.Len]render.H  `json:"-"`
 	Langage [language.Len]render.H `json:"-"`

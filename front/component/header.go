@@ -47,3 +47,10 @@ func Toc(l language.Language) render.Node {
 		render.Na("a.wi", "href", "#").N(translate.T[l].Global.PageTop),
 	))
 }
+
+func SearchBlock(l language.Language) render.Node {
+	return render.Na("div.searchBlock", "hidden", "").N(
+		render.Na("label", "for", "search").N(translate.T[l].Global.SearchInside),
+		render.Na("input", "id", "search").A("type", "search"),
+	)
+}
