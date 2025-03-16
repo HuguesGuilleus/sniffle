@@ -42,4 +42,8 @@ func HeaderLangs(pageLang language.Language, basePath string) render.Node {
 
 // The table of content node.
 // Yout need JS to fill it.
-var Toc = render.N("div", render.Na("div", "id", "toc"))
+func Toc(l language.Language) render.Node {
+	return render.N("div", render.Na("div", "id", "toc").N(
+		render.Na("a.wi", "href", "#").N(translate.T[l].Global.PageTop),
+	))
+}

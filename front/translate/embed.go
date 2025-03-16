@@ -12,6 +12,7 @@ import (
 type Translation struct {
 	Global struct {
 		Presentation render.H
+		PageTop      render.H
 	}
 
 	AboutTextLink render.H `help:"About text for link"`

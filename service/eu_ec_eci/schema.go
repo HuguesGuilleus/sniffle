@@ -406,7 +406,7 @@ var refusedOneType = sch.Map(
 )
 
 var schemaPage = func() []byte {
-	lang := language.AllEnglish
+	l := language.AllEnglish
 	title := "European Citizens' Initiative crawling method"
 	description := "Our usage of the https://citizens-initiative.europa.eu/ website to crawl data."
 
@@ -422,17 +422,17 @@ var schemaPage = func() []byte {
 			render.Na("meta", "name", "description").A("content", description),
 		),
 		render.N("body.edito",
-			component.TopHeader(lang),
-			component.InDevHeader(lang),
+			component.TopHeader(l),
+			component.InDevHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
-					idNamespace(lang),
+					idNamespace(l),
 					render.N("div.headerId", "schema"),
 				),
 				render.N("div.headerTitle", title),
 			),
 			render.N("main.wt.wide",
-				component.Toc,
+				component.Toc(l),
 				render.N("div.wc",
 					render.N("div.summary", "Usage of public API https://register.eci.ec.europa.eu/ to get index and details of European Citizens' Initiative. It is full empiric, be careful!"),
 
@@ -509,13 +509,13 @@ var schemaPage = func() []byte {
 						render.Na("a.block", "href", oneURLExyear).N(oneURLExyear), "\n",
 						render.Na("a.block", "href", oneURLExId).N(oneURLExId),
 					),
-					render.N("h2", "Not refused"),
+					render.N("h2", "Accepted ECI"),
 					render.N("pre.sch", eciType.HTML("")),
 
 					render.N("h2", "Detailed member"),
 					render.N("pre.sch", detailedMemberDef),
 
-					render.N("h2", "Refused"),
+					render.N("h2", "Refused ECI"),
 					render.N("pre.sch", refusedOneType.HTML("")),
 
 					render.N("h1", "Thresholds data"),
@@ -526,7 +526,7 @@ var schemaPage = func() []byte {
 					),
 				),
 			),
-			component.Footer(lang, component.JsSchema|component.JsToc),
+			component.Footer(l, component.JsSchema|component.JsToc),
 		),
 	))
 }()

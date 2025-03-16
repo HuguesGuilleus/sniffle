@@ -23,7 +23,7 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 				render.N("div.headerTitle", tr.EU_EC_ECI.INDEX.Name),
 				component.HeaderLangs(l, ""),
 			),
-			render.N("main.wt", component.Toc, render.N("div.wc",
+			render.N("main.wt", component.Toc(l), render.N("div.wc",
 				render.N("div.summary",
 					render.N("div.edito",
 						render.N("div.editoT", tr.Global.Presentation),
@@ -79,7 +79,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.N("div.headerTitle", desc.Title),
 				component.HeaderLangs(l, ""),
 			),
-			render.N("main.wt", component.Toc, render.N("div.wc",
+			render.N("main.wt", component.Toc(l), render.N("div.wc",
 				// Summary
 				render.N("div.summary",
 					render.N("div", ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
