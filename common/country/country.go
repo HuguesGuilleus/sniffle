@@ -15,30 +15,30 @@ const (
 	Austria
 	Belgium
 	Bulgaria
+	Croatia
 	Cyprus
 	Czechia
-	Germany
 	Denmark
 	Estonia
-	Spain
 	Finland
 	France
+	Germany
 	Greece
-	Croatia
 	Hungary
 	Ireland
 	Italy
+	Latvia
 	Lithuania
 	Luxembourg
-	Latvia
 	Malta
 	Netherlands
 	Poland
 	Portugal
 	Romania
-	Sweden
-	Slovenia
 	Slovakia
+	Slovenia
+	Spain
+	Sweden
 	UnitedKingdom
 
 	// The length for a array of coutrie codes.

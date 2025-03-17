@@ -129,12 +129,12 @@
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Nombre total de signatures",
-			"ValidatedSignature": "Les signatures ont été validées.",
 			"PaperSignaturesUpdate": "Dernière mise à jour des signatures papiers\u00A0: ",
 			"CountryOverThreshold": "Pays dépassant le seuil de signature",
 			"Country": "Pays",
 			"Signature": "Signature",
 			"Threshold": "Seuil",
+			"AfterSubmission": "Certificats reçus en dehors des délais impartis. Ces chiffres ne sont pas comptabilisés dans le nombre total de signatures.",
 			"OverThreshold": "Seuil dépassé",
 
 			"AnswerKind": {

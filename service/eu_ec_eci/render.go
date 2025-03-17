@@ -2,7 +2,6 @@ package eu_ec_eci
 
 import (
 	"fmt"
-	"sniffle/common/country"
 	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/front/translate"
@@ -165,12 +164,10 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				render.If(len(eci.Signature) != 0, func() render.Node {
 					return render.N("",
 						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
-						render.If(eci.ValidatedSignature, func() render.Node {
-							return render.N("div.marginBottom", render.N("span.tag", ONE.ValidatedSignature))
-						}),
 						render.If(!eci.PaperSignaturesUpdate.IsZero(), func() render.Node {
 							return render.N("div.marginBottom", ONE.PaperSignaturesUpdate, eci.PaperSignaturesUpdate)
 						}),
+
 						render.N("div.bigInfo",
 							render.N("div.bifInfoMeta", ONE.SignatureSum),
 							render.N("div.bigInfoMain",
@@ -199,16 +196,20 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								render.N("th", ONE.Signature),
 								render.N("th", ONE.Threshold),
 							),
-							render.S(eci.countryByName(l), "", func(c country.Country) render.Node {
+							render.S(eci.Signature, "", func(sig Signature) render.Node {
+								afterDelayed := render.Na("span.tag", "title", ONE.AfterSubmission).N("✘")
+								thresholdPass := render.Na("span.tag", "title", ONE.OverThreshold).N("✔")
 								return render.N("tr",
-									render.N("td", tr.Country[c]),
-									render.N("td", eci.Signature[c]),
+									render.N("td", tr.Country[sig.Country]),
 									render.N("td",
-										render.If(eci.ThresholdPass[c], func() render.Node {
-											return render.Na("span.tag", "title", ONE.OverThreshold).N("✔")
-										}),
-										eci.Threshold[c],
-									))
+										render.IfS(sig.After, afterDelayed),
+										sig.Count,
+									),
+									render.N("td",
+										render.IfS(sig.ThresholdPass, thresholdPass),
+										sig.Threshold,
+									),
+								)
 							}),
 						),
 					)
@@ -233,8 +234,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							render.N("tr",
 								render.N("th", ONE.Funding.Sponsor),
 								render.N("th", ONE.Funding.Kind),
-								render.N("th", ONE.Funding.Amount),
-								render.N("th", ONE.Funding.Date),
+								render.N("th", ONE.Funding.Amount, "*"),
+								render.N("th", ONE.Funding.Date, "*"),
 							),
 							render.S(eci.Sponsor, "", func(s Sponsor) render.Node {
 								anonymous := render.Na("i", "title", ONE.Funding.AnonymousHelp).N(ONE.Funding.Anonymous)
@@ -253,12 +254,12 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							}),
 							render.N("caption",
 								render.N("div.edito",
-									render.N("div.editoT", ONE.Funding.Date),
-									ONE.Funding.CaptionDate,
-								),
-								render.N("div.edito",
 									render.N("div.editoT", ONE.Funding.Amount),
 									ONE.Funding.CaptionAmount,
+								),
+								render.N("div.edito",
+									render.N("div.editoT", ONE.Funding.Date),
+									ONE.Funding.CaptionDate,
 								),
 							),
 						),

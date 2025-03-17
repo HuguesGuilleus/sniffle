@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+type Threshold = [country.Len]uint
+
 var (
 	threshold_lastCheck = time.Date(2024, time.December, 1, 0, 0, 0, 0, render.DateZone)
 

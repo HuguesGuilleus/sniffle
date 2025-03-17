@@ -82,12 +82,12 @@ type Translation struct {
 
 			H1Signature           render.H
 			SignatureSum          render.H
-			ValidatedSignature    render.H
 			PaperSignaturesUpdate render.H
 			CountryOverThreshold  render.H
 			Country               render.H
 			Signature             render.H
 			Threshold             render.H
+			AfterSubmission       string
 			OverThreshold         string
 
 			AnswerKind struct {

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	_ "image/jpeg"
 	_ "image/png"
-	"maps"
 	"net/url"
 	"slices"
 	"sniffle/common"
@@ -47,16 +46,15 @@ type ECIOut struct {
 
 	Timeline []Event
 
-	TotalSignature     uint
-	ValidatedSignature bool
-	Signature          map[country.Country]uint
+	Signature []Signature
+	// Total of validated signature
+	TotalSignature uint
 	// Date of the last organisators paper signatures update.
 	// Can be zero
 	PaperSignaturesUpdate time.Time
-	Threshold             *Threshold
-	ThresholdRule         string
-	ThresholdPass         [country.Len]bool
-	ThresholdPassTotal    uint
+
+	ThresholdRule      string
+	ThresholdPassTotal uint
 
 	Members []Member
 
@@ -95,13 +93,16 @@ type Event struct {
 	AnswerResponse     *[language.Len]*Document
 	AnswerPressRelease *[language.Len]*Document
 }
-type Threshold = [country.Len]uint
-type Document struct {
-	URL      *url.URL
-	Language language.Language
-	Name     string
-	Size     int
-	MimeType string
+type Signature struct {
+	Country country.Country
+	// Number of signature
+	Count uint
+	// After the deadline
+	After bool
+	// Threashold for this country at registration date.
+	Threshold uint
+	// If Count >= Threshold
+	ThresholdPass bool
 }
 type Member struct {
 	// "MEMBER" | "SUBSTITUTE" | "REPRESENTATIVE" | "OTHER" | "DPO" | "LEGAL_ENTITY"
@@ -135,6 +136,13 @@ type Sponsor struct {
 	IsPrivate bool
 	Amount    float64
 	Date      time.Time
+}
+type Document struct {
+	URL      *url.URL
+	Language language.Language
+	Name     string
+	Size     int
+	MimeType string
 }
 
 func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
@@ -271,25 +279,27 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	}
 
 	// Timeline
+	registerDate := time.Time{} // use for Threshold
 	for _, p := range dto.Progress {
 		if p.Date.Time.IsZero() {
 			continue
 		}
-		timeline := Event{
+		e := Event{
 			Date:   p.Date.Time,
 			Status: p.Status,
 		}
-		switch timeline.Status {
+		switch e.Status {
 		case "REGISTERED":
-			timeline.Register = registrationDoc
+			registerDate = e.Date
+			e.Register = registrationDoc
 		case "CLOSED":
-			timeline.EarlyClose = p.Note == "COLLECTION_EARLY_CLOSURE"
+			e.EarlyClose = p.Note == "COLLECTION_EARLY_CLOSURE"
 		case "ANSWERED":
-			timeline.AnswerAnnex = answer.AnswerAnnex
-			timeline.AnswerResponse = answer.AnswerResponse
-			timeline.AnswerPressRelease = answer.AnswerPressRelease
+			e.AnswerAnnex = answer.AnswerAnnex
+			e.AnswerResponse = answer.AnswerResponse
+			e.AnswerPressRelease = answer.AnswerPressRelease
 		}
-		eci.Timeline = append(eci.Timeline, timeline)
+		eci.Timeline = append(eci.Timeline, e)
 	}
 	if !dto.Deadline.Time.IsZero() {
 		eci.Timeline = append(eci.Timeline, Event{
@@ -302,48 +312,10 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	})
 
 	// Set signature
-	eci.Signature = make(map[country.Country]uint)
-	setSignature := func(entrys []signatureDTO) {
-		for _, entry := range entrys {
-			eci.Signature[entry.Country] = entry.Total
-			eci.TotalSignature += entry.Total
-		}
-		registerDate := time.Time{}
-		for _, t := range eci.Timeline {
-			if t.Status == "REGISTERED" {
-				registerDate = t.Date
-			}
-		}
-		switch {
-		case date_2024_07_06.Before(registerDate):
-			eci.ThresholdRule = rule_since_2020_01_01
-			eci.Threshold = &threshold_2024_07_06
-		case date_2020_02_01.Before(registerDate):
-			eci.ThresholdRule = rule_since_2020_01_01
-			eci.Threshold = &threshold_2020_02_01
-		case date_2020_01_01.Before(registerDate):
-			eci.ThresholdRule = rule_since_2020_01_01
-			eci.Threshold = &threshold_2020_01_01
-		case date_2014_07_01.Before(registerDate):
-			eci.ThresholdRule = rule_since_2012_04_01
-			eci.Threshold = &threshold_2014_07_01
-		case date_2012_04_01.Before(registerDate):
-			eci.ThresholdRule = rule_since_2012_04_01
-			eci.Threshold = &threshold_2012_04_01
-		}
-		for c, sig := range eci.Signature {
-			if eci.Threshold[c] <= sig {
-				eci.ThresholdPass[c] = true
-				eci.ThresholdPassTotal++
-			}
-		}
-	}
-	if len(dto.Signatures.Entry) > 0 {
-		eci.PaperSignaturesUpdate = dto.Signatures.UpdateDate.Time
-		setSignature(dto.Signatures.Entry)
-	} else {
-		eci.ValidatedSignature = true
-		setSignature(dto.Submission.Entry)
+	if dto.SosReport != nil {
+		eci.setSignatures(dto.SosReport, registerDate)
+	} else if dto.Submission != nil {
+		eci.setSignatures(dto.Submission, registerDate)
 	}
 
 	// Members
@@ -407,11 +379,45 @@ func fetchImage(t *tool.Tool, logoID int) *common.ResizedImage {
 	return common.FetchImage(t, fetch.URL(fmt.Sprintf(logoURL, logoID)))
 }
 
-// Get country index sorted by their name in the language l.
-func (eci *ECIOut) countryByName(l language.Language) []country.Country {
-	name := translate.T[l].Country
-	return slices.SortedFunc(maps.Keys(eci.Signature), func(a, b country.Country) int {
-		return cmp.Compare(name[a], name[b])
+func (eci *ECIOut) setSignatures(dto *signatureDTO, registerDate time.Time) {
+	eci.TotalSignature = dto.TotalSignatures
+	eci.PaperSignaturesUpdate = dto.PaperSignaturesUpdate.Time
+
+	threshold := [country.Len]uint{}
+	switch {
+	case date_2024_07_06.Before(registerDate):
+		eci.ThresholdRule = rule_since_2020_01_01
+		threshold = threshold_2024_07_06
+	case date_2020_02_01.Before(registerDate):
+		eci.ThresholdRule = rule_since_2020_01_01
+		threshold = threshold_2020_02_01
+	case date_2020_01_01.Before(registerDate):
+		eci.ThresholdRule = rule_since_2020_01_01
+		threshold = threshold_2020_01_01
+	case date_2014_07_01.Before(registerDate):
+		eci.ThresholdRule = rule_since_2012_04_01
+		threshold = threshold_2014_07_01
+	case date_2012_04_01.Before(registerDate):
+		eci.ThresholdRule = rule_since_2012_04_01
+		threshold = threshold_2012_04_01
+	}
+
+	eci.Signature = make([]Signature, len(dto.Entry))
+	for i, entry := range dto.Entry {
+		sig := Signature{
+			Country:   entry.Country,
+			Count:     entry.Count,
+			After:     entry.After,
+			Threshold: threshold[entry.Country],
+		}
+		if !sig.After && sig.Count >= sig.Threshold {
+			sig.ThresholdPass = true
+			eci.ThresholdPassTotal++
+		}
+		eci.Signature[i] = sig
+	}
+	slices.SortFunc(eci.Signature, func(a, b Signature) int {
+		return cmp.Compare(a.Country, b.Country)
 	})
 }
 

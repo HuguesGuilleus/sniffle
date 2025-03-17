@@ -129,12 +129,12 @@
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Signature sum",
-			"ValidatedSignature": "The signatures are validate.",
 			"PaperSignaturesUpdate": "Paper signature last update: ",
 			"CountryOverThreshold": "Country over the threshold",
 			"Country": "Country",
 			"Signature": "Signature",
 			"Threshold": "Threshold",
+			"AfterSubmission": "Certificates received after the time of submission. Figures not included in the total number of signatures.",
 			"OverThreshold": "Threshold pass",
 
 			"AnswerKind": {

@@ -56,13 +56,8 @@ type acceptedDTO struct {
 		} `json:"links"`
 	} `json:"answer"`
 
-	Signatures struct {
-		UpdateDate dtoDate
-		Entry      []signatureDTO
-	} `json:"sosReport"`
-	Submission struct {
-		Entry []signatureDTO
-	}
+	SosReport  *signatureDTO `json:"sosReport"`
+	Submission *signatureDTO `json:"submission"`
 
 	Members []struct {
 		FullName         string          `json:"fullName"`
@@ -96,6 +91,12 @@ type acceptedDTO struct {
 	} `json:"funding"`
 }
 type signatureDTO struct {
-	Country country.Country `json:"countryCodeType"`
-	Total   uint
+	PaperSignaturesUpdate dtoDate `json:"updateDate"`
+	TotalSignatures       uint    `json:"totalSignatures"`
+
+	Entry []struct {
+		Country country.Country `json:"countryCodeType"`
+		Count   uint            `json:"total"`
+		After   bool            `json:"afterSubmission"`
+	}
 }

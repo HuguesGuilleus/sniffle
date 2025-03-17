@@ -235,7 +235,7 @@ var eciType = sch.Map(
 		),
 	)),
 	sch.BlankField(),
-	sch.Field(sch.EnumString("submission", "sosReport"), sch.Map(
+	sch.Field(sch.EnumString("sosReport", "submission"), sch.Map(
 		sch.FieldSO("updateDate", dateType),
 		sch.FieldSR("entry", sch.ArrayRange(3, 28, sch.Map(
 			sch.FieldSR("countryCodeType", countriesUpper),
@@ -271,7 +271,7 @@ var eciType = sch.Map(
 			}
 			return nil
 		}),
-	), false),
+	), false).Comment("sosReport when collect is not validated, else submission field."),
 	sch.BlankField(),
 	sch.FieldSO("preAnswer", sch.Map(
 		sch.FieldSR("links", sch.ArraySize(1,
@@ -281,13 +281,13 @@ var eciType = sch.Map(
 				sch.FieldSR("defaultLink", sch.URL("https://citizens-initiative.europa.eu/**?")),
 			),
 		)),
-	)).Comment("Only view for ECI 2019/7. View 2025-03-11").
-		Assert(`eci.status == "SUBMITED"`, func(eci map[string]any, _ any) error {
-			if eci["status"] != "SUBMITTED" {
-				return fmt.Errorf("expect SUBMITTED status, but get %q", eci["status"])
-			}
-			return nil
-		}),
+	)).Comment("Only view for ECI 2019/7. View 2025-03-11"),
+	sch.Assert(`eci.status==SUBMITED <=> eci.preAnswer={...}`, func(eci map[string]any, _ any) error {
+		if (eci["status"] == "SUBMITTED") != (eci["preAnswer"] != nil) {
+			return fmt.Errorf("eci.status(actual:%q)==SUBMITED <=> eci.preAnswer(actualNotNull:%t)={...}", eci["status"], eci["preAnswer"] != nil)
+		}
+		return nil
+	}),
 	sch.BlankField(),
 	sch.FieldSO("answer", sch.Map(
 		sch.FieldSR("id", sch.StrictPositiveInt()),
