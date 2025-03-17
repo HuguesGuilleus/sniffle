@@ -76,10 +76,12 @@ func (m *mapType) Match(v any) error {
 
 	errs := make(ErrorSlice, 0, len(mv)+len(keys))
 	for _, field := range m.fields {
-		if field.fieldKey == nil && len(errs) == 0 {
-			for _, assert := range field.asserts {
-				if err := assert.test(mv, nil); err != nil {
-					errs = append(errs, err)
+		if field.fieldKey == nil {
+			if len(errs) == 0 {
+				for _, assert := range field.asserts {
+					if err := assert.test(mv, nil); err != nil {
+						errs = append(errs, err)
+					}
 				}
 			}
 			continue

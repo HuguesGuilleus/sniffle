@@ -313,9 +313,10 @@ func TestFetchDetail(t *testing.T) {
 					Host:   "furfreeeurope.eu",
 					Path:   "/",
 				},
-				FollowUp:  parseURL("https://citizens-initiative.europa.eu/fur-free-europe_en"),
-				PlainDesc: "objectives",
-				Objective: "<p>objectives</p>",
+				SupportLink: parseURL("https://eci.ec.europa.eu/043/public/?lg=fr"),
+				FollowUp:    parseURL("https://citizens-initiative.europa.eu/fur-free-europe_en"),
+				PlainDesc:   "objectives",
+				Objective:   "<p>objectives</p>",
 				AnnexDoc: &Document{
 					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/6729"),
 					Language: language.English,
@@ -356,20 +357,23 @@ func TestFetchDetail(t *testing.T) {
 				Treaty: "Articolo 6 lettera a), Articolo 114, Articolo 168, Articolo 169 TFUE",
 			},
 		},
-		DescriptionOriginalLangage: language.English,
+		OriginalLangage: language.English,
 
-		Timeline: []Timeline{
-			{Date: newDate(2022, time.March, 16), Status: "REGISTERED", Register: &[language.Len]*Document{
-				language.English: {URL: parseURL("http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN")},
-				language.French: {
-					URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8600"),
-					Language: language.French,
-					Name:     "CDD-2012000002.pdf",
-					MimeType: "application/pdf",
-					Size:     15325,
+		Timeline: []Event{
+			{
+				Date: newDate(2022, time.March, 16), Status: "REGISTERED",
+				Register: &[language.Len]*Document{
+					language.English: {URL: parseURL("http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN")},
+					language.French: {
+						URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8600"),
+						Language: language.French,
+						Name:     "CDD-2012000002.pdf",
+						MimeType: "application/pdf",
+						Size:     15325,
+					},
 				},
-			}},
-			{Date: newDate(2022, time.May, 18), Status: "ONGOING"},
+			},
+			{Date: newDate(2022, time.May, 18), Status: "COLLECTION_START_DATE"},
 			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true},
 			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
 			{Date: newDate(2023, time.June, 14), Status: "SUBMITTED"},

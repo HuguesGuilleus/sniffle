@@ -84,7 +84,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					render.N("div", ONE.Categorie, render.S(eci.Categorie, ", ", func(categorie string) render.Node {
 						return render.N("", tr.EU_EC_ECI.Categorie[categorie])
 					})),
-					render.N("div", ONE.DescriptionOriginalLangage, tr.Langage[eci.DescriptionOriginalLangage]),
+					render.N("div", ONE.DescriptionOriginalLangage, tr.Langage[eci.OriginalLangage]),
 					render.N("div",
 						render.Na("a.box", "href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l)).
@@ -99,6 +99,12 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							return render.Na("a.box", "href", desc.Website.String()).N(ONE.LinkWebsite)
 						}),
 					),
+					render.If(tool.DevMode, func() render.Node {
+						return render.N("div",
+							render.N("hr"),
+							render.Na("a.box", "href", "./src.json").N("JSON -->"),
+						)
+					}),
 				),
 
 				// Image
@@ -107,8 +113,12 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Text description
 				render.N("h1", ONE.H1Description),
 				render.N("div.text", desc.Objective),
-				render.IfS(desc.Annex != "" || desc.AnnexDoc != nil, render.N("h2", ONE.H1DescriptionAnnex)),
-				render.IfS(desc.Annex != "", render.N("div.text", desc.Annex)),
+				render.If(desc.Annex != "", func() render.Node {
+					return render.N("",
+						render.N("h2", ONE.H1DescriptionAnnex),
+						render.N("div.text", desc.Annex),
+					)
+				}),
 				renderDoc(l, desc.AnnexDoc, ONE.AnnexDocument),
 				renderDoc(l, desc.DraftLegal, ONE.DraftLegal),
 				render.If(desc.Treaty != "", func() render.Node {
@@ -121,24 +131,32 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Timeline
 				render.N("h1", ONE.H1Timeline),
 				render.N("ol.timeLine",
-					render.S(eci.Timeline, "", func(t Timeline) render.Node {
+					render.S(eci.Timeline, "", func(e Event) render.Node {
 						child := render.Z
-						switch t.Status {
+						switch e.Status {
 						case "REGISTERED":
-							child = renderDoc(l, t.Register[l], "Enregistrement")
+							child = renderDoc(l, e.Register[l], ONE.Registration)
 						case "CLOSED":
-							child = render.IfS(t.EarlyClose, render.N("div", ONE.CollectionEarlyClosure))
+							if e.EarlyClose {
+								child = render.N("div", ONE.CollectionEarlyClosure)
+							}
 						case "ANSWERED":
 							child = render.N("",
-								render.If(t.AnswerResponse != nil, func() render.Node { return renderDoc(l, t.AnswerResponse[l], ONE.AnswerKind.Response) }),
-								render.If(t.AnswerPressRelease != nil, func() render.Node { return renderDoc(l, t.AnswerPressRelease[l], ONE.AnswerKind.PressRelease) }),
-								render.If(t.AnswerAnnex != nil, func() render.Node { return renderDoc(l, t.AnswerAnnex[l], ONE.AnswerKind.Annex) }),
+								render.If(e.AnswerResponse != nil, func() render.Node {
+									return renderDoc(l, e.AnswerResponse[l], ONE.AnswerKind.Response)
+								}),
+								render.If(e.AnswerPressRelease != nil, func() render.Node {
+									return renderDoc(l, e.AnswerPressRelease[l], ONE.AnswerKind.PressRelease)
+								}),
+								render.If(e.AnswerAnnex != nil, func() render.Node {
+									return renderDoc(l, e.AnswerAnnex[l], ONE.AnswerKind.Annex)
+								}),
 							)
 						case "DEADLINE":
-							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date)
+							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[e.Status]), e.Date)
 						}
 						return render.N("li.timePoint",
-							render.N("div.timeHead", render.N("span.tag", tr.EU_EC_ECI.Status[t.Status]), t.Date),
+							render.N("div.timeHead", render.N("span.tag", tr.EU_EC_ECI.Status[e.Status]), e.Date),
 							child)
 					}),
 				),
@@ -199,7 +217,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Members
 				render.N("h1", ONE.Member.H1),
 				render.N("ul.peopleIndex", render.S(eci.Members, "", func(m Member) render.Node {
-					return renderMember(&m, l)
+					return renderMember(l, &m)
 				})),
 
 				// Funding
@@ -291,7 +309,7 @@ func renderImage(eci *ECIOut, needBase bool, title string) render.Node {
 	return eci.Image.Render(base, title)
 }
 
-func renderMember(m *Member, l language.Language) render.Node {
+func renderMember(l language.Language, m *Member) render.Node {
 	ONE := translate.T[l].EU_EC_ECI.ONE
 	return render.N("li.people",
 		render.N("div",
@@ -316,7 +334,7 @@ func renderMember(m *Member, l language.Language) render.Node {
 			}),
 		),
 		render.If(m.Replaced != nil, func() render.Node {
-			return render.N("ul.peopleIndex", renderMember(m.Replaced, l))
+			return render.N("ul.peopleIndex", renderMember(l, m.Replaced))
 		}),
 	)
 }

@@ -162,6 +162,16 @@ var eciType = sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
 		sch.FieldSR("name", statusType),
 		sch.FieldSO("date", dateType),
+		sch.Assert(`date == null => name == "COLLECTION_START_DATE" && active == false`, func(this map[string]any, _ any) error {
+			status := this["name"].(string)
+			if this["date"] == nil && status != "COLLECTION_START_DATE" {
+				return fmt.Errorf("wrong status when no date: %q", status)
+			}
+			if this["date"] == nil && this["active"].(bool) {
+				return fmt.Errorf("must not be active")
+			}
+			return nil
+		}),
 		sch.FieldSO("footnoteType", sch.String("COLLECTION_EARLY_CLOSURE")).Assert(`this.name == "CLOSED"`, func(this map[string]any, field any) error {
 			if this["name"] != "CLOSED" {
 				return fmt.Errorf("expect this.name == CLOSED, but get %q", this["name"])
@@ -173,7 +183,7 @@ var eciType = sch.Map(
 	})).Assert(sch.AssertOnlyOneTrue("active", func(progress any) bool {
 		return progress.(map[string]any)["active"].(bool)
 	})),
-	sch.Assert(`eci.status == this.progress[with .active].name  `, func(eci map[string]any, _ any) error {
+	sch.Assert(`eci.status == this.progress[with .active].name`, func(eci map[string]any, _ any) error {
 		eciStatus := eci["status"].(string)
 		for _, p := range eci["progress"].([]any) {
 			if progress := p.(map[string]any); progress["active"].(bool) {

@@ -43,9 +43,9 @@ type ECIOut struct {
 	// Description text in all language
 	Description map[language.Language]*Description
 	// The based language used to write the ECI text.
-	DescriptionOriginalLangage language.Language
+	OriginalLangage language.Language
 
-	Timeline []Timeline
+	Timeline []Event
 
 	TotalSignature     uint
 	ValidatedSignature bool
@@ -67,21 +67,29 @@ type ECIOut struct {
 }
 type Description struct {
 	Title       string
-	PlainDesc   string
 	SupportLink *url.URL
 	Website     *url.URL
 	FollowUp    *url.URL
-	Objective   render.H
-	AnnexDoc    *Document
-	DraftLegal  *Document
-	Annex       render.H
-	Treaty      render.H
+
+	PlainDesc string
+	Objective render.H
+	Annex     render.H
+	Treaty    render.H
+
+	AnnexDoc   *Document
+	DraftLegal *Document
 }
-type Timeline struct {
-	Date       time.Time
-	Status     string
+type Event struct {
+	Status string
+	Date   time.Time
+
+	// The registration document
+	Register *[language.Len]*Document
+
+	// EarlyClose when organisator close signatures reception
+	// If the status is CLOSED
 	EarlyClose bool
-	Register   *[language.Len]*Document
+
 	// Answer documents
 	AnswerAnnex        *[language.Len]*Document
 	AnswerResponse     *[language.Len]*Document
@@ -149,10 +157,6 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		Status:     dto.Status,
 		Categorie:  make([]string, len(dto.Categories)),
 		Image:      fetchImage(t, dto.Logo.ID),
-
-		// TODO: move when used it
-		Description: make(map[language.Language]*Description),
-		Signature:   make(map[country.Country]uint),
 	}
 
 	// Categorie
@@ -162,65 +166,77 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	slices.Sort(eci.Categorie)
 
 	// Description
-	registrationDoc := new([language.Len]*Document)
-	defaultAnnexDoc := (*Document)(nil)
-	defaultDraftLegal := (*Document)(nil)
+	eci.Description = make(map[language.Language]*Description)
 	for _, desc := range dto.Description {
+		if desc.Original {
+			eci.OriginalLangage = desc.Language
+		}
 		if desc.SupportLink == desc.Website {
 			desc.SupportLink = ""
 		}
 		supportLink := securehtml.ParseURL(desc.SupportLink)
-		if supportLink != nil && supportLink.Host == "ec.europa.eu" {
+		if eci.Status != "ONGOING" || (supportLink != nil && supportLink.Host == "ec.europa.eu") {
 			supportLink = nil
 		}
-		annexDoc := desc.AnnexDoc.Document(desc.Language)
-		draftLegal := desc.DraftLegal.Document(desc.Language)
 		eci.Description[desc.Language] = &Description{
 			Title:       desc.Title,
-			PlainDesc:   securehtml.Text(desc.Objective, 200),
 			SupportLink: supportLink,
 			Website:     securehtml.ParseURL(desc.Website),
-			Objective:   securehtml.Secure(desc.Objective),
-			AnnexDoc:    annexDoc,
-			DraftLegal:  draftLegal,
-			Annex:       securehtml.Secure(desc.Annex),
-			Treaty:      securehtml.TextWithURL(desc.Treaty),
+
+			PlainDesc: securehtml.Text(desc.Objective, 200),
+			Objective: securehtml.Secure(desc.Objective),
+			Annex:     securehtml.Secure(desc.Annex),
+			Treaty:    securehtml.TextWithURL(desc.Treaty),
+
+			AnnexDoc:   desc.AnnexDoc.Document(desc.Language),
+			DraftLegal: desc.DraftLegal.Document(desc.Language),
 		}
-		if desc.Original {
-			eci.DescriptionOriginalLangage = desc.Language
-			defaultAnnexDoc = annexDoc
-			defaultDraftLegal = draftLegal
+	}
+	defaultDesc := eci.Description[eci.OriginalLangage]
+	for _, desc := range eci.Description {
+		if desc.AnnexDoc == nil {
+			desc.AnnexDoc = defaultDesc.AnnexDoc
 		}
-		if u := securehtml.ParseURL(desc.Register.Url); u != nil {
+		if desc.DraftLegal == nil {
+			desc.DraftLegal = defaultDesc.DraftLegal
+		}
+	}
+	// TODO: remove
+	for _, l := range translate.Langs {
+		if eci.Description[l] == nil {
+			eci.Description[l] = defaultDesc
+		}
+	}
+
+	// if pre answer, get the follow up link
+	if du := securehtml.ParseURL(dto.PreAnswer.Links[0].DefaultLink); du != nil {
+		for l, desc := range eci.Description {
+			if desc != nil {
+				u := (*du)
+				u.Path += "_" + l.String()
+				desc.FollowUp = &u
+			}
+		}
+	}
+
+	// Registration documents
+	registrationDoc := new([language.Len]*Document)
+	for _, desc := range dto.Description {
+		if u := securehtml.ParseURL(desc.Register.URL); u != nil {
 			registrationDoc[desc.Language] = &Document{URL: u}
-		} else if desc.Register.Document != nil {
+		} else {
 			registrationDoc[desc.Language] = desc.Register.Document.Document(desc.Language)
 		}
 	}
-	for _, desc := range eci.Description {
-		if desc.AnnexDoc == nil {
-			desc.AnnexDoc = defaultAnnexDoc
-			desc.DraftLegal = defaultDraftLegal
-		}
-	}
 
-	for _, l := range translate.Langs {
-		if eci.Description[l] == nil {
-			eci.Description[l] = eci.Description[eci.DescriptionOriginalLangage]
-		}
-		if registrationDoc[l] == nil {
-			registrationDoc[l] = registrationDoc[eci.DescriptionOriginalLangage]
-		}
-	}
-
-	answer := Timeline{}
+	// Get answer documents
+	answer := Event{} // wraper for all documents
 	for _, link := range dto.Answer.Links {
+		translation := &[language.Len]*Document{}
 		def := &Document{
 			URL:      securehtml.ParseURL(link.DefaultLink),
 			Language: link.DefaultLanguageCode,
 		}
-
-		translation := &[language.Len]*Document{}
 		for l := range translation {
 			translation[l] = def
 		}
@@ -229,26 +245,28 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			if u == nil {
 				continue
 			}
-			translation[t.LanguageCode] = &Document{URL: u, Language: t.LanguageCode}
+			translation[t.Language] = &Document{URL: u, Language: t.Language}
 		}
 
-		switch link.DefaultName {
+		switch link.Kind {
 		case "ANNEX":
 			answer.AnswerAnnex = translation
 		case "COMMUNICATION":
 			answer.AnswerResponse = translation
+		case "PRESS_RELEASE":
+			answer.AnswerPressRelease = translation
 		case "FOLLOW_UP":
 			for l, desc := range eci.Description {
 				u := translation[l].URL
 				if u.Scheme == "https" && u.Host == "citizens-initiative.europa.eu" {
-					u = u.JoinPath() // clone the url
-					u.Path += "_" + l.String()
+					u = &url.URL{
+						Scheme: "https",
+						Host:   "citizens-initiative.europa.eu",
+						Path:   u.Path + "_" + l.String(),
+					}
 				}
 				desc.FollowUp = u
-				desc.SupportLink = nil
 			}
-		case "PRESS_RELEASE":
-			answer.AnswerPressRelease = translation
 		}
 	}
 
@@ -257,19 +275,15 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		if p.Date.Time.IsZero() {
 			continue
 		}
-		timeline := Timeline{
+		timeline := Event{
 			Date:   p.Date.Time,
 			Status: p.Status,
 		}
 		switch timeline.Status {
 		case "REGISTERED":
 			timeline.Register = registrationDoc
-		case "COLLECTION_START_DATE":
-			timeline.Status = "ONGOING"
 		case "CLOSED":
-			if p.Note == "COLLECTION_EARLY_CLOSURE" {
-				timeline.EarlyClose = true
-			}
+			timeline.EarlyClose = p.Note == "COLLECTION_EARLY_CLOSURE"
 		case "ANSWERED":
 			timeline.AnswerAnnex = answer.AnswerAnnex
 			timeline.AnswerResponse = answer.AnswerResponse
@@ -278,16 +292,17 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		eci.Timeline = append(eci.Timeline, timeline)
 	}
 	if !dto.Deadline.Time.IsZero() {
-		eci.Timeline = append(eci.Timeline, Timeline{
+		eci.Timeline = append(eci.Timeline, Event{
 			Date:   dto.Deadline.Time,
 			Status: "DEADLINE",
 		})
 	}
-	slices.SortFunc(eci.Timeline, func(a, b Timeline) int {
+	slices.SortFunc(eci.Timeline, func(a, b Event) int {
 		return cmp.Compare(a.Date.Unix(), b.Date.Unix())
 	})
 
 	// Set signature
+	eci.Signature = make(map[country.Country]uint)
 	setSignature := func(entrys []signatureDTO) {
 		for _, entry := range entrys {
 			eci.Signature[entry.Country] = entry.Total
@@ -331,7 +346,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		setSignature(dto.Submission.Entry)
 	}
 
-	// set Members
+	// Members
 	eci.Members = make([]Member, len(dto.Members))
 	for i, entry := range dto.Members {
 		replacedMember := (*Member)(nil)
@@ -362,7 +377,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		}
 	}
 
-	// Set funding
+	// Funding
 	if fund := dto.Funding; !fund.LastUpdate.Time.IsZero() {
 		eci.FundingUpdate = fund.LastUpdate.Time
 		eci.FundingTotal = fund.TotalAmount
