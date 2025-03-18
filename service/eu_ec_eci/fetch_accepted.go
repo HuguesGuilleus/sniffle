@@ -82,7 +82,8 @@ type Event struct {
 	Date   time.Time
 
 	// The registration document
-	Register *[language.Len]*Document
+	Register            *[language.Len]*Document
+	RegisterCorrigendum *[language.Len]*Document
 
 	// EarlyClose when organisator close signatures reception
 	// If the status is CLOSED
@@ -223,11 +224,15 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 
 	// Registration documents
 	registrationDoc := new([language.Len]*Document)
+	registrationDocCorrigendum := new([language.Len]*Document)
 	for _, desc := range dto.Description {
-		if u := securehtml.ParseURL(desc.Register.URL); u != nil {
-			registrationDoc[desc.Language] = &Document{URL: u}
-		} else {
+		if desc.Register.Document != nil {
 			registrationDoc[desc.Language] = desc.Register.Document.Document(desc.Language)
+		} else {
+			registrationDoc[desc.Language] = docFromCelex(desc.Register.CELEX, desc.Language)
+			if desc.Register.Corrigendum != "" {
+				registrationDocCorrigendum[desc.Language] = docFromCelex(desc.Register.Corrigendum, desc.Language)
+			}
 		}
 	}
 
@@ -286,6 +291,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		case "REGISTERED":
 			registerDate = e.Date
 			e.Register = registrationDoc
+			e.RegisterCorrigendum = registrationDocCorrigendum
 		case "CLOSED":
 			e.EarlyClose = p.Note == "COLLECTION_EARLY_CLOSURE"
 		case "ANSWERED":
@@ -413,6 +419,17 @@ func (eci *ECIOut) setSignatures(dto *signatureDTO, registerDate time.Time) {
 	slices.SortFunc(eci.Signature, func(a, b Signature) int {
 		return cmp.Compare(a.Country, b.Country)
 	})
+}
+
+func docFromCelex(celex string, l language.Language) *Document {
+	return &Document{URL: &url.URL{
+		Scheme: "https",
+		Host:   "eur-lex.europa.eu",
+		Path:   "/legal-content/" + l.Upper() + "/TXT/",
+		RawQuery: url.Values{
+			"uri": {"CELEX:" + celex},
+		}.Encode(),
+	}}
 }
 
 func memberURL(s string) (href, display string) {

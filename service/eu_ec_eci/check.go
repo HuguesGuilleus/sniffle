@@ -28,7 +28,7 @@ type acceptedDTO struct {
 		Annex       string            `json:"annexText"`
 		Treaty      string            `json:"treaties"`
 		Register    struct {
-			URL         string  `json:"url"`
+			CELEX       string  `json:"celex"`
 			Corrigendum string  `json:"corrigendum"`
 			Document    *docDTO `json:"document"`
 		} `json:"commissionDecision"`

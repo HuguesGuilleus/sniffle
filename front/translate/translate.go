@@ -76,6 +76,7 @@ type Translation struct {
 			H1Treaty                   render.H
 			H1Timeline                 render.H
 			Registration               render.H
+			RegistrationCorrigendum    render.H
 			CollectionEarlyClosure     render.H
 
 			H1Signature           render.H

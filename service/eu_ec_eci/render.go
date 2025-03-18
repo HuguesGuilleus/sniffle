@@ -139,6 +139,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						switch e.Status {
 						case "REGISTERED":
 							child = renderDoc(l, e.Register[l], ONE.Registration)
+							if e.RegisterCorrigendum[l] != nil {
+								child = render.N("", child, renderDoc(l, e.RegisterCorrigendum[l], ONE.RegistrationCorrigendum))
+							}
 						case "CLOSED":
 							if e.EarlyClose {
 								child = render.N("div", ONE.CollectionEarlyClosure)

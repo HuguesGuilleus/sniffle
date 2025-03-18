@@ -90,7 +90,8 @@ var fetcher = map[string]*fetch.TestResponse{
 				"supportLink": "https://eci.ec.europa.eu/043/public/?lg=fr",
 				"website": "https://furfreeeurope.eu/",
 				"commissionDecision": {
-					"url": "http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN"
+					"celex": "32022D0482",
+					"corrigendum": "32020D0674R(01)"
 				},
 				"additionalDocument": {
 					"id": 6729,
@@ -364,7 +365,7 @@ func TestFetchDetail(t *testing.T) {
 			{
 				Date: newDate(2022, time.March, 16), Status: "REGISTERED",
 				Register: &[language.Len]*Document{
-					language.English: {URL: parseURL("http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022D0482&from=EN")},
+					language.English: {URL: parseURL("https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022D0482")},
 					language.French: {
 						URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/8600"),
 						Language: language.French,
@@ -372,6 +373,9 @@ func TestFetchDetail(t *testing.T) {
 						MimeType: "application/pdf",
 						Size:     15325,
 					},
+				},
+				RegisterCorrigendum: &[language.Len]*Document{
+					language.English: {URL: parseURL("https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32020D0674R%2801%29")},
 				},
 			},
 			{Date: newDate(2022, time.May, 18), Status: "COLLECTION_START_DATE"},

@@ -73,14 +73,50 @@ var language2iso = [Len]string{
 	Swedish:    "sv",
 	AllEnglish: "en",
 }
+var language2ISO = [Len]string{
+	Bulgarian:  "BG",
+	Croatian:   "HR",
+	Czech:      "CS",
+	Danish:     "DA",
+	Dutch:      "NL",
+	English:    "EN",
+	Estonian:   "ET",
+	Finnish:    "FI",
+	French:     "FR",
+	German:     "DE",
+	Greek:      "EL",
+	Hungarian:  "HU",
+	Irish:      "GA",
+	Italian:    "IT",
+	Latvian:    "LV",
+	Lithuanian: "LT",
+	Maltese:    "MT",
+	Polish:     "PL",
+	Portuguese: "PT",
+	Romanian:   "RO",
+	Slovak:     "SK",
+	Slovene:    "SL",
+	Spanish:    "ES",
+	Swedish:    "SV",
+	AllEnglish: "EN",
+}
 
-// Two ascii letter of the ISO language code.
+// Two lower ascii letter of the ISO language code.
 // If unknwon return "??".
 func (l Language) String() string {
 	if l == Invalid || l >= Len {
 		return "??"
 	}
 	return language2iso[l]
+}
+
+// Two upper ascii letter of the ISO language code.
+// If unknwon return "??".
+func (l Language) Upper() string {
+	if l == Invalid || l >= Len {
+		return "??"
+	}
+	return language2ISO[l]
 }
 
 var iso2language = map[string]Language{
