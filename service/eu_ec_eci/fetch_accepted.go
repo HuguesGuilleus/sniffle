@@ -357,7 +357,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 		eci.Sponsor = make([]Sponsor, len(fund.Sponsors))
 		for i, s := range fund.Sponsors {
 			name := s.Name
-			if s.PrivateSponsor {
+			if s.Anonymized {
 				name = ""
 			}
 			eci.Sponsor[i] = Sponsor{
