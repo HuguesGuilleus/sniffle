@@ -1,20 +1,19 @@
 {
 	"Global": {
+		"AboutTextLink": "À propos",
 		"Byte": "octet",
+		"FooterBuild": "Dernière génération de la page\u00A0: ",
+		"HELP": "AIDE",
+		"InDev": "Cette page est actuellement en dévelopement",
+		"LinkOfficial": "Page officielle",
+		"LogoTitle": "Logo",
+		"NotEUWebsite": "Ce n'est pas un site officiel de l'Union Europénne.",
 		"PageTop": "Haut de la page",
 		"Presentation": "Présentation",
-		"SearchInside": "Rechercher dans la page\u00A0:"
+		"SchemaLink": "Schéma",
+		"SearchInside": "Rechercher dans la page\u00A0:",
+		"Source": "Source"
 	},
-
-	"AboutTextLink": "À propos",
-	"FooterBuild": "Dernière génération de la page\u00A0: ",
-	"InDev": "Cette page est actuellement en dévelopement",
-	"LinkOfficial": "Page officielle",
-	"LogoTitle": "Logo",
-	"PageTop": "Ce n'est pas un site officiel de l'Union Europénne.",
-	"SchemaLink": "Schéma",
-	"HELP": "AIDE",
-	"Source": "Source",
 
 	"$Country": {
 		"Belgium": "Belgique",

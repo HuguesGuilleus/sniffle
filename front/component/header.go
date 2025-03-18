@@ -8,15 +8,15 @@ import (
 
 func TopHeader(l language.Language) render.Node {
 	return render.N("div.topHeader",
-		translate.T[l].PageTop,
+		translate.T[l].Global.NotEUWebsite,
 		render.H(" ("),
-		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].AboutTextLink),
+		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].Global.AboutTextLink),
 		render.H(")"))
 }
 
 // A header to indicated taht this page is currently in development.
 func InDevHeader(l language.Language) render.Node {
-	return render.N("div.subHeader", translate.T[l].InDev)
+	return render.N("div.subHeader", translate.T[l].Global.InDev)
 }
 
 func HomeAnchor(l language.Language) render.Node {

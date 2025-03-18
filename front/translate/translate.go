@@ -11,22 +11,20 @@ import (
 
 type Translation struct {
 	Global struct {
-		Byte         render.H
-		PageTop      render.H
-		Presentation render.H
-		SearchInside string
+		AboutTextLink render.H `help:"About text for link"`
+		Byte          render.H
+		FooterBuild   render.H `help:"In Footer, before build date"`
+		HELP          render.H
+		InDev         render.H `help:"This page is actualy on development"`
+		LinkOfficial  render.H `help:"Official page link"`
+		LogoTitle     string   `help:"Logo title and alt attribute"`
+		NotEUWebsite  render.H `help:"Page header to indicated that this website is not official"`
+		PageTop       render.H `help:"In TOC link to page top"`
+		Presentation  render.H
+		SchemaLink    render.H `help:"Schema link"`
+		SearchInside  string
+		Source        render.H
 	}
-
-	AboutTextLink render.H `help:"About text for link"`
-	FooterBuild   render.H `help:"In Footer, before build date"`
-	InDev         render.H `help:"This page is actualy on development"`
-	LinkOfficial  render.H `help:"Official page link"`
-	LogoTitle     string   `help:"Logo title and alt attribute"`
-	PageTop       render.H `help:"Page header to indicated that this website is not official"`
-	SchemaLink    render.H `help:"Schema link"`
-
-	HELP   render.H
-	Source render.H
 
 	Country [country.Len]render.H  `json:"-"`
 	Langage [language.Len]render.H `json:"-"`

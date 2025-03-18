@@ -38,10 +38,10 @@ var (
 // It contain in the end, so the DOM is complete when it's executed.
 func Footer(l language.Language, flag uint) render.Node {
 	return render.N("footer",
-		translate.T[l].FooterBuild,
+		translate.T[l].Global.FooterBuild,
 		time.Now(),
 		render.H("<br>"),
-		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].AboutTextLink),
+		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].Global.AboutTextLink),
 		scripts[flag],
 	)
 }

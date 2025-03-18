@@ -28,9 +28,9 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 						render.N("div.editoT", tr.Global.Presentation),
 						tr.EU_EC_ECI.INDEX.Help,
 					),
-					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.LinkOfficial),
+					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.Global.LinkOfficial),
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
-					render.Na("a.box", "href", "schema.html").N(tr.SchemaLink),
+					render.Na("a.box", "href", "schema.html").N(tr.Global.SchemaLink),
 				),
 				component.SearchBlock(l),
 				render.N("div", render.MapReverse(eciByYear, func(year int, slice []*ECIOut) render.Node {
@@ -51,7 +51,7 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 									return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
 								})),
 								render.N("p.itemDesc", eci.Description[l].PlainDesc),
-								renderImage(eci, true, tr.LogoTitle),
+								renderImage(eci, true, tr.Global.LogoTitle),
 							)
 						}),
 					)
@@ -91,7 +91,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					render.N("div",
 						render.Na("a.box", "href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l)).
-							N(tr.LinkOfficial),
+							N(tr.Global.LinkOfficial),
 						render.If(desc.SupportLink != nil, func() render.Node {
 							return render.Na("a.box", "href", desc.SupportLink.String()).N(ONE.LinkSignature)
 						}),
@@ -111,7 +111,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				),
 
 				// Image
-				renderImage(eci, false, tr.LogoTitle),
+				renderImage(eci, false, tr.Global.LogoTitle),
 
 				// Text description
 				render.N("h1", ONE.H1Description),
@@ -187,10 +187,10 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								" / 7",
 							),
 							render.N("div.edito",
-								render.N("div.editoT", tr.HELP),
+								render.N("div.editoT", tr.Global.HELP),
 								tr.EU_EC_ECI.ThresholdRule[eci.ThresholdRule],
 								" ",
-								render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()).N(tr.Source),
+								render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()).N(tr.Global.Source),
 							),
 						),
 
