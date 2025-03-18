@@ -209,12 +209,6 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			desc.DraftLegal = defaultDesc.DraftLegal
 		}
 	}
-	// TODO: remove
-	for _, l := range translate.Langs {
-		if eci.Description[l] == nil {
-			eci.Description[l] = defaultDesc
-		}
-	}
 
 	// if pre answer, get the follow up link
 	if du := securehtml.ParseURL(dto.PreAnswer.Links[0].DefaultLink); du != nil {
@@ -431,6 +425,17 @@ func memberURL(s string) (href, display string) {
 		return s, s
 	}
 	return "", ""
+}
+
+// All available langs for this ICE and include in [translate.Langs]
+func (eci *ECIOut) Langs() []language.Language {
+	langs := make([]language.Language, 0, len(translate.Langs))
+	for _, l := range translate.Langs {
+		if eci.Description[l] != nil {
+			langs = append(langs, l)
+		}
+	}
+	return langs
 }
 
 type dtoDate struct {

@@ -28,8 +28,8 @@ func HomeAnchor(l language.Language) render.Node {
 }
 
 // Links to different
-func HeaderLangs(pageLang language.Language, basePath string) render.Node {
-	return render.N("div.headerLangs", render.S(translate.Langs, "", func(l language.Language) render.Node {
+func HeaderLangs(langs []language.Language, pageLang language.Language, basePath string) render.Node {
+	return render.N("div.headerLangs", render.S(langs, "", func(l language.Language) render.Node {
 		if pageLang == l {
 			return render.Na("span.headerOneLang", "title", l.Human()).N(l.String())
 		}

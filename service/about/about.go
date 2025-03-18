@@ -25,7 +25,7 @@ func Do(t *tool.Tool) {
 						component.HomeAnchor(l), "about",
 					)),
 					render.N("div.headerTitle", tr.ABOUT.PageTitle),
-					component.HeaderLangs(l, ""),
+					component.HeaderLangs(translate.Langs, l, ""),
 				),
 				render.N("div.w",
 					render.S(tr.ABOUT.Intro, "", func(p render.H) render.Node {

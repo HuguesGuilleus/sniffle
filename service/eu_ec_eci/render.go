@@ -20,7 +20,7 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 			render.N("header",
 				render.N("div.headerSup", idNamespace(l)),
 				render.N("div.headerTitle", tr.EU_EC_ECI.INDEX.Name),
-				component.HeaderLangs(l, ""),
+				component.HeaderLangs(translate.Langs, l, ""),
 			),
 			render.N("main.wt", component.Toc(l), render.N("div.wc",
 				render.N("div.summary",
@@ -37,6 +37,10 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 					return render.N("div.sg",
 						render.N("h1", render.Int(year)),
 						render.S(slice, "", func(eci *ECIOut) render.Node {
+							l := l
+							if eci.Description[l] == nil {
+								l = eci.OriginalLangage
+							}
 							return render.Na("a.si.bigItem", "href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l)).N(
 								render.N("div",
 									render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
@@ -73,7 +77,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					render.N("div.headerId", render.Int(eci.Year), "/", render.Int(eci.Number)),
 				),
 				render.N("div.headerTitle", desc.Title),
-				component.HeaderLangs(l, ""),
+				component.HeaderLangs(eci.Langs(), l, ""),
 			),
 			render.N("main.wt", component.Toc(l), render.N("div.wc",
 				// Summary

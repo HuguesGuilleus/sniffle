@@ -20,7 +20,7 @@ func Do(t *tool.Tool) {
 				component.InDevHeader(l),
 				render.N("header",
 					render.N("div.headerTitle", component.HomeAnchor(l), tr.HOME.Name),
-					component.HeaderLangs(l, ""),
+					component.HeaderLangs(translate.Langs, l, ""),
 				),
 
 				render.N("div.w.home",

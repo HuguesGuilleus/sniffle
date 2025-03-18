@@ -18,14 +18,17 @@ func Do(t *tool.Tool) {
 	for _, l := range translate.Langs {
 		renderIndex(t, eciByYear, l)
 	}
-	for year := range eciByYear {
+	for year, eciSlice := range eciByYear {
 		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/index.html", year), render.Back)
-	}
-	for _, eciSlice := range eciByYear {
 		for _, eci := range eciSlice {
-			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number), lredirect.All) // TODO: the language can be unavailable
+			redirect := lredirect.Page(fmt.Sprintf("https://citizens-initiative.europa.eu/initiatives/details/%d/%06d", eci.Year, eci.Number), eci.Langs())
+			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number), redirect)
 			for _, l := range translate.Langs {
-				renderOne(t, eci, l)
+				if eci.Description[l] != nil {
+					renderOne(t, eci, l)
+				} else {
+					t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s.html", eci.Year, eci.Number, l), redirect)
+				}
 			}
 			if img := eci.Image; img != nil {
 				t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/logo%s", eci.Year, eci.Number, img.Raw.Extension), img.Raw.Data)
