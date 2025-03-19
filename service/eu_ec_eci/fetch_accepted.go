@@ -28,8 +28,8 @@ const (
 
 type ECIOut struct {
 	// Identifier
-	Year   int
-	Number int
+	Year   uint
+	Number uint
 	// Last update of information
 	LastUpdate time.Time
 	// Current status

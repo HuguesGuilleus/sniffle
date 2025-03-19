@@ -11,18 +11,18 @@ const acceptedIndexURL = "https://register.eci.ec.europa.eu/core/api/register/se
 const refusedIndexURL = "https://register.eci.ec.europa.eu/core/api/register/search/REFUSED/EN/0/0"
 
 type indexItem struct {
-	id     int
-	year   int
-	number int
+	id     uint
+	year   uint
+	number uint
 }
 
 // Get all ECI items.
 func fetchIndex(t *tool.Tool, ty sch.Type, url string) []indexItem {
 	dto := struct {
 		Entries []struct {
-			ID     int `json:"id"`
-			Year   int `json:"year,string"`
-			Number int `json:"number,string"`
+			ID     uint `json:"id"`
+			Year   uint `json:"year,string"`
+			Number uint `json:"number,string"`
 		} `json:"entries"`
 	}{}
 	if tool.FetchJSON(t, ty, &dto, fetch.URL(url)) {

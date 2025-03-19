@@ -42,10 +42,10 @@ func Do(t *tool.Tool) {
 	ExploreRefused(t)
 }
 
-func fetchAllAcepted(t *tool.Tool) map[int][]*ECIOut {
+func fetchAllAcepted(t *tool.Tool) map[uint][]*ECIOut {
 	checkThreashold(t)
 
-	eciByYear := make(map[int][]*ECIOut)
+	eciByYear := make(map[uint][]*ECIOut)
 	for _, info := range fetchAcceptedIndex(t) {
 		eci := fetchDetail(t, info)
 		if eci == nil {

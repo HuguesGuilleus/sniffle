@@ -9,7 +9,7 @@ import (
 	"sniffle/tool/render"
 )
 
-func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language) {
+func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language) {
 	tr := translate.T[l]
 	baseURL := "/eu/ec/eci/"
 
@@ -33,7 +33,7 @@ func renderIndex(t *tool.Tool, eciByYear map[int][]*ECIOut, l language.Language)
 					render.Na("a.box", "href", "schema.html").N(tr.Global.SchemaLink),
 				),
 				component.SearchBlock(l),
-				render.N("div", render.MapReverse(eciByYear, func(year int, slice []*ECIOut) render.Node {
+				render.N("div", render.MapReverse(eciByYear, func(year uint, slice []*ECIOut) render.Node {
 					return render.N("div.sg",
 						render.N("h1", render.Int(year)),
 						render.S(slice, "", func(eci *ECIOut) render.Node {
