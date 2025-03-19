@@ -32,11 +32,11 @@ func Head(l language.Language, baseURL, title, description string) render.Node {
 		HeadBegin,
 		render.N("title", title),
 		render.Na("meta", "name", "description").A("content", description),
-		langAlternate(baseURL, l, translate.Langs),
+		LangAlternate(baseURL, l, translate.Langs),
 	)
 }
 
-func langAlternate(baseURL string, pageLang language.Language, langs []language.Language) []render.Node {
+func LangAlternate(baseURL string, pageLang language.Language, langs []language.Language) []render.Node {
 	return render.S(langs, "", func(l language.Language) render.Node {
 		if pageLang == l {
 			return render.Z

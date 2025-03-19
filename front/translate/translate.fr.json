@@ -126,6 +126,7 @@
 			"Registration": "Enregistrement",
 			"RegistrationCorrigendum": "Enregistrement corrigé",
 			"CollectionEarlyClosure": "Collecte clôturée de manière anticipée par les organisateurs.",
+			"ExtraDelay": "Délai allongé suite au COVID, voir\u00A0: ",
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Nombre total de signatures",
@@ -174,6 +175,10 @@
 				"CaptionAmount": "Montant réel du financement octroyé ou valeur estimée de la contribution en nature.",
 				"Document": "Document financier additionnel"
 			}
+		},
+		"DATA_EXTRADELAY": {
+			"Name": "Allongement des délais COVID",
+			"Description": "Suite au COVID, les délais pour collecter les signatures ont été rallongés."
 		},
 		"Status": {
 			"ANSWERED": "RÉPONDU",

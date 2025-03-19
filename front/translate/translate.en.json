@@ -126,6 +126,7 @@
 			"Registration": "Registration",
 			"RegistrationCorrigendum": "Corrected registration",
 			"CollectionEarlyClosure": "Collection closed earlier by organizer.",
+			"ExtraDelay": "Extra delay because of COVID, see: ",
 
 			"H1Signature": "Signature",
 			"SignatureSum": "Signature sum",
@@ -174,6 +175,10 @@
 				"CaptionAmount": "Actual amount of funding provided or estimated value of in kind contribution.",
 				"Document": "Aditional financial document"
 			}
+		},
+		"DATA_EXTRADELAY": {
+			"Name": "COVID extra delay",
+			"Description": "Becuause COVID pandemic, add extra delay for signtures collections."
 		},
 		"Status": {
 			"ANSWERED": "ANSWERED",

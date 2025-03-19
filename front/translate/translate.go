@@ -78,6 +78,7 @@ type Translation struct {
 			Registration               render.H
 			RegistrationCorrigendum    render.H
 			CollectionEarlyClosure     render.H
+			ExtraDelay                 render.H
 
 			H1Signature           render.H
 			SignatureSum          render.H
@@ -119,6 +120,10 @@ type Translation struct {
 				CaptionAmount    render.H
 				Document         render.H
 			}
+		}
+		DATA_EXTRADELAY struct {
+			Name        string
+			Description string
 		}
 		Status        map[string]render.H
 		Categorie     map[string]render.H

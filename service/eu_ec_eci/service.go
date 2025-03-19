@@ -14,9 +14,13 @@ import (
 func Do(t *tool.Tool) {
 	eciByYear := fetchAllAcepted(t)
 	t.WriteFile("/eu/ec/eci/index.html", lredirect.All)
+	t.WriteFile("/eu/ec/eci/data/index.html", render.Back)
+	t.WriteFile("/eu/ec/eci/data/extradelay/index.html", lredirect.All)
 	t.WriteFile("/eu/ec/eci/schema.html", schemaPage)
 	for _, l := range translate.Langs {
 		renderIndex(t, eciByYear, l)
+		t.WriteFile(l.Path("/eu/ec/eci/data/"), render.Back)
+		renderDataExtraDelay(t, l)
 	}
 	for year, eciSlice := range eciByYear {
 		t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/index.html", year), render.Back)

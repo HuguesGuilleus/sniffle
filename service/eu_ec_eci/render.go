@@ -30,7 +30,9 @@ func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language
 					),
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.Global.LinkOfficial),
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
+					render.N("hr"),
 					render.Na("a.box", "href", "schema.html").N(tr.Global.SchemaLink),
+					render.Na("a.box", "href", l.Path("data/extradelay/")).N(tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
 				),
 				component.SearchBlock(l),
 				render.N("div", render.MapReverse(eciByYear, func(year uint, slice []*ECIOut) render.Node {
@@ -145,6 +147,14 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						case "CLOSED":
 							if e.EarlyClose {
 								child = render.N("div", ONE.CollectionEarlyClosure)
+							}
+							if len(e.ExtraDelay) != 0 {
+								child = render.N("", child, render.N("div",
+									ONE.ExtraDelay,
+									render.S(e.ExtraDelay, ", ", func(extra ExtraDelay) render.Node {
+										return render.Na("a", "href", "https://eur-lex.europa.eu/legal-content/"+l.Upper()+"/TXT/?uri=CELEX:"+extra.CELEX).N(extra.Code)
+									}),
+								))
 							}
 						case "ANSWERED":
 							child = render.N("",

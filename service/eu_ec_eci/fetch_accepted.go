@@ -88,11 +88,19 @@ type Event struct {
 	// EarlyClose when organisator close signatures reception
 	// If the status is CLOSED
 	EarlyClose bool
+	// Because of COVID, some ICE get collecting signature extra delay.
+	// Legal text source.
+	// If nil, no extra delay.
+	ExtraDelay []ExtraDelay
 
 	// Answer documents
 	AnswerAnnex        *[language.Len]*Document
 	AnswerResponse     *[language.Len]*Document
 	AnswerPressRelease *[language.Len]*Document
+}
+type ExtraDelay struct {
+	Code  string
+	CELEX string
 }
 type Signature struct {
 	Country country.Country
@@ -294,6 +302,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			e.RegisterCorrigendum = registrationDocCorrigendum
 		case "CLOSED":
 			e.EarlyClose = p.Note == "COLLECTION_EARLY_CLOSURE"
+			e.ExtraDelay = extraDelayMap[info.id]
 		case "ANSWERED":
 			e.AnswerAnnex = answer.AnswerAnnex
 			e.AnswerResponse = answer.AnswerResponse

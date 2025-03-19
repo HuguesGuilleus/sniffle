@@ -20,14 +20,20 @@ func TestService(t *testing.T) {
 	to.Logger = slog.New(slog.NewTextHandler(io.Discard, nil))
 	Do(to)
 	assert.Equal(t, writefile.T{
-		"/eu/ec/eci/index.html":        1,
-		"/eu/ec/eci/fr.html":           1,
-		"/eu/ec/eci/en.html":           1,
-		"/eu/ec/eci/schema.html":       1,
-		"/eu/ec/eci/2024/index.html":   1,
-		"/eu/ec/eci/2024/9/index.html": 1,
-		"/eu/ec/eci/2024/9/logo.png":   1,
-		"/eu/ec/eci/2024/9/fr.html":    1,
-		"/eu/ec/eci/2024/9/en.html":    1,
+		"/eu/ec/eci/index.html":                 1,
+		"/eu/ec/eci/fr.html":                    1,
+		"/eu/ec/eci/en.html":                    1,
+		"/eu/ec/eci/schema.html":                1,
+		"/eu/ec/eci/data/index.html":            1,
+		"/eu/ec/eci/data/fr.html":               1,
+		"/eu/ec/eci/data/en.html":               1,
+		"/eu/ec/eci/data/extradelay/index.html": 1,
+		"/eu/ec/eci/data/extradelay/fr.html":    1,
+		"/eu/ec/eci/data/extradelay/en.html":    1,
+		"/eu/ec/eci/2024/index.html":            1,
+		"/eu/ec/eci/2024/9/index.html":          1,
+		"/eu/ec/eci/2024/9/logo.png":            1,
+		"/eu/ec/eci/2024/9/fr.html":             1,
+		"/eu/ec/eci/2024/9/en.html":             1,
 	}, wf)
 }
