@@ -71,7 +71,12 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	ONE := tr.EU_EC_ECI.ONE
 
 	t.WriteFile(l.Path(fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number)), render.Merge(render.Na("html", "lang", l.String()).N(
-		component.Head(l, fmt.Sprintf("%s/eu/ec/eci/%d/%d/", t.HostURL, eci.Year, eci.Number), desc.Title, desc.PlainDesc),
+		render.N("head",
+			component.HeadBegin,
+			render.N("title", desc.Title),
+			render.Na("meta", "name", "description").A("content", desc.PlainDesc),
+			component.LangAlternate(fmt.Sprintf("%s/eu/ec/eci/%d/%d/", t.HostURL, eci.Year, eci.Number), l, eci.Langs()),
+		),
 		render.N("body",
 			component.TopHeader(l),
 			render.N("header",

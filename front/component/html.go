@@ -26,7 +26,7 @@ var HeadBegin = render.H(`<meta charset=utf-8>` +
 	`<link rel=stylesheet href=/style.` + front.StyleHash + `.css integrity="` + front.StyleIntegrity + `">` +
 	`<link rel=icon href=/favicon.ico>`)
 
-// <head> component.
+// <head> component, use it only when all [translate.Langs] page exist.
 func Head(l language.Language, baseURL, title, description string) render.Node {
 	return render.N("head",
 		HeadBegin,

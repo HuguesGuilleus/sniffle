@@ -20,11 +20,14 @@ var steps = map[render.Int][]render.Node{
 
 func Do(t *tool.Tool) {
 	basePath := "/release/"
-	hostURL := t.HostURL + basePath
 	l := language.AllEnglish
 
 	t.WriteFile(basePath+"index.html", render.Merge(render.Na("html", "lang", l.String()).N(
-		component.Head(l, hostURL, "Release index", "Index of all release"),
+		render.N("head",
+			component.HeadBegin,
+			render.N("title", "Release index"),
+			render.Na("meta", "name", "description").A("content", "Index of all release"),
+		),
 		render.N("body.edito",
 			component.TopHeader(l),
 			render.N("header",
@@ -45,7 +48,11 @@ func Do(t *tool.Tool) {
 	for year, steps := range steps {
 		y := strconv.Itoa(int(year))
 		t.WriteFile(fmt.Sprintf("%s%d/index.html", basePath, year), render.Merge(render.Na("html", "lang", l.String()).N(
-			component.Head(l, hostURL, y+" release", "Release of "+y),
+			render.N("head",
+				component.HeadBegin,
+				render.N("title", y+" release"),
+				render.Na("meta", "name", "description").A("content", "Release of "+y),
+			),
 			render.N("body.edito",
 				component.TopHeader(l),
 				render.N("header",
