@@ -52,10 +52,17 @@ func CLI(delay map[string]time.Duration) *Config {
 		}
 	}
 
+	if delay == nil {
+		delay = make(map[string]time.Duration, 1)
+	}
+	if _, ok := delay[""]; !ok {
+		delay[""] = time.Millisecond * 100
+	}
+
 	config.LongTasksCache = writefile.Os(filepath.Join(*cache, "longtask"))
 	config.Fetcher = []fetch.Fetcher{
 		fetch.Cache(*cache),
-		fetch.Net(nil, *cache, map[string]time.Duration{"": time.Millisecond * 100}),
+		fetch.Net(nil, *cache, delay),
 	}
 
 	return config
