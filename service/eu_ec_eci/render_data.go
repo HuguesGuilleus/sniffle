@@ -39,8 +39,8 @@ func renderDataExtraDelay(t *tool.Tool, l language.Language) {
 							" ", ice.Name, render.N("br"),
 						),
 						" -> ",
-						render.S(ice.ExtraDelay, ", ", func(extra ExtraDelay) render.Node {
-							return render.Na("a", "href", "https://eur-lex.europa.eu/legal-content/"+l.Upper()+"/TXT/?uri=CELEX:"+extra.CELEX).N(extra.Code)
+						render.S(ice.ExtraDelay, ", ", func(extra component.Legal) render.Node {
+							return extra.Render(l)
 						}),
 					)
 				})),

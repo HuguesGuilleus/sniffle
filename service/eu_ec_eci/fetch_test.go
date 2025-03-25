@@ -381,7 +381,7 @@ func TestFetchDetail(t *testing.T) {
 				},
 			},
 			{Date: newDate(2022, time.May, 18), Status: "COLLECTION_START_DATE"},
-			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true, ExtraDelay: []ExtraDelay{extraDelay_2021_1121, extraDelay_2021_3879}},
+			{Date: newDate(2023, time.March, 1), Status: "CLOSED", EarlyClose: true, ExtraDelay: []component.Legal{extraDelay_2021_1121, extraDelay_2021_3879}},
 			{Date: newDate(2023, time.March, 13), Status: "VERIFICATION"},
 			{Date: newDate(2023, time.June, 14), Status: "SUBMITTED"},
 			{

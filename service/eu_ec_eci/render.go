@@ -152,8 +152,8 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							if len(e.ExtraDelay) != 0 {
 								child = render.N("", child, render.N("div",
 									ONE.ExtraDelay,
-									render.S(e.ExtraDelay, ", ", func(extra ExtraDelay) render.Node {
-										return render.Na("a", "href", "https://eur-lex.europa.eu/legal-content/"+l.Upper()+"/TXT/?uri=CELEX:"+extra.CELEX).N(extra.Code)
+									render.S(e.ExtraDelay, ", ", func(extra component.Legal) render.Node {
+										return extra.Render(l)
 									}),
 								))
 							}

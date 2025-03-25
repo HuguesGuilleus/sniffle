@@ -10,6 +10,7 @@ import (
 	"sniffle/common"
 	"sniffle/common/country"
 	"sniffle/common/language"
+	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -91,16 +92,12 @@ type Event struct {
 	// Because of COVID, some ICE get collecting signature extra delay.
 	// Legal text source.
 	// If nil, no extra delay.
-	ExtraDelay []ExtraDelay
+	ExtraDelay []component.Legal
 
 	// Answer documents
 	AnswerAnnex        *[language.Len]*Document
 	AnswerResponse     *[language.Len]*Document
 	AnswerPressRelease *[language.Len]*Document
-}
-type ExtraDelay struct {
-	Code  string
-	CELEX string
 }
 type Signature struct {
 	Country country.Country
