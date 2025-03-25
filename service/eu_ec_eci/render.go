@@ -33,6 +33,7 @@ func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language
 					render.N("hr"),
 					render.Na("a.box", "href", "schema.html").N(tr.Global.SchemaLink),
 					render.Na("a.box", "href", l.Path("data/extradelay/")).N(tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
+					render.Na("a.box", "href", l.Path("data/threshold/")).N(tr.EU_EC_ECI.DATA_THRESHOLD.Name),
 				),
 				component.SearchBlock(l),
 				render.N("div", render.MapReverse(eciByYear, func(year uint, slice []*ECIOut) render.Node {
@@ -186,7 +187,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						}),
 
 						render.N("div.bigInfo",
-							render.N("div.bifInfoMeta", ONE.SignatureSum),
+							render.N("div.bigInfoMeta", ONE.SignatureSum),
 							render.N("div.bigInfoMain",
 								render.N("span.bigInfoData", eci.TotalSignature),
 								" / 1 000 000",
@@ -201,9 +202,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 							),
 							render.N("div.edito",
 								render.N("div.editoT", tr.Global.HELP),
-								tr.EU_EC_ECI.ThresholdRule[eci.ThresholdRule],
-								" ",
-								render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_"+l.String()).N(tr.Global.Source),
+								render.N("div.marginBottom", tr.EU_EC_ECI.ThresholdRule[eci.Threshold.Rule]),
+								tr.Global.Source, ": ",
+								eci.Threshold.Legal.Render(l),
 							),
 						),
 

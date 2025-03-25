@@ -73,6 +73,25 @@
 		"sv": "Swedish"
 	},
 
+	"Legal": {
+		"COMMISSION DELEGATED REGULATION (EU)": [
+			"COMMISSION DELEGATED REGULATION (EU)\u00A0",
+			""
+		],
+		"COMMISSION DELEGATED REGULATION (EU) No": [
+			"COMMISSION DELEGATED REGULATION (EU)\u00A0No\u00A0",
+			""
+		],
+		"COUNCIL REGULATION (EU) No": [
+			"COUNCIL REGULATION (EU)\u00A0No\u00A0",
+			""
+		],
+		"REGULATION (EU) OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL": [
+			"REGULATION (EU)\u00A0",
+			" OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL"
+		]
+	},
+
 	"ABOUT": {
 		"PageTitle": "About this website",
 		"PageDescription": "About website page",
@@ -179,6 +198,13 @@
 		"DATA_EXTRADELAY": {
 			"Name": "COVID extra delay",
 			"Description": "Becuause COVID pandemic, add extra delay for signtures collections."
+		},
+		"DATA_THRESHOLD": {
+			"Name": "Threshold data",
+			"Description": "Valid ECI need at most un quarter of European Union members (7 country) pass following thresholds.",
+			"LastCheck": "Last check: ",
+			"From": "From",
+			"Calculation": "Calculation"
 		},
 		"Status": {
 			"ANSWERED": "ANSWERED",

@@ -73,6 +73,25 @@
 		"sv": "Suédois"
 	},
 
+	"Legal": {
+		"COMMISSION DELEGATED REGULATION (EU)": [
+			"RÈGLEMENT DÉLÉGUÉ (UE)\u00A0",
+			" DE LA COMMISSION"
+		],
+		"COMMISSION DELEGATED REGULATION (EU) No": [
+			"RÈGLEMENT DÉLÉGUÉ (UE)\u00A0n°\u00A0",
+			" DE LA COMMISSION"
+		],
+		"COUNCIL REGULATION (EU) No": [
+			"RÈGLEMENT (UE) N°\u00A0",
+			" DU CONSEIL"
+		],
+		"REGULATION (EU) OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL": [
+			"RÈGLEMENT (UE)\u00A0",
+			" DU PARLEMENT EUROPÉEN ET DU CONSEIL "
+		]
+	},
+
 	"ABOUT": {
 		"PageTitle": "À propos de ce site web",
 		"PageDescription": "Page d'information sur ce site web",
@@ -179,6 +198,13 @@
 		"DATA_EXTRADELAY": {
 			"Name": "Allongement des délais COVID",
 			"Description": "Suite au COVID, les délais pour collecter les signatures ont été rallongés."
+		},
+		"DATA_THRESHOLD": {
+			"Name": "Données de seuil",
+			"Description": "Pour qu'une ICE soit valide, il faut qu'au moins un quart des pays de l'Union Européenne (7 pays) dépassent les seuils ci-dessous.",
+			"LastCheck": "Dernière vérification\u00A0: ",
+			"From": "Depuis",
+			"Calculation": "Calcul"
 		},
 		"Status": {
 			"ANSWERED": "RÉPONDU",

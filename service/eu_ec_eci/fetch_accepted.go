@@ -52,8 +52,8 @@ type ECIOut struct {
 	// Date of the last organisators paper signatures update.
 	// Can be zero
 	PaperSignaturesUpdate time.Time
-
-	ThresholdRule      string
+	// Threshold information
+	Threshold          *Threshold
 	ThresholdPassTotal uint
 
 	Members []Member
@@ -392,23 +392,11 @@ func (eci *ECIOut) setSignatures(dto *signatureDTO, registerDate time.Time) {
 	eci.TotalSignature = dto.TotalSignatures
 	eci.PaperSignaturesUpdate = dto.PaperSignaturesUpdate.Time
 
-	threshold := [country.Len]uint{}
-	switch {
-	case date_2024_07_06.Before(registerDate):
-		eci.ThresholdRule = rule_since_2020_01_01
-		threshold = threshold_2024_07_06
-	case date_2020_02_01.Before(registerDate):
-		eci.ThresholdRule = rule_since_2020_01_01
-		threshold = threshold_2020_02_01
-	case date_2020_01_01.Before(registerDate):
-		eci.ThresholdRule = rule_since_2020_01_01
-		threshold = threshold_2020_01_01
-	case date_2014_07_01.Before(registerDate):
-		eci.ThresholdRule = rule_since_2012_04_01
-		threshold = threshold_2014_07_01
-	case date_2012_04_01.Before(registerDate):
-		eci.ThresholdRule = rule_since_2012_04_01
-		threshold = threshold_2012_04_01
+	for _, t := range thresholds {
+		if t.Begin.Before(registerDate) {
+			eci.Threshold = t
+			break
+		}
 	}
 
 	eci.Signature = make([]Signature, len(dto.Entry))
@@ -417,7 +405,7 @@ func (eci *ECIOut) setSignatures(dto *signatureDTO, registerDate time.Time) {
 			Country:   entry.Country,
 			Count:     entry.Count,
 			After:     entry.After,
-			Threshold: threshold[entry.Country],
+			Threshold: eci.Threshold.Data[entry.Country],
 		}
 		if !sig.After && sig.Count >= sig.Threshold {
 			sig.ThresholdPass = true

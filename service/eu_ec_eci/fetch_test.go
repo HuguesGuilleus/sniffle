@@ -5,6 +5,7 @@ import (
 	"sniffle/common"
 	"sniffle/common/country"
 	"sniffle/common/language"
+	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -441,8 +442,45 @@ func TestFetchDetail(t *testing.T) {
 		},
 		TotalSignature:        88783,
 		PaperSignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
-		ThresholdRule:         "2020-01-01",
-		ThresholdPassTotal:    1,
+		Threshold: &Threshold{
+			Begin: time.Date(2020, 2, 1, 0, 0, 0, 0, render.ShortDateZone),
+			Rule:  rule_since_2020_01_01,
+			Legal: component.Legal{
+				Prefix: "COMMISSION DELEGATED REGULATION (EU)",
+				Num:    "2019/1673",
+				CELEX:  "32019R1673",
+			},
+			Data: ThresholdArray{
+				country.Belgium:     14_805,
+				country.Bulgaria:    11_985,
+				country.Czechia:     14_805,
+				country.Denmark:     9_870,
+				country.Germany:     67_680,
+				country.Estonia:     4_935,
+				country.Ireland:     9_165,
+				country.Greece:      14_805,
+				country.Spain:       41_595,
+				country.France:      55_695,
+				country.Croatia:     8_460,
+				country.Italy:       53_580,
+				country.Cyprus:      4_230,
+				country.Latvia:      5_640,
+				country.Lithuania:   7_755,
+				country.Luxembourg:  4_230,
+				country.Hungary:     14_805,
+				country.Malta:       4_230,
+				country.Netherlands: 20_445,
+				country.Austria:     13_395,
+				country.Poland:      36_660,
+				country.Portugal:    14_805,
+				country.Romania:     23_265,
+				country.Slovenia:    5_640,
+				country.Slovakia:    9_870,
+				country.Finland:     9_870,
+				country.Sweden:      14_805,
+			},
+		},
+		ThresholdPassTotal: 1,
 
 		Image: &common.ResizedImage{
 			Raw: common.Image{

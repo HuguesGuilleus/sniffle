@@ -28,6 +28,7 @@ type Translation struct {
 
 	Country [country.Len]render.H  `json:"-"`
 	Langage [language.Len]render.H `json:"-"`
+	Legal   map[string][2]render.H
 
 	ABOUT struct {
 		PageTitle       string     `help:"Header title"`
@@ -124,6 +125,13 @@ type Translation struct {
 		DATA_EXTRADELAY struct {
 			Name        string
 			Description string
+		}
+		DATA_THRESHOLD struct {
+			Name        string
+			Description string
+			LastCheck   render.H
+			From        render.H
+			Calculation render.H
 		}
 		Status        map[string]render.H
 		Categorie     map[string]render.H
