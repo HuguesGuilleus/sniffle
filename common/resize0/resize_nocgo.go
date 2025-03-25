@@ -2,8 +2,11 @@
 
 package resize0
 
-import "errors"
+import (
+	"errors"
+	"sniffle/tool"
+)
 
-func Resize(data []byte) ([]byte, error) {
+func Resize(_ *tool.Tool, data []byte) ([]byte, error) {
 	return nil, errors.New("need cgo")
 }

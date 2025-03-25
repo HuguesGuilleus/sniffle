@@ -25,7 +25,7 @@ type Config struct {
 	Fetcher   []fetch.Fetcher
 
 	LongTasksCache writefile.WriteReadFile
-	LongTasksMap   map[string]func([]byte) ([]byte, error)
+	LongTasksMap   map[string]func(*Tool, []byte) ([]byte, error)
 }
 
 func New(config *Config) *Tool {
@@ -65,8 +65,7 @@ type Tool struct {
 	htmlFileMutex sync.Mutex
 
 	longTasksCache writefile.WriteReadFile
-	longTasksMutex sync.Mutex
-	longTasksMap   map[string]func([]byte) ([]byte, error)
+	longTasksMap   map[string]func(*Tool, []byte) ([]byte, error)
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
@@ -132,15 +131,13 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 		t.Warn("longtask.cacheErr", "name", name, "id", id, "ref", logRef, "err", err.Error())
 	}
 
-	t.longTasksMutex.Lock()
 	task := t.longTasksMap[name]
-	t.longTasksMutex.Unlock()
 	if task == nil {
 		t.Info("longtask.noFunc", "name", name, "id", id, "ref", logRef)
 		return nil
 	}
 
-	out, err := task(input)
+	out, err := task(t, input)
 	if err != nil {
 		t.Warn("longtask.err", "name", name, "id", id, "ref", logRef, "err", err.Error())
 		return nil

@@ -7,13 +7,14 @@ import (
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
+	"sniffle/tool"
 
 	"github.com/gen2brain/avif"
 	"github.com/nfnt/resize"
 )
 
 // Resize image and encode it in AVIF.
-func Resize(data []byte) ([]byte, error) {
+func Resize(_ *tool.Tool, data []byte) ([]byte, error) {
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		return nil, err

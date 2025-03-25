@@ -22,7 +22,7 @@ func main() {
 
 	config.HostURL = *host
 
-	config.LongTasksMap = map[string]func([]byte) ([]byte, error){
+	config.LongTasksMap = map[string]func(*tool.Tool, []byte) ([]byte, error){
 		resize0.Name: resize0.Resize,
 	}
 
