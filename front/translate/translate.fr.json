@@ -4,10 +4,10 @@
 		"Byte": "octet",
 		"FooterBuild": "Dernière génération de la page\u00A0: ",
 		"HELP": "AIDE",
-		"InDev": "Cette page est actuellement en dévelopement",
+		"InDev": "Cette page est actuellement en développement",
 		"LinkOfficial": "Page officielle",
 		"LogoTitle": "Logo",
-		"NotEUWebsite": "Ce n'est pas un site officiel de l'Union Europénne.",
+		"NotEUWebsite": "Ce n'est pas un site officiel de l'Union européenne.",
 		"PageTop": "Haut de la page",
 		"Presentation": "Présentation",
 		"SchemaLink": "Schéma",
@@ -194,6 +194,14 @@
 				"CaptionAmount": "Montant réel du financement octroyé ou valeur estimée de la contribution en nature.",
 				"Document": "Document financier additionnel"
 			}
+		},
+		"REFUSED_INDEX": {
+			"Name": "Liste des initiatives refusées",
+			"Description": "La liste de toutes les initiatives refusées par la Comission Européenne."
+		},
+		"REFUSED_ONE": {
+			"RefusalOnline": "Texte de refus en ligne",
+			"RefusalDocument": "Document de refus"
 		},
 		"DATA_EXTRADELAY": {
 			"Name": "Allongement des délais COVID",

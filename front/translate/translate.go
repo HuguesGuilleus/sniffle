@@ -122,6 +122,14 @@ type Translation struct {
 				Document         render.H
 			}
 		}
+		REFUSED_INDEX struct {
+			Name        string
+			Description string
+		}
+		REFUSED_ONE struct {
+			RefusalOnline   render.H
+			RefusalDocument render.H
+		}
 		DATA_EXTRADELAY struct {
 			Name        string
 			Description string

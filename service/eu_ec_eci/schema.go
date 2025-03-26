@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"reflect"
 	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/tool/render"
@@ -415,13 +416,27 @@ var refusedOneType = sch.Map(
 		sch.FieldSR("treaties", sch.NotEmptyString()),
 		sch.FieldSO("website", sch.AnyURL()),
 		sch.FieldSO("supportLink", sch.AnyURL()),
-		sch.FieldSO("additionalDocument", docApplication),
+		sch.Assert(`this.website == tis.supportLink`, func(this map[string]any, _ any) error {
+			if this["website"] != this["supportLink"] {
+				return fmt.Errorf("website:%q != supportLink:%q", this["website"], this["supportLink"])
+			}
+			return nil
+		}),
+		sch.FieldSO("additionalDocument", docApplication).Comment("additionalDocument and draftLegal fields can be equal execpt id."),
 		sch.FieldSO("draftLegal", docPDFOrMSWord),
 		sch.FieldSR("commissionDecision", sch.Map(
 			sch.FieldSR("document", docPDF),
 			sch.FieldSO("celex", sch.NotEmptyString()),
 		)),
 	))),
+	sch.Assert(`eci.refusalDocument == eci.linguisticVersions[0].commissionDecision.document`, func(this map[string]any, _ any) error {
+		commissionDoc := this["linguisticVersions"].([]any)[0].(map[string]any)["commissionDecision"].(map[string]any)["document"]
+		refusalDocument := this["refusalDocument"]
+		if !reflect.DeepEqual(refusalDocument, commissionDoc) {
+			return fmt.Errorf("refusalDocument:%+v, commissionDoc:%+v", refusalDocument, commissionDoc)
+		}
+		return nil
+	}),
 	sch.FieldSO("refusalReasons", sch.ArraySize(1, sch.String("reason.action.registration.reject.competences"))),
 )
 

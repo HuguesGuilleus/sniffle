@@ -23,8 +23,9 @@ import (
 )
 
 const (
-	detailURL = "https://register.eci.ec.europa.eu/core/api/register/details/%d/%06d"
-	logoURL   = "https://register.eci.ec.europa.eu/core/api/register/logo/%d"
+	detailURL    = "https://register.eci.ec.europa.eu/core/api/register/details/%d/%06d"
+	logoURL      = "https://register.eci.ec.europa.eu/core/api/register/logo/%d"
+	plainDescMax = 200
 )
 
 type ECIOut struct {
@@ -293,7 +294,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			SupportLink: supportLink,
 			Website:     securehtml.ParseURL(desc.Website),
 
-			PlainDesc: securehtml.Text(desc.Objective, 200),
+			PlainDesc: securehtml.Text(desc.Objective, plainDescMax),
 			Objective: securehtml.Secure(desc.Objective),
 			Annex:     securehtml.Secure(desc.Annex),
 			Treaty:    securehtml.TextWithURL(desc.Treaty),

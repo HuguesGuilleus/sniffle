@@ -195,6 +195,14 @@
 				"Document": "Aditional financial document"
 			}
 		},
+		"REFUSED_INDEX": {
+			"Name": "Refused initiative index",
+			"Description": "Index of all refused initiatives by European Comission."
+		},
+		"REFUSED_ONE": {
+			"RefusalOnline": "Online refusal text",
+			"RefusalDocument": "Refusal document"
+		},
 		"DATA_EXTRADELAY": {
 			"Name": "COVID extra delay",
 			"Description": "Becuause COVID pandemic, add extra delay for signtures collections."

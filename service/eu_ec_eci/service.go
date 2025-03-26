@@ -9,6 +9,7 @@ import (
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
+	"strconv"
 	"sync"
 )
 
@@ -46,7 +47,10 @@ func Do(t *tool.Tool) {
 		}
 	}
 
-	ExploreRefused(t)
+	for _, eci := range fetchRefusedAll(t) {
+		p := "/eu/ec/eci/refused/" + strconv.FormatUint(uint64(eci.ID), 10) + "/"
+		t.WriteFile(eci.Lang.Path(p), renderRefusedOne(eci))
+	}
 }
 
 func fetchAllAcepted(t *tool.Tool) map[uint][]*ECIOut {
