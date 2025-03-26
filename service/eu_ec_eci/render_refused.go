@@ -14,7 +14,6 @@ func renderRefusedIndex(index []*ECIRefused, baseURL string, l language.Language
 		component.Head(l, baseURL, tr.EU_EC_ECI.REFUSED_INDEX.Name, tr.EU_EC_ECI.REFUSED_INDEX.Description),
 		render.N("body",
 			component.TopHeader(l),
-			component.InDevHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(l),

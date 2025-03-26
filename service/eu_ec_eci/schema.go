@@ -458,7 +458,6 @@ var schemaPage = func() []byte {
 		),
 		render.N("body.edito",
 			component.TopHeader(l),
-			component.InDevHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(l),
