@@ -9,7 +9,19 @@ import (
 	"sniffle/tool/render"
 )
 
-func renderDataExtraDelay(t *tool.Tool, l language.Language) {
+func renderDataExtraDelay(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language) {
+	titles := make(map[uint]string)
+	for _, eci := range extraDelayData {
+		titles[eci.ID] = eci.Name
+	}
+	for _, s := range eciByYear {
+		for _, eci := range s {
+			if desc := eci.Description[l]; desc != nil {
+				titles[eci.ID] = desc.Title
+			}
+		}
+	}
+
 	tr := translate.T[l]
 	baseURL := "/eu/ec/eci/data/extradelay/"
 
@@ -32,14 +44,14 @@ func renderDataExtraDelay(t *tool.Tool, l language.Language) {
 			),
 			render.N("main.w",
 				render.N("div.summary", tr.EU_EC_ECI.DATA_EXTRADELAY.Description),
-				render.N("ul", render.S(extraDelayData[:], "", func(ice extraDelayICE) render.Node {
+				render.N("ul", render.S(extraDelayData[:], "", func(eci extraDelayICE) render.Node {
 					return render.N("li",
 						render.N("b",
-							render.Na("a", "href", l.Path("../../"+ice.Code+"/")).N(ice.Code),
-							" ", ice.Name, render.N("br"),
+							render.Na("a", "href", l.Path("../../"+eci.Code+"/")).N(eci.Code),
+							" ", titles[eci.ID], render.N("br"),
 						),
 						" -> ",
-						render.S(ice.ExtraDelay, ", ", func(extra component.Legal) render.Node {
+						render.S(eci.ExtraDelay, ", ", func(extra component.Legal) render.Node {
 							return extra.Render(l)
 						}),
 					)

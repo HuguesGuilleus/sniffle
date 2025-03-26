@@ -64,6 +64,7 @@ func fetchAllAcepted(t *tool.Tool) map[uint][]*ECIOut {
 
 type ECIOut struct {
 	// Identifier
+	ID     uint
 	Year   uint
 	Number uint
 	// Last update of information
@@ -296,6 +297,7 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	}
 
 	eci := &ECIOut{
+		ID:         info.id,
 		Year:       info.year,
 		Number:     info.number,
 		LastUpdate: dto.LastUpdate.Time,

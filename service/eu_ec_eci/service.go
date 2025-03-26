@@ -19,7 +19,7 @@ func Do(t *tool.Tool) {
 	for _, l := range translate.Langs {
 		writeIndex(t, eciByYear, l)
 		t.WriteFile(l.Path("/eu/ec/eci/data/"), render.Back)
-		renderDataExtraDelay(t, l)
+		renderDataExtraDelay(t, eciByYear, l)
 		renderDataThreshold(t, l)
 	}
 	for year, eciSlice := range eciByYear {

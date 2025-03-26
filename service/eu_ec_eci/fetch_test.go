@@ -339,6 +339,7 @@ func TestFetchDetail(t *testing.T) {
 	assert.True(t, wf.NoCalled())
 
 	assert.Equal(t, &ECIOut{
+		ID:         648,
 		Year:       2024,
 		Number:     9,
 		LastUpdate: time.Date(2024, time.July, 24, 13, 52, 0, 0, time.UTC),
