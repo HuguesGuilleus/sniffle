@@ -7,7 +7,6 @@ import (
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
-	"strconv"
 )
 
 func Do(t *tool.Tool) {
@@ -47,7 +46,7 @@ func Do(t *tool.Tool) {
 	refused := fetchRefusedAll(t)
 	for _, eci := range refused {
 		redirect := lredirect.Page(eci.OfficielLink(), eci.Langs())
-		p := "/eu/ec/eci/refused/" + strconv.FormatUint(uint64(eci.ID), 10) + "/"
+		p := "/eu/ec/eci/refused/" + printUint(eci.ID) + "/"
 		t.WriteFile(p+"index.html", redirect)
 		for _, l := range translate.Langs {
 			if eci.Lang == l {
@@ -56,5 +55,9 @@ func Do(t *tool.Tool) {
 				t.WriteFile(l.Path(p), redirect)
 			}
 		}
+	}
+	t.WriteFile("/eu/ec/eci/refused/index.html", lredirect.All)
+	for _, l := range translate.Langs {
+		t.WriteFile(l.Path("/eu/ec/eci/refused/"), renderRefusedIndex(refused, t.HostURL+"/eu/ec/eci/refused/", l))
 	}
 }

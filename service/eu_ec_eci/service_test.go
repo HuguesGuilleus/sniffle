@@ -38,5 +38,11 @@ func TestService(t *testing.T) {
 		"/eu/ec/eci/2024/9/logo.png":            1,
 		"/eu/ec/eci/2024/9/fr.html":             1,
 		"/eu/ec/eci/2024/9/en.html":             1,
+		"/eu/ec/eci/refused/index.html":         1,
+		"/eu/ec/eci/refused/en.html":            1,
+		"/eu/ec/eci/refused/fr.html":            1,
+		"/eu/ec/eci/refused/42/index.html":      1,
+		"/eu/ec/eci/refused/42/en.html":         1,
+		"/eu/ec/eci/refused/42/fr.html":         1,
 	}, wf)
 }

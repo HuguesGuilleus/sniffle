@@ -1,11 +1,64 @@
 package eu_ec_eci
 
 import (
+	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
 )
+
+func renderRefusedIndex(index []*ECIRefused, baseURL string, l language.Language) []byte {
+	tr := translate.T[l]
+	return render.Merge(render.Na("html", "lang", l.String()).N(
+		component.Head(l, baseURL, tr.EU_EC_ECI.REFUSED_INDEX.Name, tr.EU_EC_ECI.REFUSED_INDEX.Description),
+		render.N("body",
+			component.TopHeader(l),
+			component.InDevHeader(l),
+			render.N("header",
+				render.N("div.headerSup",
+					idNamespace(l),
+					render.N("div.headerID", "refused"),
+				),
+				render.N("div.headerTitle", tr.EU_EC_ECI.REFUSED_INDEX.Name),
+				component.HeaderLangs(translate.Langs, l, ""),
+			),
+			render.N("main.w",
+				render.N("div.summary",
+					render.N("div.edito",
+						render.N("div.editoT", tr.GLOBAL.Presentation),
+						tr.EU_EC_ECI.REFUSED_INDEX.Description,
+					),
+					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-refused-requests-for-registration_"+l.String()).N(tr.GLOBAL.LinkOfficial),
+				),
+				component.SearchBlock(l),
+				render.S(index, "", func(eci *ECIRefused) render.Node {
+					p := ""
+					if len(eci.Langs()) != 0 {
+						p = eci.Lang.Path(printUint(eci.ID) + "/")
+					} else {
+						p = eci.OfficielLink()
+					}
+					return render.Na("a.si.bigItem", "href", p).N(
+						render.N("div",
+							render.N("div",
+								render.N("span.tag.st",
+									eci.RefusedDate.In(render.ShortDateZone),
+								),
+								render.N("span.itemTitle.st", eci.Title),
+							),
+							render.N("p.itemDesc.st",
+								"[", eci.Lang.Human(), "] ",
+								eci.PlainDesc,
+							),
+						),
+					)
+				}),
+			),
+			component.Footer(l, component.JsSearch),
+		),
+	))
+}
 
 func renderRefusedOne(eci *ECIRefused) []byte {
 	tr := translate.T[eci.Lang]

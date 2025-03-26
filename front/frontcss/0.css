@@ -60,9 +60,14 @@ tr:hover {
 	background: _back1;
 }
 
+.boxFlex {
+	display: flex;
+	gap: _sp;
+	flex-wrap: wrap;
+}
+
 .box {
 	display: inline-block;
-	margin-right: _sp;
 	padding: _line1 _sp;
 	background: _colorA;
 }

@@ -5,23 +5,24 @@
 //         .st // search target: use this string to math the queries.
 //     ]
 // ]
-// .sg []
+// Or any .sg and .si [ .st ]
 
-// Type: [][searchGroup, [][searchItem, searchTarget:string]]
-const searchGroupArray = qsa(
-		".sg",
-		(searchGroup) => [
-			searchGroup,
-			qsa(".si", (searchItem) => [
+const makeSearchGroupItem = (searchGroup) => [
+		searchGroup || {},
+		qsa(".si", (searchItem) => [
+			searchItem,
+			qsa(
+				".st",
+				(searchTarget) => searchTarget[INNERTEXT].toLowerCase(),
 				searchItem,
-				qsa(
-					".st",
-					(searchTarget) => searchTarget[INNERTEXT].toLowerCase(),
-					searchItem,
-				).join(" "),
-			], searchGroup),
-		],
-	),
+			).join(" "),
+		], searchGroup),
+	],
+	// Type: [][searchGroup|{}, [][searchItem, searchTarget:string]]
+	searchGroupArray = [
+		makeSearchGroupItem(),
+		...qsa(".sg", makeSearchGroupItem),
+	],
 	_search = qsa("[type=search]", (input) => {
 		input.parentNode[HIDDEN] = false;
 		input.focus();

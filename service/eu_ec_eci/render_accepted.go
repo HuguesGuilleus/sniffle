@@ -7,6 +7,7 @@ import (
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
+	"strconv"
 )
 
 func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language) {
@@ -28,15 +29,20 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 						render.N("div.editoT", tr.GLOBAL.Presentation),
 						tr.EU_EC_ECI.INDEX.Help,
 					),
-					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.GLOBAL.LinkOfficial),
-					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
+					render.N("div.boxFlex",
+						render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.GLOBAL.LinkOfficial),
+						render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
+					),
 					render.N("hr"),
-					render.Na("a.box", "href", "schema.html").N(tr.GLOBAL.SchemaLink),
-					render.Na("a.box", "href", l.Path("data/extradelay/")).N(tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
-					render.Na("a.box", "href", l.Path("data/threshold/")).N(tr.EU_EC_ECI.DATA_THRESHOLD.Name),
+					render.N("div.boxFlex",
+						render.Na("a.box", "href", l.Path("refused/")).N(tr.EU_EC_ECI.REFUSED_INDEX.Name),
+						render.Na("a.box", "href", "schema.html").N(tr.GLOBAL.SchemaLink),
+						render.Na("a.box", "href", l.Path("data/extradelay/")).N(tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
+						render.Na("a.box", "href", l.Path("data/threshold/")).N(tr.EU_EC_ECI.DATA_THRESHOLD.Name),
+					),
 				),
 				component.SearchBlock(l),
-				render.N("div", render.MapReverse(eciByYear, func(year uint, slice []*ECIOut) render.Node {
+				render.MapReverse(eciByYear, func(year uint, slice []*ECIOut) render.Node {
 					return render.N("div.sg",
 						render.N("h1", render.Int(year)),
 						render.S(slice, "", func(eci *ECIOut) render.Node {
@@ -58,7 +64,7 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 							)
 						}),
 					)
-				})),
+				}),
 			)),
 			component.Footer(l, component.JsSearch|component.JsToc),
 		),
@@ -96,7 +102,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						return render.N("", tr.EU_EC_ECI.Categorie[categorie])
 					})),
 					render.N("div", ONE.DescriptionOriginalLangage, tr.Langage[eci.OriginalLangage]),
-					render.N("div",
+					render.N("div.boxFlex",
 						render.Na("a.box", "href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l)).
 							N(tr.GLOBAL.LinkOfficial),
@@ -368,4 +374,8 @@ func printEuros(f float64) any {
 		int(f),
 		fmt.Sprintf(".%02d\u202F€", int64(f*100)%100),
 	)
+}
+
+func printUint(u uint) string {
+	return strconv.FormatUint(uint64(u), 10)
 }

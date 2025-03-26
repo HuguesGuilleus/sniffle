@@ -1,7 +1,6 @@
 package eu_ec_eci
 
 import (
-	"fmt"
 	"net/url"
 	"slices"
 	"sniffle/common/language"
@@ -37,7 +36,7 @@ func fetchRefusedAll(t *tool.Tool) []*ECIRefused {
 	wg.Wait()
 
 	slices.SortFunc(refused, func(a, b *ECIRefused) int {
-		return a.RefusedDate.Compare(b.RefusedDate)
+		return b.RefusedDate.Compare(a.RefusedDate)
 	})
 
 	return refused
@@ -121,7 +120,7 @@ func fetchOneRefused(t *tool.Tool, id uint) *ECIRefused {
 }
 
 func (eci *ECIRefused) OfficielLink() string {
-	return fmt.Sprintf("https://citizens-initiative.europa.eu/initiatives/details/%d_%s", eci.ID, eci.Lang)
+	return "https://citizens-initiative.europa.eu/initiatives/details/" + printUint(eci.ID) + "_" + eci.Lang.String()
 }
 
 func (eci *ECIRefused) Langs() []language.Language {
