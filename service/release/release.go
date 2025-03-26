@@ -2,73 +2,41 @@
 package release
 
 import (
-	"fmt"
 	"sniffle/common/language"
 	"sniffle/front/component"
 	"sniffle/tool"
 	"sniffle/tool/render"
-	"strconv"
 	"time"
 )
 
-var steps = map[render.Int][]render.Node{
-	2024: {
-		step("2024-08-11", "", "eu/ec/eci", "Creation of European Citizens' Initiative pages and development tools to built this website."),
-		step("2024-12-27", "", "release", "Creation of release pages."),
-	},
+var steps = []render.Node{
+	step("2024-07-27", "", "tool", "Begin tool development for this website."),
+	step("2024-08-11", "2025-03-26", "eu/ec/eci", "Creation of European Citizens' Initiative pages."),
+	step("2024-12-27", "", "release", "Creation of release pages."),
 }
 
 func Do(t *tool.Tool) {
-	basePath := "/release/"
 	l := language.AllEnglish
-
-	t.WriteFile(basePath+"index.html", render.Merge(render.Na("html", "lang", l.String()).N(
+	t.WriteFile("/release/index.html", render.Merge(render.Na("html", "lang", l.String()).N(
 		render.N("head",
 			component.HeadBegin,
-			render.N("title", "Release index"),
-			render.Na("meta", "name", "description").A("content", "Index of all release"),
+			render.N("title", "Release"),
+			render.Na("meta", "name", "description").A("content", "Release of this website"),
 		),
 		render.N("body.edito",
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
-					render.N("div.headerID", component.HomeAnchor(l), render.Na("a", "href", ".").N("release")),
+					render.N("div.headerID", component.HomeAnchor(l), render.Na("a", "href", "..").N("release")),
 				),
 				render.N("div.headerTitle", "List of change in this website"),
 			),
-			render.N("ul.w.home",
-				render.Map(steps, func(year render.Int, _ []render.Node) render.Node {
-					return render.N("li", render.Na("a", "href", fmt.Sprintf("%d/", year)).N(year))
-				}),
+			render.N("div.w",
+				render.N("div.timeLine", steps),
 			),
 			component.Footer(l, 0),
 		),
 	)))
-
-	for year, steps := range steps {
-		y := strconv.Itoa(int(year))
-		t.WriteFile(fmt.Sprintf("%s%d/index.html", basePath, year), render.Merge(render.Na("html", "lang", l.String()).N(
-			render.N("head",
-				component.HeadBegin,
-				render.N("title", y+" release"),
-				render.Na("meta", "name", "description").A("content", "Release of "+y),
-			),
-			render.N("body.edito",
-				component.TopHeader(l),
-				render.N("header",
-					render.N("div.headerSup",
-						render.N("div.headerID", component.HomeAnchor(l), render.Na("a", "href", "..").N("release")),
-						render.N("div.headerID", year),
-					),
-					render.N("div.headerTitle", "List of change in this website in ", year),
-				),
-				render.N("div.w",
-					render.N("div.timeLine", steps),
-				),
-				component.Footer(l, 0),
-			),
-		)))
-	}
 }
 
 func step(begin, end string, tag string, children ...any) render.Node {
