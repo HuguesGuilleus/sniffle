@@ -6,7 +6,6 @@ package render
 import (
 	"cmp"
 	"fmt"
-	"html"
 	"html/template"
 	"slices"
 	"strconv"
@@ -202,7 +201,7 @@ func renderChild(h []byte, child any) []byte {
 			h = append(h, subChild...)
 		}
 	case string:
-		h = append(h, html.EscapeString(child)...)
+		h = espaceString(h, child)
 	case Int:
 		h = strconv.AppendInt(h, int64(child), 10)
 	case int:
@@ -233,7 +232,7 @@ func renderChild(h []byte, child any) []byte {
 			h = renderChild(h, subChild)
 		}
 	default:
-		h = append(h, html.EscapeString(fmt.Sprint(child))...)
+		h = espaceString(h, fmt.Sprint(child))
 	}
 	return h
 }
@@ -255,6 +254,36 @@ func renderUint64(h []byte, u uint64) []byte {
 		}
 		h = append(h, '0'+byte(u%10))
 	}
+	return h
+}
+func espaceString(h []byte, s string) []byte {
+	data := []byte(s)
+	begin := 0
+	for i, b := range data {
+		switch b {
+		case '\'':
+			h = append(h, data[begin:i]...)
+			h = append(h, "&#39;"...)
+			begin = i + 1
+		case '"':
+			h = append(h, data[begin:i]...)
+			h = append(h, "&#34;"...)
+			begin = i + 1
+		case '<':
+			h = append(h, data[begin:i]...)
+			h = append(h, "&lt;"...)
+			begin = i + 1
+		case '>':
+			h = append(h, data[begin:i]...)
+			h = append(h, "&gt;"...)
+			begin = i + 1
+		case '&':
+			h = append(h, data[begin:i]...)
+			h = append(h, "&amp;"...)
+			begin = i + 1
+		}
+	}
+	h = append(h, data[begin:]...)
 	return h
 }
 

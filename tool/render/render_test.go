@@ -71,6 +71,10 @@ func TestIfElse(t *testing.T) {
 	assert.Equal(t, `<b></b>`, string(n.mergeSlice(nil)))
 }
 
+func TestEspaceString(t *testing.T) {
+	n := N("", `"Fran & Freddie's Diner" <tasty@example.com> `)
+	assert.Equal(t, `&#34;Fran &amp; Freddie&#39;s Diner&#34; &lt;tasty@example.com&gt; `, string(n.mergeSlice(nil)))
+}
 func TestTime(t *testing.T) {
 	assert.Equal(t, `<time datetime=2024-02-14T20:21:22Z>2024-02-14 20:21:22 UTC</time>`,
 		string(renderChild(nil, time.Date(2024, time.February, 14, 20, 21, 32, 1, time.FixedZone("TEST", 10)))))
