@@ -21,7 +21,7 @@ func Do(t *tool.Tool) {
 			render.N("body.edito",
 				component.TopHeader(l),
 				render.N("header",
-					render.N("div.headerSup", render.N("div.headerId",
+					render.N("div.headerSup", render.N("div.headerID",
 						component.HomeAnchor(l), "about",
 					)),
 					render.N("div.headerTitle", tr.ABOUT.PageTitle),

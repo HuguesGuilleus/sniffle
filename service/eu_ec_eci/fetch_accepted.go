@@ -19,6 +19,7 @@ import (
 	"sniffle/tool/securehtml"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -27,6 +28,39 @@ const (
 	logoURL      = "https://register.eci.ec.europa.eu/core/api/register/logo/%d"
 	plainDescMax = 200
 )
+
+func fetchAllAcepted(t *tool.Tool) map[uint][]*ECIOut {
+	infoIndex := fetchAcceptedIndex(t)
+	wg := sync.WaitGroup{}
+	wg.Add(1 + len(infoIndex))
+	go func() {
+		defer wg.Done()
+		checkThreashold(t)
+	}()
+	eciByYear := make(map[uint][]*ECIOut)
+	mutex := sync.Mutex{}
+	for _, info := range infoIndex {
+		go func(info indexItem) {
+			defer wg.Done()
+			eci := fetchDetail(t, info)
+			if eci == nil {
+				return
+			}
+			mutex.Lock()
+			defer mutex.Unlock()
+			eciByYear[eci.Year] = append(eciByYear[eci.Year], eci)
+		}(info)
+	}
+	wg.Wait()
+
+	for _, byYear := range eciByYear {
+		slices.SortFunc(byYear, func(a, b *ECIOut) int {
+			return cmp.Compare(b.Number, a.Number)
+		})
+	}
+
+	return eciByYear
+}
 
 type ECIOut struct {
 	// Identifier

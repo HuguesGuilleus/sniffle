@@ -462,7 +462,7 @@ var schemaPage = func() []byte {
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(l),
-					render.N("div.headerId", "schema"),
+					render.N("div.headerID", "schema"),
 				),
 				render.N("div.headerTitle", title),
 			),

@@ -10,7 +10,7 @@ import (
 )
 
 type Translation struct {
-	Global struct {
+	GLOBAL struct {
 		AboutTextLink render.H `help:"About text for link"`
 		Byte          render.H
 		FooterBuild   render.H `help:"In Footer, before build date"`

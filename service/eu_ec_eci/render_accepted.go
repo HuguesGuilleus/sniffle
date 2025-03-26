@@ -9,7 +9,7 @@ import (
 	"sniffle/tool/render"
 )
 
-func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language) {
+func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language) {
 	tr := translate.T[l]
 	baseURL := "/eu/ec/eci/"
 
@@ -25,13 +25,13 @@ func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language
 			render.N("main.wt", component.Toc(l), render.N("div.wc",
 				render.N("div.summary",
 					render.N("div.edito",
-						render.N("div.editoT", tr.Global.Presentation),
+						render.N("div.editoT", tr.GLOBAL.Presentation),
 						tr.EU_EC_ECI.INDEX.Help,
 					),
-					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.Global.LinkOfficial),
+					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/_"+l.String()).N(tr.GLOBAL.LinkOfficial),
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-initiative_"+l.String()).N(tr.EU_EC_ECI.INDEX.IndexLink),
 					render.N("hr"),
-					render.Na("a.box", "href", "schema.html").N(tr.Global.SchemaLink),
+					render.Na("a.box", "href", "schema.html").N(tr.GLOBAL.SchemaLink),
 					render.Na("a.box", "href", l.Path("data/extradelay/")).N(tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
 					render.Na("a.box", "href", l.Path("data/threshold/")).N(tr.EU_EC_ECI.DATA_THRESHOLD.Name),
 				),
@@ -46,15 +46,15 @@ func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language
 							}
 							return render.Na("a.si.bigItem", "href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l)).N(
 								render.N("div",
+									render.N("span.tag.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
 									render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
-									render.N("span.box.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
 								),
 								render.N("div.itemTitle.st", eci.Description[l].Title),
 								render.N("div", render.S(eci.Categorie, ", ", func(categorie string) render.Node {
 									return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
 								})),
 								render.N("p.itemDesc", eci.Description[l].PlainDesc),
-								renderImage(eci, true, tr.Global.LogoTitle),
+								renderImage(eci, true, tr.GLOBAL.LogoTitle),
 							)
 						}),
 					)
@@ -65,7 +65,7 @@ func renderIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language
 	)))
 }
 
-func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
+func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 	desc := eci.Description[l]
 	tr := translate.T[l]
 	ONE := tr.EU_EC_ECI.ONE
@@ -82,7 +82,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(l),
-					render.N("div.headerId", render.Int(eci.Year), "/", render.Int(eci.Number)),
+					render.N("div.headerID", render.Int(eci.Year), "/", render.Int(eci.Number)),
 				),
 				render.N("div.headerTitle", desc.Title),
 				component.HeaderLangs(eci.Langs(), l, ""),
@@ -99,7 +99,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					render.N("div",
 						render.Na("a.box", "href", fmt.Sprintf(
 							"https://citizens-initiative.europa.eu/initiatives/details/%d/%06d_%s", eci.Year, eci.Number, l)).
-							N(tr.Global.LinkOfficial),
+							N(tr.GLOBAL.LinkOfficial),
 						render.If(desc.SupportLink != nil, func() render.Node {
 							return render.Na("a.box", "href", desc.SupportLink.String()).N(ONE.LinkSignature)
 						}),
@@ -119,7 +119,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				),
 
 				// Image
-				renderImage(eci, false, tr.Global.LogoTitle),
+				renderImage(eci, false, tr.GLOBAL.LogoTitle),
 
 				// Text description
 				render.N("h1", ONE.H1Description),
@@ -206,9 +206,9 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								" / 7",
 							),
 							render.N("div.edito",
-								render.N("div.editoT", tr.Global.HELP),
+								render.N("div.editoT", tr.GLOBAL.HELP),
 								render.N("div.marginBottom", tr.EU_EC_ECI.ThresholdRule[eci.Threshold.Rule]),
-								tr.Global.Source, ": ",
+								tr.GLOBAL.Source, ": ",
 								eci.Threshold.Legal.Render(l),
 							),
 						),
@@ -298,7 +298,7 @@ func renderOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 
 func idNamespace(l language.Language) render.Node {
 	tr := translate.T[l]
-	return render.N("div.headerId",
+	return render.N("div.headerID",
 		component.HomeAnchor(l),
 		render.Na("a", "href", l.Path("/eu/")).A("title", tr.EU.Name).N("eu"), " / ",
 		render.Na("a", "href", l.Path("/eu/ec/")).A("title", tr.EU_EC.Name).N("ec"), " / ",
@@ -318,7 +318,7 @@ func renderDoc(l language.Language, doc *Document, name render.H) render.Node {
 		}),
 		render.If(doc.Size != 0, func() render.Node {
 			return render.N("",
-				" (", doc.Size, " ", tr.Global.Byte, ") ", doc.MimeType,
+				" (", doc.Size, " ", tr.GLOBAL.Byte, ") ", doc.MimeType,
 				render.N("div.docName", doc.Name),
 			)
 		}),

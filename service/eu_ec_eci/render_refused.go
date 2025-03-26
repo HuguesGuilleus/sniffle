@@ -22,7 +22,7 @@ func renderRefusedOne(eci *ECIRefused) []byte {
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(eci.Lang),
-					render.N("div.headerId",
+					render.N("div.headerID",
 						render.Na("a", "href", "..").N("refused"),
 						" / ", render.Int(eci.ID)),
 				),
@@ -35,7 +35,7 @@ func renderRefusedOne(eci *ECIRefused) []byte {
 						ONE.DescriptionOriginalLangage, eci.Lang.Human(),
 					),
 					render.N("div",
-						render.Na("a.box", "href", fmt.Sprintf("https://citizens-initiative.europa.eu/initiatives/details/%d_%s", eci.ID, eci.Lang)).N(tr.Global.LinkOfficial),
+						render.Na("a.box", "href", fmt.Sprintf("https://citizens-initiative.europa.eu/initiatives/details/%d_%s", eci.ID, eci.Lang)).N(tr.GLOBAL.LinkOfficial),
 						render.If(eci.Website != nil, func() render.Node {
 							return render.Na("a.box", "href", eci.Website.String()).N(ONE.LinkWebsite)
 						}),

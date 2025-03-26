@@ -8,15 +8,15 @@ import (
 
 func TopHeader(l language.Language) render.Node {
 	return render.N("div.topHeader",
-		translate.T[l].Global.NotEUWebsite,
+		translate.T[l].GLOBAL.NotEUWebsite,
 		render.H(" ("),
-		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].Global.AboutTextLink),
+		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].GLOBAL.AboutTextLink),
 		render.H(")"))
 }
 
 // A header to indicated taht this page is currently in development.
 func InDevHeader(l language.Language) render.Node {
-	return render.N("div.subHeader", translate.T[l].Global.InDev)
+	return render.N("div.subHeader", translate.T[l].GLOBAL.InDev)
 }
 
 func HomeAnchor(l language.Language) render.Node {
@@ -44,13 +44,13 @@ func HeaderLangs(langs []language.Language, pageLang language.Language, basePath
 // Yout need JS to fill it.
 func Toc(l language.Language) render.Node {
 	return render.N("div", render.Na("div", "id", "toc").N(
-		render.Na("a.wi", "href", "#").N(translate.T[l].Global.PageTop),
+		render.Na("a.wi", "href", "#").N(translate.T[l].GLOBAL.PageTop),
 	))
 }
 
 func SearchBlock(l language.Language) render.Node {
 	return render.Na("div.searchBlock", "hidden", "").N(
-		render.Na("label", "for", "search").N(translate.T[l].Global.SearchInside),
+		render.Na("label", "for", "search").N(translate.T[l].GLOBAL.SearchInside),
 		render.Na("input", "id", "search").A("type", "search"),
 	)
 }

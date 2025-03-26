@@ -19,7 +19,7 @@ func renderReportIndex(t *tool.Tool, l language.Language, reports []Report) {
 			render.N("header",
 				render.N("div.headerSup",
 					headerSupECA(l),
-					render.N("div.headerId", "annual-report"),
+					render.N("div.headerID", "annual-report"),
 				),
 				render.N("div.headerTitle", "$ECA report index"),
 				// traductions...
@@ -48,7 +48,7 @@ func renderReportIndex(t *tool.Tool, l language.Language, reports []Report) {
 
 func headerSupECA(l language.Language) render.Node {
 	tr := translate.T[l]
-	return render.N("div.headerId",
+	return render.N("div.headerID",
 		component.HomeAnchor(l),
 		render.Na("a", "href", l.Path("/eu/")).A("title", tr.EU.Name).N("eu"), " / ",
 		render.Na("a", "href", l.Path("/eu/eca/")).A("title", "$Europea court of Auditor").N("eca"),

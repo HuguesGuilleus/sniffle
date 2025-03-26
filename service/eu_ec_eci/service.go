@@ -2,15 +2,12 @@
 package eu_ec_eci
 
 import (
-	"cmp"
 	"fmt"
-	"slices"
 	"sniffle/front/lredirect"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
 	"strconv"
-	"sync"
 )
 
 func Do(t *tool.Tool) {
@@ -21,7 +18,7 @@ func Do(t *tool.Tool) {
 	t.WriteFile("/eu/ec/eci/data/threshold/index.html", lredirect.All)
 	t.WriteFile("/eu/ec/eci/schema.html", schemaPage)
 	for _, l := range translate.Langs {
-		renderIndex(t, eciByYear, l)
+		writeIndex(t, eciByYear, l)
 		t.WriteFile(l.Path("/eu/ec/eci/data/"), render.Back)
 		renderDataExtraDelay(t, l)
 		renderDataThreshold(t, l)
@@ -33,7 +30,7 @@ func Do(t *tool.Tool) {
 			t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/index.html", eci.Year, eci.Number), redirect)
 			for _, l := range translate.Langs {
 				if eci.Description[l] != nil {
-					renderOne(t, eci, l)
+					writeOne(t, eci, l)
 				} else {
 					t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s.html", eci.Year, eci.Number, l), redirect)
 				}
@@ -51,37 +48,4 @@ func Do(t *tool.Tool) {
 		p := "/eu/ec/eci/refused/" + strconv.FormatUint(uint64(eci.ID), 10) + "/"
 		t.WriteFile(eci.Lang.Path(p), renderRefusedOne(eci))
 	}
-}
-
-func fetchAllAcepted(t *tool.Tool) map[uint][]*ECIOut {
-	infoIndex := fetchAcceptedIndex(t)
-	wg := sync.WaitGroup{}
-	wg.Add(1 + len(infoIndex))
-	go func() {
-		defer wg.Done()
-		checkThreashold(t)
-	}()
-	eciByYear := make(map[uint][]*ECIOut)
-	mutex := sync.Mutex{}
-	for _, info := range infoIndex {
-		go func(info indexItem) {
-			defer wg.Done()
-			eci := fetchDetail(t, info)
-			if eci == nil {
-				return
-			}
-			mutex.Lock()
-			defer mutex.Unlock()
-			eciByYear[eci.Year] = append(eciByYear[eci.Year], eci)
-		}(info)
-	}
-	wg.Wait()
-
-	for _, byYear := range eciByYear {
-		slices.SortFunc(byYear, func(a, b *ECIOut) int {
-			return cmp.Compare(b.Number, a.Number)
-		})
-	}
-
-	return eciByYear
 }
