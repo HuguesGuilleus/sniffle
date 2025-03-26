@@ -153,15 +153,15 @@ var Langs = []language.Language{
 }
 
 var T = [...]Translation{
-	language.English: load(fileEn),
+	language.English: load(fileEN),
 	language.French:  load(fileFR),
 
-	language.AllEnglish: load(fileEn),
+	language.AllEnglish: load(fileEN),
 }
 
 var (
 	//go:embed translate.en.json
-	fileEn []byte
+	fileEN []byte
 	//go:embed translate.fr.json
 	fileFR []byte
 )

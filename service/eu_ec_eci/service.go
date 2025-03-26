@@ -44,8 +44,17 @@ func Do(t *tool.Tool) {
 		}
 	}
 
-	for _, eci := range fetchRefusedAll(t) {
+	refused := fetchRefusedAll(t)
+	for _, eci := range refused {
+		redirect := lredirect.Page(eci.OfficielLink(), eci.Langs())
 		p := "/eu/ec/eci/refused/" + strconv.FormatUint(uint64(eci.ID), 10) + "/"
-		t.WriteFile(eci.Lang.Path(p), renderRefusedOne(eci))
+		t.WriteFile(p+"index.html", redirect)
+		for _, l := range translate.Langs {
+			if eci.Lang == l {
+				t.WriteFile(l.Path(p), renderRefusedOne(eci))
+			} else {
+				t.WriteFile(l.Path(p), redirect)
+			}
+		}
 	}
 }

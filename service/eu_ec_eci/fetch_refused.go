@@ -1,9 +1,11 @@
 package eu_ec_eci
 
 import (
+	"fmt"
 	"net/url"
 	"slices"
 	"sniffle/common/language"
+	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/render"
@@ -116,4 +118,17 @@ func fetchOneRefused(t *tool.Tool, id uint) *ECIRefused {
 		RefusalDocument: *dto.RefusalDocument.Document(desc.Lang),
 		RefusedCELEX:    desc.CommissionDecision.CELEX,
 	}
+}
+
+func (eci *ECIRefused) OfficielLink() string {
+	return fmt.Sprintf("https://citizens-initiative.europa.eu/initiatives/details/%d_%s", eci.ID, eci.Lang)
+}
+
+func (eci *ECIRefused) Langs() []language.Language {
+	for _, l := range translate.Langs {
+		if eci.Lang == l {
+			return []language.Language{l}
+		}
+	}
+	return nil
 }

@@ -21,21 +21,27 @@ func Page(official string, langs []language.Language) []byte {
 		`<html>` +
 		`<head>` +
 		`<meta charset=utf-8>` +
-		`<meta name=robots content=noindex>` +
-		`<script>` +
-		`for(a of navigator.languages)` +
-		`if(` +
-		`/`)
-	for i, l := range langs {
-		if i != 0 {
-			buff.WriteByte('|')
+		`<meta name=robots content=noindex>`)
+
+	if len(langs) != 0 {
+		buff.WriteString(`` +
+			`<script>` +
+			`for(a of navigator.languages)` +
+			`if(` +
+			`/`)
+		for i, l := range langs {
+			if i != 0 {
+				buff.WriteByte('|')
+			}
+			buff.WriteString(l.String())
 		}
-		buff.WriteString(l.String())
+		buff.WriteString(`` +
+			`/.test(a=a.split("-")[0])` +
+			`){location=a+".html";break}` +
+			`</script>`)
 	}
+
 	buff.WriteString(`` +
-		`/.test(a=a.split("-")[0])` +
-		`){location=a+".html";break}` +
-		`</script>` +
 		`<meta name=viewport content="width=device-width,initial-scale=1">` +
 		`<style>` +
 		`a{display:inline-block;padding:2ex;font-size:xx-large}` +
