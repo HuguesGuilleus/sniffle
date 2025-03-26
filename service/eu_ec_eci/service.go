@@ -9,6 +9,7 @@ import (
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/render"
+	"sync"
 )
 
 func Do(t *tool.Tool) {
@@ -49,16 +50,28 @@ func Do(t *tool.Tool) {
 }
 
 func fetchAllAcepted(t *tool.Tool) map[uint][]*ECIOut {
-	checkThreashold(t)
-
+	infoIndex := fetchAcceptedIndex(t)
+	wg := sync.WaitGroup{}
+	wg.Add(1 + len(infoIndex))
+	go func() {
+		defer wg.Done()
+		checkThreashold(t)
+	}()
 	eciByYear := make(map[uint][]*ECIOut)
-	for _, info := range fetchAcceptedIndex(t) {
-		eci := fetchDetail(t, info)
-		if eci == nil {
-			continue
-		}
-		eciByYear[eci.Year] = append(eciByYear[eci.Year], eci)
+	mutex := sync.Mutex{}
+	for _, info := range infoIndex {
+		go func(info indexItem) {
+			defer wg.Done()
+			eci := fetchDetail(t, info)
+			if eci == nil {
+				return
+			}
+			mutex.Lock()
+			defer mutex.Unlock()
+			eciByYear[eci.Year] = append(eciByYear[eci.Year], eci)
+		}(info)
 	}
+	wg.Wait()
 
 	for _, byYear := range eciByYear {
 		slices.SortFunc(byYear, func(a, b *ECIOut) int {
