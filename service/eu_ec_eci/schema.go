@@ -217,7 +217,7 @@ var eciType = sch.Map(
 					}
 					return nil
 				}),
-				sch.FieldSO("otherSupport", sch.String("Research and Network")).Comment("Found only in ECI 2025/1"),
+				sch.FieldSO("otherSupport", sch.EnumString("Research and Network", "in-kind donation")).Comment("Found only in ECI 2025/1"),
 			))),
 			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(`totalAmount == sum(sponsors[*].amount)`, func(this map[string]any, field any) error {
 				totalAmount, _ := field.(json.Number).Float64()
