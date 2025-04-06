@@ -217,7 +217,13 @@ var eciType = sch.Map(
 					}
 					return nil
 				}),
-				sch.FieldSO("otherSupport", sch.EnumString("Research and Network", "in-kind donation")).Comment("Found only in ECI 2025/1"),
+				sch.FieldSO("otherSupport", sch.EnumString(
+					"Film Screening Exhibition (Organisation, Design and Set-Up, Communication)",
+					"in-kind donation",
+					"National Press Conference (Organisation, Speakers, Communication)",
+					"Research and Network",
+					"Traveling Exhibition (Organisation, Design and Set-Up, Conference, Communication)",
+				)).Comment("Found only in ECI 2025/1"),
 			))),
 			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(`totalAmount == sum(sponsors[*].amount)`, func(this map[string]any, field any) error {
 				totalAmount, _ := field.(json.Number).Float64()
