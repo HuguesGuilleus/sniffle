@@ -104,6 +104,15 @@ func IfElse(b bool, yes, no func() Node) Node {
 	}
 }
 
+// If b is true, return yes, else return no.
+func IfSAny(b bool, yes, no any) any {
+	if b {
+		return yes
+	} else {
+		return no
+	}
+}
+
 // Merge all nodes to a HTML page.
 // So the root should be a HTML tag.
 // Add doctype tag.
@@ -200,8 +209,6 @@ func renderChild(h []byte, child any) []byte {
 		for _, subChild := range child {
 			h = append(h, subChild...)
 		}
-	case string:
-		h = espaceString(h, child)
 	case Int:
 		h = strconv.AppendInt(h, int64(child), 10)
 	case int:
@@ -231,6 +238,10 @@ func renderChild(h []byte, child any) []byte {
 		for _, subChild := range child {
 			h = renderChild(h, subChild)
 		}
+	case string:
+		h = espaceString(h, child)
+	case fmt.Stringer:
+		h = espaceString(h, child.String())
 	default:
 		h = espaceString(h, fmt.Sprint(child))
 	}

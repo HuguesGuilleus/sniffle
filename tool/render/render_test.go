@@ -23,6 +23,7 @@ func TestRender(t *testing.T) {
 			uint(42),
 			-1,
 			[]H{"a", "b"},
+			time.Second,
 			nil,
 		))
 	assert.Equal(t, `<!DOCTYPE html>`+
@@ -40,6 +41,7 @@ func TestRender(t *testing.T) {
 		`42`+
 		`-1`+
 		`ab`+
+		`1s`+
 		`</body>`,
 		string(h))
 }
@@ -69,6 +71,11 @@ func TestIfElse(t *testing.T) {
 	assert.Equal(t, `<a></a>`, string(n.mergeSlice(nil)))
 	n = IfElse(false, func() Node { return N("a") }, func() Node { return N("b") })
 	assert.Equal(t, `<b></b>`, string(n.mergeSlice(nil)))
+}
+
+func TestIsSAny(t *testing.T) {
+	assert.Equal(t, 3, IfSAny(false, 1, 3))
+	assert.Equal(t, 1, IfSAny(true, 1, 3))
 }
 
 func TestEspaceString(t *testing.T) {
