@@ -10,8 +10,8 @@ import (
 // Clear cache.
 //
 // Each filter return a duration to keep the request.
-// Is meta.Time < now+maxAge => remove it.
-// The filter should the edit meta.
+// If meta.Time < now+maxAge => remove it.
+// The filter should not the edit meta.
 func ClearCache(cacheBase string, filters ...func(*Meta) time.Duration) error {
 	m, err := filepath.Glob(filepath.Join(cacheBase, filepath.FromSlash("/*/*/*.http")))
 	if err != nil {

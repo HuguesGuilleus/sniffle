@@ -1,0 +1,48 @@
+body {
+	margin: 1rem;
+	font-family: monospace;
+	font-size: x-large;
+	background: #EED;
+}
+
+input {
+	width: 100%;
+	border: none;
+	font: inherit;
+}
+
+ul {
+	padding: 0;
+	list-style: "";
+}
+
+li:hover {
+	background: silver;
+}
+
+a,
+code {
+	text-decoration: 0;
+	background: black;
+	color: white;
+}
+
+.s2 {
+	background: green;
+}
+
+.s3 {
+	background: cornflowerblue;
+}
+
+.s4 {
+	background: orange;
+}
+
+.s5 {
+	background: red;
+}
+
+.m {
+	background: darkgrey;
+}

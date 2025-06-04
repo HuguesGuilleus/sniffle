@@ -22,6 +22,35 @@ type Meta struct {
 
 	Status         int         `json:"status"`
 	ResponseHeader http.Header `json:"responseHeader"`
+
+	id   string `json:"-"`
+	path string `json:"-"`
+}
+
+func (m *Meta) ID() string {
+	if m.id != "" {
+		return m.id
+	}
+
+	m.id = (&Request{
+		Method: m.Method,
+		URL:    m.URL,
+		Header: m.RequestHeader,
+		Body:   m.RequestBody,
+	}).ID()
+
+	return m.id
+}
+
+func (m *Meta) Path() string {
+	if m.path != "" {
+		return m.path
+	}
+	m.path = getPath("", &Request{
+		URL: m.URL,
+		id:  m.ID(),
+	})
+	return m.path
 }
 
 func SaveHTTP(request *Request, response *Response, now time.Time, w io.Writer) error {
@@ -53,40 +82,8 @@ func SaveHTTP(request *Request, response *Response, now time.Time, w io.Writer) 
 	return nil
 }
 
-func SaveHTTP0(request *Request, response *Response, now time.Time, w io.Writer) error {
-	j, _ := json.Marshal(&Meta{
-		Time: now.UTC(),
-
-		Method:        request.Method,
-		RawURL:        request.URL.String(),
-		RequestHeader: request.Header,
-		RequestBody:   request.Body,
-
-		Status:         response.Status,
-		ResponseHeader: response.Header,
-	})
-
-	head := [8]byte{'H', 'T', 'T', 'P'}
-	binary.BigEndian.PutUint32(head[4:], uint32(len(j)+2))
-
-	if _, err := w.Write(head[:]); err != nil {
-		return err
-	}
-	if _, err := w.Write(j); err != nil {
-		return err
-	}
-	if _, err := w.Write([]byte{'\n', '\n'}); err != nil {
-		return err
-	}
-	if _, err := io.Copy(w, response.Body); err != nil {
-		return err
-	}
-
-	return response.Body.Close()
-}
-
 func ReadResponse(r io.ReadCloser) (*Response, error) {
-	meta, err := readMeta(r)
+	meta, err := ReadOnlyMeta(r)
 	if err != nil {
 		r.Close()
 		return nil, err
@@ -102,12 +99,13 @@ func ReadResponse(r io.ReadCloser) (*Response, error) {
 // Read meta data and close the reader.
 func ReadMeta(r io.ReadCloser) (*Meta, error) {
 	defer r.Close()
-	return readMeta(r)
+	return ReadOnlyMeta(r)
 }
 
-func readMeta(r io.ReadCloser) (*Meta, error) {
+// Read only header of the file, then you can read the body.
+func ReadOnlyMeta(r io.ReadCloser) (*Meta, error) {
 	head := [8]byte{}
-	if _, err := r.Read(head[:]); err != nil {
+	if _, err := io.ReadFull(r, head[:]); err != nil {
 		return nil, err
 	} else if !bytes.Equal(head[0:4], []byte{'H', 'T', 'T', 'P'}) {
 		return nil, fmt.Errorf("wrong head: %q", head[0:4])
@@ -115,7 +113,7 @@ func readMeta(r io.ReadCloser) (*Meta, error) {
 
 	j := make([]byte, binary.BigEndian.Uint32(head[4:8]))
 	meta := &Meta{}
-	if _, err := r.Read(j); err != nil {
+	if _, err := io.ReadFull(r, j); err != nil {
 		return nil, err
 	} else if err := json.Unmarshal(j, meta); err != nil {
 		return nil, err
