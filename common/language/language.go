@@ -12,9 +12,8 @@ type Language uint
 // The order can change.
 // Invalid is always == 0
 const (
-	Invalid Language = iota
-	// Sorted by name in own language
-	Bulgarian
+	// Sorted by name in own language, diplomatic order
+	Bulgarian Language = iota
 	Spanish
 	Czech
 	Danish
@@ -38,6 +37,9 @@ const (
 	Slovene
 	Finnish
 	Swedish
+
+	Russian
+
 	// Use english, but do not print anchor href to english page, but ./index.html for client redirect to his language.
 	AllEnglish
 
@@ -71,6 +73,7 @@ var language2iso = [Len]string{
 	Slovene:    "sl",
 	Spanish:    "es",
 	Swedish:    "sv",
+	Russian:    "ru",
 	AllEnglish: "en",
 }
 var language2ISO = [Len]string{
@@ -98,13 +101,14 @@ var language2ISO = [Len]string{
 	Slovene:    "SL",
 	Spanish:    "ES",
 	Swedish:    "SV",
+	Russian:    "RU",
 	AllEnglish: "EN",
 }
 
 // Two lower ascii letter of the ISO language code.
 // If unknwon return "??".
 func (l Language) String() string {
-	if l == Invalid || l >= Len {
+	if l >= Len {
 		return "??"
 	}
 	return language2iso[l]
@@ -113,7 +117,7 @@ func (l Language) String() string {
 // Two upper ascii letter of the ISO language code.
 // If unknwon return "??".
 func (l Language) Upper() string {
-	if l == Invalid || l >= Len {
+	if l >= Len {
 		return "??"
 	}
 	return language2ISO[l]
@@ -144,16 +148,18 @@ var iso2language = map[string]Language{
 	"sk": Slovak,
 	"sl": Slovene,
 	"sv": Swedish,
+	"ru": Russian,
 }
 
 // UnmarshalText is reverse of Language.String().
 // It take two letter (case insensitive) and convert is language.
 func (l *Language) UnmarshalText(data []byte) error {
 	s := string(data)
-	*l = iso2language[strings.ToLower(s)]
-	if *l == Invalid {
+	m, ok := iso2language[strings.ToLower(s)]
+	if !ok {
 		return fmt.Errorf("unknwon langage %q", s)
 	}
+	*l = m
 	return nil
 }
 
@@ -182,12 +188,13 @@ var language2human = [Len]string{
 	Slovene:    "Slovenščina",
 	Finnish:    "Suomi",
 	Swedish:    "Svenska",
+	Russian:    "Russian",
 	AllEnglish: "English",
 }
 
 // The name of the langue in this langue.
 func (l Language) Human() string {
-	if l == Invalid || l >= Len {
+	if l >= Len {
 		return "_LANGUAGE_"
 	}
 	return language2human[l]
