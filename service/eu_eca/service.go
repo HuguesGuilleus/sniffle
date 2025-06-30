@@ -19,18 +19,7 @@ func Do(t *tool.Tool) {
 
 	for _, reports := range reportByYear {
 		for _, r := range reports {
-			if r.Image != nil {
-				t.WriteFile(
-					"/eu/eca/report/"+r.ImageHash+r.Image.Raw.Extension,
-					r.Image.Raw.Data,
-				)
-				if r.Image.Resized != nil {
-					t.WriteFile(
-						"/eu/eca/report/"+r.ImageHash+r.Image.Resized.Extension,
-						r.Image.Resized.Data,
-					)
-				}
-			}
+			r.Image.Save(t, "/eu/eca/report/"+r.ImageHash)
 		}
 	}
 }

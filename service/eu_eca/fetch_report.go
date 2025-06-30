@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
-	"sniffle/common"
 	"sniffle/common/language"
+	"sniffle/common/rimage"
 	"sniffle/front/translate"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -25,7 +25,7 @@ type report struct {
 	PubDate time.Time
 
 	ImageHash string
-	Image     *common.ResizedImage
+	Image     *rimage.Image
 
 	// Avaiable languages for this report.
 	Langs [language.Len]bool
@@ -53,15 +53,6 @@ func fetchAnnualReport(t *tool.Tool) (reportByYear map[int][]*report) {
 		fetchReports(t, mapReports, "Specific Annual Report", l)
 		fetchReports(t, mapReports, "Review", l)
 		fetchReports(t, mapReports, "opinions and other outputs", l)
-	}
-
-	// Set image Path
-	for _, r := range mapReports {
-		if r.Image == nil {
-			continue
-		}
-		h := sha256.Sum256(r.Image.Raw.Data)
-		r.ImageHash = hex.EncodeToString(h[:5])
 	}
 
 	// Set a description for all languages.
@@ -141,7 +132,10 @@ func fetchReports(t *tool.Tool, mapReports map[string]*report, reportType string
 			}
 			mapReports[id] = r
 			if dto.ImageUrl != "" {
-				r.Image = common.FetchImage(t, fetch.URL("https://www.eca.europa.eu"+dto.ImageUrl))
+				url := "https://www.eca.europa.eu" + dto.ImageUrl
+				h := sha256.Sum256([]byte(url))
+				r.Image = rimage.New(t, url)
+				r.ImageHash = hex.EncodeToString(h[:5])
 			}
 
 			for _, l := range dto.Languages {

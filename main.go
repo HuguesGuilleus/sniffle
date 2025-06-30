@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sniffle/common/resize0"
+	"sniffle/common/rimage"
 	"sniffle/front"
 	"sniffle/front/translate"
 	"sniffle/service/about"
@@ -26,7 +27,8 @@ func main() {
 	config.HostURL = *host
 
 	config.LongTasksMap = map[string]func(*tool.Tool, []byte) ([]byte, error){
-		resize0.Name: resize0.Resize,
+		resize0.Name:          resize0.Resize,
+		rimage.NameResizeJpeg: rimage.FetchResizeJpeg,
 	}
 
 	tool.Run(config,
