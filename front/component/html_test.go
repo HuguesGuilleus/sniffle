@@ -9,7 +9,7 @@ import (
 )
 
 func TestLangAlternate(t *testing.T) {
-	nodes := LangAlternate("https://sniffle.eu/yolo/", language.French,
+	nodes := LangAlternate("/yolo/", language.French,
 		[]language.Language{language.English, language.French})
 
 	assert.Equal(t, `<!DOCTYPE html><_>`+

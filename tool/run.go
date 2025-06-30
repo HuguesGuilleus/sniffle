@@ -3,6 +3,7 @@ package tool
 import (
 	"context"
 	"log/slog"
+	"sniffle/common"
 	"sniffle/tool/toollog"
 	"strings"
 	"time"
@@ -56,7 +57,7 @@ func (t *Tool) writeSitemap(paths []string) {
 	data := make([]byte, 0)
 
 	for _, p := range paths {
-		data = append(data, t.HostURL...)
+		data = append(data, []byte(common.Host)...)
 		data = append(data, p...)
 		data = append(data, '\n')
 	}

@@ -19,8 +19,6 @@ import (
 type Config struct {
 	Logger *slog.Logger
 
-	HostURL string
-
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
 
@@ -31,8 +29,6 @@ type Config struct {
 func New(config *Config) *Tool {
 	return &Tool{
 		Logger: config.Logger,
-
-		HostURL: strings.TrimRight(config.HostURL, "/"),
 
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
@@ -49,10 +45,6 @@ func New(config *Config) *Tool {
 // - consider error as fatal: return nothing because the service cannot resolve it.
 type Tool struct {
 	*slog.Logger
-
-	// The host URL, without the training slash.
-	// Ex: https://www.example.com
-	HostURL string
 
 	writeSum  uint64
 	writefile writefile.WriteFile
@@ -152,8 +144,6 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool) {
 	wf := writefile.T{}
 	return wf, New(&Config{
-		HostURL: "https://example.com",
-
 		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelWarn,
 		})),

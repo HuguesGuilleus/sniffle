@@ -2,6 +2,7 @@
 package component
 
 import (
+	"sniffle/common"
 	"sniffle/common/language"
 	"sniffle/front"
 	"sniffle/front/translate"
@@ -43,6 +44,6 @@ func LangAlternate(baseURL string, pageLang language.Language, langs []language.
 		}
 		return render.Na("link", "rel", "alternate").
 			A("hreflang", l.String()).
-			A("href", l.Path(baseURL)).N()
+			A("href", l.Path(common.Host+baseURL)).N()
 	})
 }

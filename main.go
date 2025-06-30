@@ -19,11 +19,7 @@ import (
 )
 
 func main() {
-	host := flag.String("host", "https://sniffle.eu/", "The host absolute URL")
-
 	config := tool.CLI(map[string]time.Duration{"": time.Millisecond * 100})
-
-	config.HostURL = *host
 
 	config.LongTasksMap = map[string]func(*tool.Tool, []byte) ([]byte, error){
 		rimage.NameResizeJpeg: rimage.FetchResizeJpeg,

@@ -53,6 +53,6 @@ func Do(t *tool.Tool) {
 	}
 	t.WriteFile("/eu/ec/eci/refused/index.html", lredirect.All)
 	for _, l := range translate.Langs {
-		t.WriteFile(l.Path("/eu/ec/eci/refused/"), renderRefusedIndex(refused, t.HostURL+"/eu/ec/eci/refused/", l))
+		t.WriteFile(l.Path("/eu/ec/eci/refused/"), renderRefusedIndex(refused, "/eu/ec/eci/refused/", l))
 	}
 }

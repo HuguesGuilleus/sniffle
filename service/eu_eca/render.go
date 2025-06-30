@@ -14,9 +14,8 @@ import (
 func renderReportIndex(t *tool.Tool, l language.Language, reportByYear map[int][]*report) {
 	tr := translate.T[l]
 	basePath := "/eu/eca/report/"
-	hostURL := t.HostURL + basePath
 	t.WriteFile(l.Path(basePath), render.Merge(render.Na("html", "lang", l.String()).N(
-		component.Head(l, hostURL, "$ECA report", "$ECA report index"),
+		component.Head(l, basePath, "$ECA report", "$ECA report index"),
 		render.N("body",
 			component.InDevHeader(l),
 			component.TopHeader(l),

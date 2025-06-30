@@ -15,7 +15,7 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 	baseURL := "/eu/ec/eci/"
 
 	t.WriteFile(l.Path(baseURL), render.Merge(render.Na("html", "lang", l.String()).N(
-		component.Head(l, t.HostURL+baseURL, tr.EU_EC_ECI.INDEX.Name, tr.EU_EC_ECI.INDEX.PageDescription),
+		component.Head(l, baseURL, tr.EU_EC_ECI.INDEX.Name, tr.EU_EC_ECI.INDEX.PageDescription),
 		render.N("body",
 			component.TopHeader(l),
 			render.N("header",
@@ -81,7 +81,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			component.HeadBegin,
 			render.N("title", desc.Title),
 			render.Na("meta", "name", "description").A("content", desc.PlainDesc),
-			component.LangAlternate(fmt.Sprintf("%s/eu/ec/eci/%d/%d/", t.HostURL, eci.Year, eci.Number), l, eci.Langs()),
+			component.LangAlternate(fmt.Sprintf("/eu/ec/eci/%d/%d/", eci.Year, eci.Number), l, eci.Langs()),
 		),
 		render.N("body",
 			component.TopHeader(l),
