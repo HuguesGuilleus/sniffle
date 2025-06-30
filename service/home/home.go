@@ -16,8 +16,8 @@ func Do(t *tool.Tool) {
 		t.WriteFile(l.Path("/"), render.Merge(render.Na("html", "lang", l.String()).N(
 			component.Head(l, t.HostURL+"/", tr.HOME.Name, tr.HOME.PageDescription),
 			render.N("body",
-				component.TopHeader(l),
 				component.InDevHeader(l),
+				component.TopHeader(l),
 				render.N("header",
 					render.N("div.headerTitle", component.HomeAnchor(l), tr.HOME.Name),
 					component.HeaderLangs(translate.Langs, l, ""),
@@ -27,6 +27,7 @@ func Do(t *tool.Tool) {
 					render.N("h1", tr.HOME.EU),
 					render.N("ul",
 						render.N("li", render.Na("a", "href", l.Path("/eu/ec/eci/")).N("[/eu/ec/eci/] ", tr.EU_EC_ECI.Name)),
+						render.IfS(tool.DevMode, render.N("li", render.Na("a", "href", l.Path("/eu/eca/report/")).N("[/eu/eca/report] ", "!ECA report"))),
 					),
 
 					render.N("h1", tr.HOME.About),

@@ -184,12 +184,28 @@ func (buff *buffer) walk(node *html.Node) {
 				buff.buffer.WriteString("] ")
 			}
 
+		case atom.Img:
+			alt := ""
+			for _, attr := range node.Attr {
+				if attr.Key == "alt" {
+					alt = attr.Val
+					break
+				}
+			}
+			if alt != "" {
+				buff.buffer.WriteString("[")
+				buff.WriteString(alt)
+				buff.buffer.WriteString("] ")
+			}
+
 		case atom.H1, atom.H2, atom.H3, atom.H4, atom.H5, atom.H6:
 			buff.add(atom.P)
 			defer buff.end(atom.P)
 			buff.add(atom.Strong)
 			defer buff.end(atom.Strong)
-		case atom.Html, atom.Body, atom.Span, atom.Div:
+		case atom.Table, atom.Tr, atom.Th, atom.Td, atom.Tbody:
+			fallthrough // use this for one celle table.
+		case atom.Html, atom.Body, atom.Span, atom.Div, atom.Font:
 			// Ignore markup but render children.
 		case atom.Br:
 			buff.add(atom.Br)

@@ -2,7 +2,7 @@
 	display: block;
 	clip-path: polygon(0 0, calc(100% - _sp) 0, 100% 50%, calc(100% - _sp) 100%, 0 100%);
 	margin: 1rem 0;
-	border: solid  ;
+	border: solid;
 	border-width: _line2 _sp1 _line2 _spThin;
 	padding: _spThin;
 	padding-right: _sp2;
@@ -14,6 +14,10 @@
 	background: _colorA;
 	border-color: _colorA;
 	text-decoration: underline;
+}
+
+.boxFlex>.doc {
+	margin: 0;
 }
 
 .docName {

@@ -23,7 +23,7 @@ type Image struct {
 	Height string
 	Width  string
 	// Raw image data
-	Data []byte
+	Data []byte `json:"-"`
 }
 
 func FetchImage(t *tool.Tool, request *fetch.Request) *ResizedImage {
@@ -64,7 +64,7 @@ func FetchImage(t *tool.Tool, request *fetch.Request) *ResizedImage {
 }
 
 // Render an image as <img.logo> or <picture.logo><source ...><img.logo></picture>.
-// If img is nil, just return render.Z.
+// If img is nil, just return [render.Z].
 func (img *ResizedImage) Render(base, title string) render.Node {
 	if img == nil {
 		return render.Z

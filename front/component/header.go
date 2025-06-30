@@ -43,9 +43,9 @@ func HeaderLangs(langs []language.Language, pageLang language.Language, basePath
 // The table of content node.
 // Yout need JS to fill it.
 func Toc(l language.Language) render.Node {
-	return render.N("div", render.Na("div", "id", "toc").N(
+	return render.Na("div", "id", "toc").N(
 		render.Na("a.wi", "href", "#").N(translate.T[l].GLOBAL.PageTop),
-	))
+	)
 }
 
 func SearchBlock(l language.Language) render.Node {

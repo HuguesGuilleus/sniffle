@@ -122,7 +122,7 @@ func (r regexpType) Match(v any) error {
 		return fmt.Errorf(notStringFormat, v)
 	}
 	if !r.Regexp.MatchString(s) {
-		return fmt.Errorf("rexpexp /%s/ not match %q", r.Regexp, s)
+		return fmt.Errorf("string %q does not match regexp /%s/", s, r.Regexp)
 	}
 
 	return nil

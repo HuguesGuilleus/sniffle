@@ -1,0 +1,6 @@
+/* For translate element */
+.tr {
+	border: forestgreen dashed .2ex;
+	padding: .7ex;
+	font-style: italic;
+}
