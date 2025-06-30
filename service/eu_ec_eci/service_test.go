@@ -35,7 +35,6 @@ func TestService(t *testing.T) {
 		"/eu/ec/eci/data/threshold/en.html":     1,
 		"/eu/ec/eci/2024/index.html":            1,
 		"/eu/ec/eci/2024/9/index.html":          1,
-		"/eu/ec/eci/2024/9/logo.png":            1,
 		"/eu/ec/eci/2024/9/fr.html":             1,
 		"/eu/ec/eci/2024/9/en.html":             1,
 		"/eu/ec/eci/refused/index.html":         1,

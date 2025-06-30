@@ -34,12 +34,7 @@ func Do(t *tool.Tool) {
 					t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/%s.html", eci.Year, eci.Number, l), redirect)
 				}
 			}
-			if img := eci.Image; img != nil {
-				t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/logo%s", eci.Year, eci.Number, img.Raw.Extension), img.Raw.Data)
-				if res := img.Resized; res != nil {
-					t.WriteFile(fmt.Sprintf("/eu/ec/eci/%d/%d/logo%s", eci.Year, eci.Number, res.Extension), res.Data)
-				}
-			}
+			eci.Image.Save(t, fmt.Sprintf("/eu/ec/eci/%d/%d/logo", eci.Year, eci.Number))
 		}
 	}
 

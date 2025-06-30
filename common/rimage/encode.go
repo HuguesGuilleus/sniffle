@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	_ "image/jpeg"
+	_ "image/png"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 

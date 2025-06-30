@@ -3,13 +3,11 @@ package eu_ec_eci
 import (
 	"cmp"
 	"fmt"
-	_ "image/jpeg"
-	_ "image/png"
 	"net/url"
 	"slices"
-	"sniffle/common"
 	"sniffle/common/country"
 	"sniffle/common/language"
+	"sniffle/common/rimage"
 	"sniffle/front/component"
 	"sniffle/front/translate"
 	"sniffle/tool"
@@ -74,7 +72,7 @@ type ECIOut struct {
 	// A sorted and uniq slice of categories
 	Categorie []string
 	// The image
-	Image *common.ResizedImage
+	Image *rimage.Image
 
 	// Description text in all language
 	Description map[language.Language]*Description
@@ -511,11 +509,11 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 	return eci
 }
 
-func fetchImage(t *tool.Tool, logoID int) *common.ResizedImage {
+func fetchImage(t *tool.Tool, logoID int) *rimage.Image {
 	if logoID == 0 {
 		return nil
 	}
-	return common.FetchImage(t, fetch.URL(fmt.Sprintf(logoURL, logoID)))
+	return rimage.New(t, fmt.Sprintf(logoURL, logoID))
 }
 
 func (eci *ECIOut) setSignatures(dto *signatureDTO, registerDate time.Time) {
