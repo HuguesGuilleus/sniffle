@@ -13,11 +13,10 @@ import (
 	"sniffle/tool/writefile"
 	"strings"
 	"sync"
-	"sync/atomic"
 )
 
 type Config struct {
-	Logger *slog.Logger
+	LogHandler slog.Handler
 
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
@@ -28,7 +27,7 @@ type Config struct {
 
 func New(config *Config) *Tool {
 	return &Tool{
-		Logger: config.Logger,
+		Logger: slog.New(config.LogHandler),
 
 		writefile: config.Writefile,
 		fetcher:   config.Fetcher,
@@ -46,7 +45,6 @@ func New(config *Config) *Tool {
 type Tool struct {
 	*slog.Logger
 
-	writeSum  uint64
 	writefile writefile.WriteFile
 	fetcher   []fetch.Fetcher
 
@@ -66,8 +64,6 @@ func (t *Tool) WriteFile(path string, data []byte) {
 		t.htmlFiles = append(t.htmlFiles, path)
 		t.htmlFileMutex.Unlock()
 	}
-
-	atomic.AddUint64(&t.writeSum, uint64(len(data)))
 
 	err := t.writefile.WriteFile(path, data)
 	if err != nil {
@@ -144,9 +140,9 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool) {
 	wf := writefile.T{}
 	return wf, New(&Config{
-		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		LogHandler: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelWarn,
-		})),
+		}),
 
 		Writefile: wf,
 		Fetcher:   []fetch.Fetcher{fetch.Test(fetcherMap)},

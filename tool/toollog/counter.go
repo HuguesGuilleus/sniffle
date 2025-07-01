@@ -8,35 +8,58 @@ import (
 	"time"
 )
 
-type FailCounterHandler struct {
-	warn uint64
-	err  uint64
+type failCounterHandler struct {
+	err  *uint64
+	warn *uint64
+	sub  slog.Handler
 }
 
-func (counter *FailCounterHandler) Enabled(_ context.Context, l slog.Level) bool {
-	return slog.LevelWarn <= l
+func (h *failCounterHandler) Enabled(ctx context.Context, l slog.Level) bool {
+	return h.sub.Enabled(ctx, l)
 }
 
-func (counter *FailCounterHandler) Handle(_ context.Context, r slog.Record) error {
-	l := r.Level
+func (h *failCounterHandler) Handle(ctx context.Context, r slog.Record) error {
 	switch {
-	case slog.LevelError <= l:
-		atomic.AddUint64(&counter.err, 1)
-	case slog.LevelWarn <= l:
-		atomic.AddUint64(&counter.warn, 1)
+	case slog.LevelError <= r.Level:
+		atomic.AddUint64(h.err, 1)
+	case slog.LevelWarn <= r.Level:
+		atomic.AddUint64(h.warn, 1)
 	}
-	return nil
+	return h.sub.Handle(ctx, r)
 }
 
-func (counter *FailCounterHandler) WithAttrs([]slog.Attr) slog.Handler { return counter }
-func (counter *FailCounterHandler) WithGroup(string) slog.Handler      { return counter }
+func (h *failCounterHandler) WithAttrs(attr []slog.Attr) slog.Handler {
+	return &failCounterHandler{
+		err:  h.err,
+		warn: h.warn,
+		sub:  h.sub.WithAttrs(attr),
+	}
+}
 
-// A basic format with time and sucess or number of failure.
-func (counter *FailCounterHandler) Bytes() []byte {
-	now := time.Now().UTC()
-	if counter.warn+counter.err == 0 {
-		return now.AppendFormat(nil, "2006-01-02 15:04:05 | FULL SUCESS\r\n")
-	} else {
-		return fmt.Appendf(nil, "%s | WARN(%d), ERROR(%d) \r\n", now.Format(time.DateTime), counter.warn, counter.err)
+func (h *failCounterHandler) WithGroup(group string) slog.Handler {
+	return &failCounterHandler{
+		err:  h.err,
+		warn: h.warn,
+		sub:  h.sub.WithGroup(group),
+	}
+}
+
+// Replace the slog handler with a wraper that count warn and error.
+// The returned function return a short string with time and full sucess or fail count.
+func CountFail(sub *slog.Handler) func() []byte {
+	h := &failCounterHandler{
+		err:  new(uint64),
+		warn: new(uint64),
+		sub:  *sub,
+	}
+	*sub = h
+
+	return func() []byte {
+		now := time.Now().UTC()
+		if *h.warn+*h.err == 0 {
+			return now.AppendFormat(nil, "2006-01-02 15:04:05 | FULL SUCESS\r\n")
+		} else {
+			return fmt.Appendf(nil, "%s | WARN(%d), ERROR(%d)\r\n", now.Format(time.DateTime), *h.warn, *h.err)
+		}
 	}
 }

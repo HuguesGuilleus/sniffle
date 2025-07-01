@@ -34,20 +34,20 @@ func CLI(delay map[string]time.Duration) *Config {
 		}
 	}
 	if *logJson {
-		config.Logger = slog.New(slog.NewJSONHandler(logFile, &slog.HandlerOptions{Level: level.Level}))
+		config.LogHandler = slog.NewJSONHandler(logFile, &slog.HandlerOptions{Level: level.Level})
 	} else {
-		config.Logger = slog.New(myhandler.New(logFile, level.Level))
+		config.LogHandler = myhandler.New(logFile, level.Level)
 	}
 
 	config.Writefile = writefile.Os(*out)
 
 	if *cacheRemove {
 		if err := os.RemoveAll(filepath.Join(*cache, "http")); err != nil {
-			config.Logger.Error("rm-cache", "err", err)
+			slog.New(config.LogHandler).Error("rm-cache", "err", err)
 			os.Exit(1)
 		}
 		if err := os.RemoveAll(filepath.Join(*cache, "https")); err != nil {
-			config.Logger.Error("rm-cache", "err", err)
+			slog.New(config.LogHandler).Error("rm-cache", "err", err)
 			os.Exit(1)
 		}
 	}
@@ -59,11 +59,13 @@ func CLI(delay map[string]time.Duration) *Config {
 		delay[""] = time.Millisecond * 100
 	}
 
-	config.LongTasksCache = writefile.Os(filepath.Join(*cache, "longtask"))
 	config.Fetcher = []fetch.Fetcher{
 		fetch.Cache(*cache),
 		fetch.Net(nil, *cache, delay),
 	}
+
+	config.LongTasksCache = writefile.Os(filepath.Join(*cache, "longtask"))
+	config.LongTasksMap = make(map[string]func(*Tool, []byte) ([]byte, error))
 
 	return config
 }

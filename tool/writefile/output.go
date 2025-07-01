@@ -19,7 +19,7 @@ type WriteReadFile interface {
 	ReadFile(name string) ([]byte, error)
 }
 
-func Os(base string) WriteReadFile { return osBase(base) }
+func Os(base string) WriteReadFile { return osBase(filepath.Clean(base)) }
 
 type osBase string
 

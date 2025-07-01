@@ -15,15 +15,16 @@ import (
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/render"
-	"time"
+	"sniffle/tool/toollog"
 )
 
 func main() {
-	config := tool.CLI(map[string]time.Duration{"": time.Millisecond * 100})
+	config := tool.CLI(nil)
+	config.LongTasksMap[rimage.NameResizeJpeg] = rimage.FetchResizeJpeg
 
-	config.LongTasksMap = map[string]func(*tool.Tool, []byte) ([]byte, error){
-		rimage.NameResizeJpeg: rimage.FetchResizeJpeg,
-	}
+	defer func(f func() []byte) {
+		config.Writefile.WriteFile("/log", f())
+	}(toollog.CountFail(&config.LogHandler))
 
 	tool.Run(config,
 		tool.Service{Name: "front", Do: front.Do},

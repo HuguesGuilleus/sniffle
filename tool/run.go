@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 	"sniffle/common"
-	"sniffle/tool/toollog"
 	"strings"
 	"time"
 )
@@ -20,12 +19,7 @@ type Service struct {
 func Run(config *Config, services ...Service) {
 	globalBegin := time.Now()
 
-	defer func(oldLogger *slog.Logger) { config.Logger = oldLogger }(config.Logger)
-	counterLogHandler := toollog.FailCounterHandler{}
-	config.Logger = toollog.Slice(config.Logger.Handler(), &counterLogHandler)
-
 	htmlFiles := make([]string, 0)
-	writeSum := uint64(0)
 
 	for _, service := range services {
 		begin := time.Now()
@@ -41,16 +35,12 @@ func Run(config *Config, services ...Service) {
 
 		t.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(begin))
 		htmlFiles = t.htmlFiles
-
-		writeSum += t.writeSum
 	}
 
 	end := New(config)
 	end.writeSitemap(htmlFiles)
-	end.WriteFile("/log", counterLogHandler.Bytes())
-	writeSum += end.writeSum
 
-	config.Logger.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(globalBegin), "writeSum", writeSum)
+	end.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(globalBegin))
 }
 
 func (t *Tool) writeSitemap(paths []string) {
