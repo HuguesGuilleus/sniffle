@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 	"sniffle/common"
 	"sniffle/common/rimage"
@@ -18,9 +20,12 @@ import (
 	"sniffle/tool/render"
 	"sniffle/tool/toollog"
 	"sniffle/tool/writefile"
+	"time"
 )
 
 func main() {
+	globalBegin := time.Now()
+
 	config := tool.CLI(nil)
 	writerSitemap := writefile.Sitemap(&config.Writefile)
 	config.LongTasksMap[rimage.NameResizeJpeg] = rimage.FetchResizeJpeg
@@ -29,19 +34,20 @@ func main() {
 		config.Writefile.WriteFile("/log", f())
 	}(toollog.CountFail(&config.LogHandler))
 
-	tool.Run(config,
-		tool.Service{Name: "front", Do: front.Do},
-		tool.Service{Name: "notImplementedPage", Do: notImplementedPage},
+	// Service call
+	config.Run("front", front.Do)
+	config.Run("notImplementedPage", notImplementedPage)
 
-		tool.Service{Name: "about", Do: about.Do},
-		tool.Service{Name: "release", Do: release.Do},
-		tool.Service{Name: "home", Do: home.Do},
+	config.Run("about", about.Do)
+	config.Run("release", release.Do)
+	config.Run("home", home.Do)
 
-		tool.Service{Name: "eu_ec_eci", Do: eu_ec_eci.Do},
-		tool.Service{Name: "//eu_eca", Do: eu_eca.Do},
-	)
+	config.Run("eu_ec_eci", eu_ec_eci.Do)
+	config.Run("//eu_eca", eu_eca.Do)
+
 	config.Writefile.WriteFile("/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
+	// Make cache debug index.
 	if tool.DevMode {
 		err := fetch.Debug(flag.CommandLine.Lookup("cache").Value.String(), func(host string) int {
 			switch host {
@@ -56,6 +62,8 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
+	slog.New(config.LogHandler).Log(context.Background(), tool.NoticeLevel, "end", "duration", time.Since(globalBegin))
 }
 
 func notImplementedPage(t *tool.Tool) {

@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -9,7 +10,11 @@ import (
 	"os"
 	"sniffle/tool/fetch"
 	"sniffle/tool/writefile"
+	"strings"
+	"time"
 )
+
+const NoticeLevel = slog.LevelInfo + 2
 
 type Config struct {
 	LogHandler slog.Handler
@@ -21,16 +26,19 @@ type Config struct {
 	LongTasksMap   map[string]func(*Tool, []byte) ([]byte, error)
 }
 
-func New(config *Config) *Tool {
-	return &Tool{
-		Logger: slog.New(config.LogHandler),
-
-		writefile: config.Writefile,
-		fetcher:   config.Fetcher,
-
-		longTasksCache: config.LongTasksCache,
-		longTasksMap:   config.LongTasksMap,
+func (config *Config) Run(name string, do func(*Tool)) {
+	if strings.HasPrefix(name, "//") && !DevMode {
+		return
 	}
+
+	begin := time.Now()
+
+	t := New(config)
+	t.Logger = t.Logger.With(slog.Any("service", name))
+
+	do(t)
+
+	t.Log(context.Background(), NoticeLevel, "end", "duration", time.Since(begin))
 }
 
 // All information for one service.
@@ -46,6 +54,18 @@ type Tool struct {
 
 	longTasksCache writefile.WriteReadFile
 	longTasksMap   map[string]func(*Tool, []byte) ([]byte, error)
+}
+
+func New(config *Config) *Tool {
+	return &Tool{
+		Logger: slog.New(config.LogHandler),
+
+		writefile: config.Writefile,
+		fetcher:   config.Fetcher,
+
+		longTasksCache: config.LongTasksCache,
+		longTasksMap:   config.LongTasksMap,
+	}
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
