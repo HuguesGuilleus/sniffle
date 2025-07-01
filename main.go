@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sniffle/common"
 	"sniffle/common/rimage"
 	"sniffle/front"
 	"sniffle/front/translate"
@@ -16,10 +17,12 @@ import (
 	"sniffle/tool/fetch"
 	"sniffle/tool/render"
 	"sniffle/tool/toollog"
+	"sniffle/tool/writefile"
 )
 
 func main() {
 	config := tool.CLI(nil)
+	writerSitemap := writefile.Sitemap(&config.Writefile)
 	config.LongTasksMap[rimage.NameResizeJpeg] = rimage.FetchResizeJpeg
 
 	defer func(f func() []byte) {
@@ -37,6 +40,7 @@ func main() {
 		tool.Service{Name: "eu_ec_eci", Do: eu_ec_eci.Do},
 		tool.Service{Name: "//eu_eca", Do: eu_eca.Do},
 	)
+	config.Writefile.WriteFile("/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
 	if tool.DevMode {
 		err := fetch.Debug(flag.CommandLine.Lookup("cache").Value.String(), func(host string) int {
