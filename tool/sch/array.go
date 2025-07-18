@@ -64,3 +64,24 @@ func (t arrayType) formatRange() string {
 		return fmt.Sprintf("[%d..%d]", min, max)
 	}
 }
+
+type emptyArray struct{}
+
+func EmptyArray() Type { return emptyArray{} }
+
+func (emptyArray) Match(v any) error {
+	slice, ok := v.([]any)
+	if !ok {
+		return fmt.Errorf(notArrayFormat, v)
+	}
+
+	if len(slice) != 0 {
+		return fmt.Errorf("Not empty array, len=%d", len(slice))
+	}
+
+	return nil
+}
+
+func (emptyArray) HTML(indent string) render.Node {
+	return render.N("", "[]")
+}

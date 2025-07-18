@@ -30,3 +30,10 @@ func TestArray(t *testing.T) {
 	assert.Error(t, ArrayRange(1, 2, True()).Match([]any{}))
 	assert.Equal(t, `[1..2]<span class=sch-base>true</span>`, genHTML(ArrayRange(1, 2, True())))
 }
+
+func TestEmptyArray(t *testing.T) {
+	assert.NoError(t, EmptyArray().Match([]any{}))
+	assert.Error(t, EmptyArray().Match("a"))
+	assert.Error(t, EmptyArray().Match([]any{"a"}))
+	assert.Equal(t, `[]`, genHTML(EmptyArray()))
+}
