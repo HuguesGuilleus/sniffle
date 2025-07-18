@@ -1,28 +1,44 @@
-package eu_parl_meps
+package eu_parl_mep
 
 import (
 	"encoding/xml"
+	"fmt"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"time"
 )
 
-type meps struct {
+const (
+	metaURL = "https://data.europarl.europa.eu/OdpDatasetService/Datasets/members-of-the-european-parliament-meps-parliamentary-term%d"
+	dataURL = "https://data.europarl.europa.eu/distribution/meps_%d_%d.rdf"
+)
+
+type mep struct {
 	Identifier uint
 	Label      string
 
-	Term []uint
+	Term []int
 }
 
-func fetchMeps(t *tool.Tool) (list []meps) {
-	// f, _ := os.Create("service/eu_parl_meps/a.xml")
-	// defer f.Close()
-	// io.Copy(f, t.Fetch(fetch.URL("https://data.europarl.europa.eu/distribution/meps_10_45.rdf")).Body)
-	// return
+func fetchVersion(t *tool.Tool, term int) (version int) {
+	dtoMeta := struct {
+		OdpDatasetVersions []struct {
+			VersionLabel int `json:",string"`
+		}
+	}{}
+	if tool.FetchJSON(t, metaType, &dtoMeta, fetch.URL(fmt.Sprintf(metaURL, term))) {
+		return -1
+	}
 
-	// t.Fetch(fetch.URL("https://data.europarl.europa.eu/OdpDatasetService/Datasets/members-of-the-european-parliament-meps-parliamentary-term10"))
+	for _, op := range dtoMeta.OdpDatasetVersions {
+		version = max(version, op.VersionLabel)
+	}
 
-	u := "https://data.europarl.europa.eu/distribution/meps_10_45.rdf"
+	return
+}
+
+func fetchMep(t *tool.Tool, term int) (list []mep) {
+	u := fmt.Sprintf(dataURL, term, fetchVersion(t, term))
 	data := tool.FetchAll(t, fetch.URL(u))
 
 	dto := struct {
@@ -44,12 +60,12 @@ func fetchMeps(t *tool.Tool) (list []meps) {
 		t.Error("xml.decode", "url", u, "err", err.Error())
 	}
 
-	list = make([]meps, len(dto.Person))
+	list = make([]mep, len(dto.Person))
 	for i, dto := range dto.Person {
-		list[i] = meps{
+		list[i] = mep{
 			Identifier: dto.Identifier,
 			Label:      dto.Label,
-			Term:       []uint{10},
+			Term:       []int{term},
 		}
 	}
 	return

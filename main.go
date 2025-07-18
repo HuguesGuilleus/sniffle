@@ -13,7 +13,7 @@ import (
 	"sniffle/service/about"
 	"sniffle/service/eu_ec_eci"
 	"sniffle/service/eu_eca"
-	"sniffle/service/eu_parl_meps"
+	"sniffle/service/eu_parl_mep"
 	"sniffle/service/home"
 	"sniffle/service/release"
 	"sniffle/tool"
@@ -45,7 +45,7 @@ func main() {
 
 	config.Run("eu_ec_eci", eu_ec_eci.Do)
 	config.Run("//eu_eca", eu_eca.Do)
-	config.Run("//eu_parl_meps", eu_parl_meps.Do)
+	config.Run("//eu_parl_mep", eu_parl_mep.Do)
 
 	config.Writefile.WriteFile("/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
@@ -71,8 +71,10 @@ func main() {
 func notImplementedPage(t *tool.Tool) {
 	t.WriteFile("/eu/index.html", render.Back)
 	t.WriteFile("/eu/ec/index.html", render.Back)
+	t.WriteFile("/eu/parl/index.html", render.Back)
 	for _, l := range translate.Langs {
 		t.WriteFile(l.Path("/eu/"), render.Back)
 		t.WriteFile(l.Path("/eu/ec/"), render.Back)
+		t.WriteFile(l.Path("/eu/parl/"), render.Back)
 	}
 }
