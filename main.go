@@ -13,6 +13,7 @@ import (
 	"sniffle/service/about"
 	"sniffle/service/eu_ec_eci"
 	"sniffle/service/eu_eca"
+	"sniffle/service/eu_parl_meps"
 	"sniffle/service/home"
 	"sniffle/service/release"
 	"sniffle/tool"
@@ -44,6 +45,7 @@ func main() {
 
 	config.Run("eu_ec_eci", eu_ec_eci.Do)
 	config.Run("//eu_eca", eu_eca.Do)
+	config.Run("//eu_parl_meps", eu_parl_meps.Do)
 
 	config.Writefile.WriteFile("/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
