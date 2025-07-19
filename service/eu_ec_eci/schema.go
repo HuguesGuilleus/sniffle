@@ -141,25 +141,31 @@ var eciType = sch.Map(
 		return category.(map[string]any)["categoryType"].(string)
 	})),
 	sch.BlankField(),
+
 	sch.FieldSR("members", sch.ArrayMin(7, sch.And(detailedMember, sch.Map(
-		sch.FieldSR("fullName", sch.NotEmptyString()),
-		sch.FieldSR("privacyApplied", sch.AnyBool()),
 		sch.FieldSR("type", sch.EnumString("MEMBER", "SUBSTITUTE", "REPRESENTATIVE", "OTHER", "DPO", "LEGAL_ENTITY")),
-		sch.FieldSO("email", sch.Or(sch.AnyURL(), sch.AnyMail())),
-		sch.FieldSO("replacedMember", sch.ArraySize(1, sch.Map(
-			sch.FieldSO("email", sch.AnyMail()),
-			sch.FieldSO("residenceCountry", countriesLower),
-			sch.FieldSR("endDate", dateType),
-			sch.FieldSR("fullName", sch.NotEmptyString()),
-			sch.FieldSR("privacyApplied", sch.False()),
-			sch.FieldSR("startingDate", dateType),
-			sch.FieldSR("type", sch.EnumString("MEMBER", "REPRESENTATIVE")),
-		))),
+		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSO("residenceCountry", countriesLower),
 		sch.FieldSO("startingDate", dateType),
+		sch.FieldSR("privacyApplied", sch.AnyBool()),
+		sch.FieldSO("email", sch.Or(
+			sch.EnumString("anonymised@anonymised", "email@anonymised"),
+			sch.AnyMail(),
+			sch.AnyURL(),
+		)),
+		sch.FieldSO("replacedMember", sch.ArraySize(1, sch.Map(
+			sch.FieldSR("type", sch.EnumString("MEMBER", "REPRESENTATIVE", "SUBSTITUTE")),
+			sch.FieldSR("fullName", sch.NotEmptyString()),
+			sch.FieldSR("endDate", dateType),
+			sch.FieldSR("startingDate", dateType),
+			sch.FieldSR("privacyApplied", sch.False()),
+			sch.FieldSO("email", sch.AnyMail()),
+			sch.FieldSO("residenceCountry", countriesLower),
+		))),
 	)))),
+
 	sch.BlankField(),
-	sch.FieldSR("progress", sch.ArrayMin(2, sch.Map(
+	sch.FieldSR("progress", sch.ArrayMin(1, sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
 		sch.FieldSR("name", statusType),
 		sch.FieldSO("date", dateType),
@@ -322,69 +328,46 @@ var eciType = sch.Map(
 
 var detailedMember, detailedMemberDef = sch.Def("DetailedMember", sch.Or(
 	sch.Map(
-		sch.FieldSR("fullName", sch.NotEmptyString()),
-		sch.FieldSR("privacyApplied", sch.False()),
-		sch.FieldSR("type", sch.String("MEMBER")),
-		sch.FieldSO("email", sch.Or(sch.String("email@anonymised"), sch.AnyMail())),
-		sch.FieldSO("startingDate", dateType),
-		sch.FieldSO("replacedMember", sch.ArraySize(1, sch.Or(
-			sch.Map(
-				sch.FieldSR("type", sch.String("MEMBER")),
-				sch.FieldSR("fullName", sch.NotEmptyString()),
-				sch.FieldSR("privacyApplied", sch.False()),
-				sch.FieldSR("endDate", dateType),
-				sch.FieldSR("startingDate", dateType),
-			),
-			sch.Map(
-				sch.FieldSO("email", sch.AnyMail()),
-				sch.FieldSO("residenceCountry", countriesLower),
-				sch.FieldSR("endDate", dateType),
-				sch.FieldSR("fullName", sch.NotEmptyString()),
-				sch.FieldSR("privacyApplied", sch.False()),
-				sch.FieldSR("startingDate", dateType),
-				sch.FieldSR("type", sch.String("REPRESENTATIVE")),
-			),
-		))),
-	),
-	sch.Map(
-		sch.FieldSR("type", sch.EnumString("REPRESENTATIVE")),
+		sch.FieldSR("type", sch.EnumString("SUBSTITUTE", "REPRESENTATIVE", "MEMBER")),
 		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSR("privacyApplied", sch.AnyBool()),
-		sch.FieldSO("email", sch.AnyMail()),
+		sch.FieldSO("email", sch.Or(
+			sch.String("anonymised@anonymised"),
+			sch.String("email@anonymised"),
+			sch.AnyMail(),
+		)),
+		sch.FieldSO("startingDate", dateType),
+		sch.FieldSO("residenceCountry", countriesLower),
 		sch.FieldSO("replacedMember", sch.ArraySize(1, sch.Map(
-			sch.FieldSO("email", sch.AnyMail()),
-			sch.FieldSO("residenceCountry", countriesLower),
-			sch.FieldSR("endDate", dateType),
+			sch.FieldSR("type", sch.EnumString("SUBSTITUTE", "REPRESENTATIVE", "MEMBER")),
 			sch.FieldSR("fullName", sch.NotEmptyString()),
 			sch.FieldSR("privacyApplied", sch.False()),
 			sch.FieldSR("startingDate", dateType),
-			sch.FieldSR("type", sch.EnumString("MEMBER", "REPRESENTATIVE")),
+			sch.FieldSR("endDate", dateType),
+			sch.FieldSO("email", sch.AnyMail()),
+			sch.FieldSO("residenceCountry", countriesLower),
 		))),
-		sch.FieldSR("residenceCountry", countriesLower),
-		sch.FieldSO("startingDate", dateType),
 	),
+
 	sch.Map(
-		sch.FieldSR("type", sch.EnumString("LEGAL_ENTITY")),
+		sch.FieldSR("type", sch.String("DPO")),
+		sch.FieldSR("fullName", sch.NotEmptyString()),
+		sch.FieldSR("privacyApplied", sch.False()),
+		sch.FieldSR("email", sch.AnyMail()),
+	),
+
+	sch.Map(
+		sch.FieldSR("type", sch.String("LEGAL_ENTITY")),
 		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSR("privacyApplied", sch.False()),
 		sch.FieldSO("email", sch.AnyURL()),
 		sch.FieldSR("residenceCountry", countriesLower),
 	),
+
 	sch.Map(
-		sch.FieldSR("type", sch.EnumString("OTHER")),
+		sch.FieldSR("type", sch.String("OTHER")),
 		sch.FieldSR("fullName", sch.NotEmptyString()),
 		sch.FieldSR("privacyApplied", sch.False()),
-	),
-	sch.Map(
-		sch.FieldSR("type", sch.EnumString("SUBSTITUTE", "DPO")),
-		sch.FieldSR("fullName", sch.NotEmptyString()),
-		sch.FieldSR("privacyApplied", sch.False()),
-		sch.FieldSR("email", sch.AnyMail()),
-	),
-	sch.Map(
-		sch.FieldSR("type", sch.EnumString("SUBSTITUTE")),
-		sch.FieldSR("fullName", sch.NotEmptyString()),
-		sch.FieldSR("privacyApplied", sch.True()),
 	),
 ))
 

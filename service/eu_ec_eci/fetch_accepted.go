@@ -558,7 +558,7 @@ func docFromCelex(celex string, l language.Language) *Document {
 }
 
 func memberURL(s string) (href, display string) {
-	if s == "email@anonymised" {
+	if s == "email@anonymised" || s == "anonymised@anonymised" {
 		return "", ""
 	} else if s != "" && sch.AnyMail().Match(s) == nil {
 		return "mailto:" + s, s
