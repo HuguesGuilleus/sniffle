@@ -10,6 +10,11 @@ func TestEmailAdress(t *testing.T) {
 	assert.NoError(t, AnyMail().Match("conduct@golang.org"))
 	assert.Error(t, AnyMail().Match(1))
 	assert.Error(t, AnyMail().Match(""))
+	assert.Error(t, AnyMail().Match("conduct@golang."))
+	assert.Error(t, AnyMail().Match("conduct@golang"))
+	assert.Error(t, AnyMail().Match("https://example.com"))
+	assert.Error(t, AnyMail().Match("https://example.com/"))
+	assert.Error(t, AnyMail().Match("http://www.freesharing.eu/"))
 	assert.Error(t, AnyMail().Match("<conduct@golang.org>"))
 	assert.Error(t, AnyMail().Match("GO <conduct@golang.org>"))
 	assert.Equal(t, `<span class=sch-base title="Email address: user@host">mail-address</span>`, genHTML(AnyMail()))
@@ -52,7 +57,12 @@ func TestTime(t *testing.T) {
 
 func TestAnyURL(t *testing.T) {
 	assert.NoError(t, AnyURL().Match("https://sniffle.eu/dir/file.txt?a=1"))
+	assert.NoError(t, AnyURL().Match("sniffle.eu/dir/file.txt?a=1"))
+	assert.NoError(t, AnyURL().Match("sniffle.eu"))
 	assert.Error(t, AnyURL().Match(1))
+	assert.Error(t, AnyURL().Match("user@europa.eu"))
+	assert.Error(t, AnyURL().Match("mailto:user@europa.eu"))
+	assert.Error(t, AnyURL().Match("https://user@sniffle.eu/dir/file.txt?a=1"))
 	assert.Equal(t, `<span class=sch-base title="A HTTP(S) url into a string">url</span>`, genHTML(AnyURL()))
 }
 
@@ -66,7 +76,8 @@ func TestURL(t *testing.T) {
 	assert.Error(t, u.Match(1))
 	assert.Error(t, u.Match("://europa.eu/"))
 	assert.Error(t, u.Match("https://user@europa.eu/"))
-	assert.Error(t, u.Match("malto:user@europa.eu"))
+	assert.Error(t, u.Match("mailto:user@europa.eu"))
+	assert.Error(t, u.Match("user@europa.eu"))
 	assert.Error(t, URL("https://europa.eu/").Match("http://europa.eu/"))
 	assert.Error(t, u.Match("https://europa.eu/yolo?a=1&x=42"))
 	assert.Error(t, u.Match("https://ec.europa.eu/yolo?a=1&a=2&x=42"))

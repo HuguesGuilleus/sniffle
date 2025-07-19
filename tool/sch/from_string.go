@@ -4,12 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"mime"
-	"net/mail"
 	"net/url"
 	"regexp"
 	"sniffle/tool/render"
 	"strings"
 	"time"
+)
+
+var (
+	justHostRegexp = regexp.MustCompile(`^([\w-]+\.)+[\w-]{2,}$`)
+	anyMailRegexp  = regexp.MustCompile(`^\w[\w.-]+\w@([\w-]+\.)+[\w-]{2,}$`)
 )
 
 /* EMAIL */
@@ -18,19 +22,19 @@ type anyMailType struct{}
 
 func AnyMail() TypeStringer { return anyMailType{} }
 
+// var anyMailRegexp = regexp.MustCompile(`^\w[\w.-]+\w@[\w-]+(\.[\w-]+)+$`)
+
 func (anyMailType) Match(v any) error {
 	s, ok := v.(string)
 	if !ok {
 		return fmt.Errorf(notStringFormat, v)
 	}
-	if strings.Contains(s, "<") {
-		return errors.New("support only simple mail address")
+
+	if !anyMailRegexp.MatchString(s) {
+		return fmt.Errorf("not email adress: %q", s)
 	}
 
-	_, err := mail.ParseAddress(s)
-	if err != nil {
-		return err
-	}
+	// fmt.Println("any_mail:", s)
 
 	return nil
 }
@@ -160,6 +164,7 @@ func (t timeType) HTML(_ string) render.Node {
 
 type anyUrlType struct{}
 
+// Any HTTP or HTTPS url without user information.
 func AnyURL() Type { return anyUrlType{} }
 
 func (anyUrlType) Match(v any) error {
@@ -167,7 +172,19 @@ func (anyUrlType) Match(v any) error {
 	if !ok {
 		return fmt.Errorf(notStringFormat, v)
 	}
-	_, err := url.Parse(s)
+	if anyMailRegexp.MatchString(s) {
+		return fmt.Errorf("expected URL, get mail address: %q", s)
+	}
+	if justHostRegexp.MatchString(s) {
+		return nil
+	}
+	u, err := url.Parse(s)
+	if u.Scheme != "http" && u.Scheme != "https" && u.Scheme != "" {
+		return fmt.Errorf("not http.s scheme: %q", s)
+	}
+	if u.User != nil {
+		return fmt.Errorf("user information is not accepted: %q", s)
+	}
 	return err
 }
 
@@ -213,6 +230,7 @@ func URL(rawURL string) TypeStringer {
 			return s == t || (strings.HasSuffix(s, t) && s[len(s)-len(t)-1] == '.')
 		}
 	}
+
 	eqPath := strings.EqualFold
 	if strings.HasSuffix(u.Path, "**") {
 		u.Path = strings.TrimSuffix(u.Path, "**")
@@ -238,6 +256,11 @@ func (ut urlType) Match(v any) error {
 	if !ok {
 		return fmt.Errorf(notStringFormat, v)
 	}
+
+	if anyMailRegexp.MatchString(s) {
+		return fmt.Errorf("expected URL, get mail address: %q", s)
+	}
+
 	u, err := url.Parse(s)
 	if err != nil {
 		return err

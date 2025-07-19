@@ -87,20 +87,22 @@ func (m *mapType) Match(v any) error {
 			continue
 		}
 
-		key, ok := m.searchKey(&field, keys)
-		if !ok && field.required {
-			errs = append(errs, fmt.Errorf("not found field for %s", field.fieldKey))
-			continue
-		} else if !ok {
+		key, ok := mapSearchKey(field, keys)
+		if !ok {
+			if field.required {
+				errs = append(errs, fmt.Errorf("not found field for %s", field.fieldKey))
+			}
 			continue
 		}
+
 		fieldValue := mv[key]
 		if err := field.fieldValue.Match(fieldValue); err != nil {
 			errs.Append(key, err)
-		} else {
-			for _, assert := range field.asserts {
-				errs.Append(key, assert.test(mv, fieldValue))
-			}
+			continue
+		}
+
+		for _, assert := range field.asserts {
+			errs.Append(key, assert.test(mv, fieldValue))
 		}
 	}
 
@@ -112,7 +114,7 @@ func (m *mapType) Match(v any) error {
 
 	return errs.Return()
 }
-func (m *mapType) searchKey(field *MapField, keys map[string]bool) (key string, ok bool) {
+func mapSearchKey(field MapField, keys map[string]bool) (key string, ok bool) {
 	for k := range keys {
 		if field.fieldKey.Match(k) == nil {
 			delete(keys, k)
