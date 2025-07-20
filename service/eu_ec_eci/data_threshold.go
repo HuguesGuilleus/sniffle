@@ -16,14 +16,14 @@ type Threshold struct {
 type ThresholdArray = [country.Len]uint
 
 var (
-	threshold_lastCheck   = time.Date(2025, time.March, 25, 0, 0, 0, 0, render.DateZone)
+	threshold_lastCheck   = time.Date(2025, time.July, 20, 0, 0, 0, 0, render.DateZone)
 	rule_since_2012_04_01 = "2012-04-01"
 	rule_since_2020_01_01 = "2020-01-01"
 
 	thresholds = [...]*Threshold{
 		{
-			Begin: time.Date(2024, 7, 6, 0, 0, 0, 0, render.ShortDateZone),
-			Rule:  rule_since_2012_04_01,
+			Begin: time.Date(2024, 7, 16, 0, 0, 0, 0, render.ShortDateZone),
+			Rule:  rule_since_2020_01_01,
 			Legal: component.Legal{
 				Prefix: "COMMISSION DELEGATED REGULATION (EU)",
 				Num:    "2024/1082",
@@ -99,7 +99,7 @@ var (
 		},
 		{
 			Begin: time.Date(2020, 1, 1, 0, 0, 0, 0, render.ShortDateZone),
-			Rule:  rule_since_2012_04_01,
+			Rule:  rule_since_2020_01_01,
 			Legal: component.Legal{
 				Prefix: "REGULATION (EU) OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
 				Num:    "2019/788",

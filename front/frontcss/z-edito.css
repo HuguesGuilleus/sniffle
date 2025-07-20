@@ -1,3 +1,18 @@
+.edito #toc,
+.edito .summary,
+.edito h1,
+.edito h2,
+.edito hr,
+.edito pre.sch {
+	border-color: _colorEdito;
+}
+
+.edito .headerID,
+.edito .headerTitle,
+.edito .tag {
+	background: _colorEdito;
+}
+
 div.edito {
 	border: solid _line2 _colorEdito;
 	margin-bottom: _sp;
@@ -11,13 +26,4 @@ div.edito {
 	padding: 0 _spThin;
 	font-weight: bold;
 	background: _colorEdito;
-}
-
-.edito .tag {
-	background: _colorEdito;
-}
-
-.edito hr {
-	border: none;
-	border-top: dashed _line2 _colorEdito;
 }

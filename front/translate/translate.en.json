@@ -211,6 +211,8 @@
 			"Name": "Threshold data",
 			"Description": "Valid ECI need at most un quarter of European Union members (7 country) pass following thresholds.",
 			"LastCheck": "Last check: ",
+			"H1Data": "Data",
+			"H1Rule": "Legal rules",
 			"From": "From",
 			"Calculation": "Calculation"
 		},

@@ -32,7 +32,7 @@ func renderDataExtraDelay(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language
 			render.Na("meta", "name", "description").A("content", tr.EU_EC_ECI.DATA_EXTRADELAY.Description),
 			component.LangAlternate(baseURL, l, translate.Langs),
 		),
-		render.N("body",
+		render.N("body.edito",
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
@@ -75,7 +75,7 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 			render.Na("meta", "name", "description").A("content", DATA_THRESHOLD.Description),
 			component.LangAlternate(baseURL, l, translate.Langs),
 		),
-		render.N("body",
+		render.N("body.edito",
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
@@ -85,36 +85,45 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 				render.N("div.headerTitle", DATA_THRESHOLD.Name),
 				component.HeaderLangs(translate.Langs, l, ""),
 			),
-			render.N("main.wt", component.Toc(l), render.N("div.wc",
+			render.N("main.wt.wide", component.Toc(l), render.N("div.wc",
 				render.N("div.summary", DATA_THRESHOLD.Description),
 
 				render.N("p.noindent", DATA_THRESHOLD.LastCheck, threshold_lastCheck),
 
-				render.S(thresholds[:], "", func(threshold *Threshold) render.Node {
-					return render.N("",
-						render.N("h1", DATA_THRESHOLD.From, " ", threshold.Begin),
-						render.N("div.edito",
-							render.N("div.editoT", DATA_THRESHOLD.Calculation),
-							tr.EU_EC_ECI.ThresholdRule[threshold.Rule],
-						),
-						render.N("p.noindent", threshold.Legal.Render(l)),
-						render.N("table.right",
-							render.N("tr",
-								render.N("th", tr.EU_EC_ECI.ONE.Country),
-								render.N("th", tr.EU_EC_ECI.ONE.Threshold),
-							),
-							render.S(countries, "", func(c country.Country) render.Node {
-								if threshold.Data[c] == 0 {
-									return render.Z
+				render.N("h1", DATA_THRESHOLD.H1Data),
+				render.N("table.right",
+					render.N("tr",
+						render.N("th", tr.EU_EC_ECI.ONE.Country),
+						render.S(thresholds[:], "", func(t *Threshold) render.Node {
+							return render.N("th", DATA_THRESHOLD.From, " ", t.Begin)
+						}),
+					),
+					render.S(countries, "", func(c country.Country) render.Node {
+						return render.N("tr",
+							render.N("td", tr.Country[c]),
+							render.S(thresholds[:], "", func(t *Threshold) render.Node {
+								if t.Data[c] == 0 {
+									return render.N("td.blanck")
 								}
-								return render.N("tr",
-									render.N("td", tr.Country[c]),
-									render.N("td", threshold.Data[c]),
-								)
+								return render.N("td", t.Data[c])
 							}),
-						),
-					)
-				}),
+						)
+					}),
+				),
+
+				render.N("div.subw",
+					render.N("h1", DATA_THRESHOLD.H1Rule),
+					render.S(thresholds[:], "", func(threshold *Threshold) render.Node {
+						return render.N("",
+							render.N("h2", DATA_THRESHOLD.From, " ", threshold.Begin),
+							render.N("div.edito",
+								render.N("div.editoT", DATA_THRESHOLD.Calculation),
+								tr.EU_EC_ECI.ThresholdRule[threshold.Rule],
+							),
+							render.N("p.noindent", threshold.Legal.Render(l)),
+						)
+					}),
+				),
 			)),
 			component.Footer(l, component.JsToc),
 		),

@@ -5,6 +5,11 @@ pre.sch {
 	font-family: "Noto Sans Mono", monospace;
 }
 
+pre.sch hr {
+	border: none;
+	border-top: dashed _line2;
+}
+
 .sch-base,
 .sch-int,
 .sch-str {

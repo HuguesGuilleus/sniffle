@@ -12,15 +12,6 @@ body {
 	background: _back;
 }
 
-.edito * {
-	border-color: _colorEdito !important;
-}
-
-.edito .headerID,
-.edito .headerTitle {
-	background: _colorEdito !important;
-}
-
 h1 {
 	border: _colorA _line2;
 	border-style: solid none;
@@ -45,11 +36,14 @@ table.right {
 
 td,
 th {
-	border: solid _line1 white;
-	border: _line1 white;
 	border: _line1 _color2;
 	border-style: solid none;
 	padding: 0 _spThin;
+}
+
+td.blanck,
+th.blanck {
+	background: _color2;
 }
 
 caption {

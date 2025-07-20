@@ -4,6 +4,10 @@
 	padding: _sp;
 }
 
+.subw {
+	max-width: 40rem;
+}
+
 .home {
 	max-width: 60rem;
 	font-size: xx-large;
@@ -41,6 +45,8 @@
 		position: sticky;
 		margin: 0;
 		top: _sp;
+		overflow-y: scroll;
+		max-height: 100vh;
 	}
 
 	a.wi[data-w=true] {

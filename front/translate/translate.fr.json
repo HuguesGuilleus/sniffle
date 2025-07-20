@@ -211,6 +211,8 @@
 			"Name": "Données de seuil",
 			"Description": "Pour qu'une ICE soit valide, il faut qu'au moins un quart des pays de l'Union Européenne (7 pays) dépassent les seuils ci-dessous.",
 			"LastCheck": "Dernière vérification\u00A0: ",
+			"H1Data": "Données",
+			"H1Rule": "Règles légales",
 			"From": "Depuis",
 			"Calculation": "Calcul"
 		},

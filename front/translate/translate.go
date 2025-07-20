@@ -138,6 +138,8 @@ type Translation struct {
 			Name        string
 			Description string
 			LastCheck   render.H
+			H1Data      render.H
+			H1Rule      render.H
 			From        render.H
 			Calculation render.H
 		}
