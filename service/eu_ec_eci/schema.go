@@ -546,7 +546,7 @@ var schemaPage = func() []byte {
 						"We manualy extract data from ",
 						render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_en").N("https://citizens-initiative.europa.eu/thresholds_en"),
 						" and legal text. ",
-						render.Na("a", "href", "data/threshold/").N("See used data."),
+						render.Na("a", "href", "data-threshold/").N("See used data."),
 						" Last check: ", threshold_lastCheck, ".",
 					),
 				),

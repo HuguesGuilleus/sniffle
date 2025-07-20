@@ -23,7 +23,7 @@ func renderDataExtraDelay(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language
 	}
 
 	tr := translate.T[l]
-	baseURL := "/eu/ec/eci/data/extradelay/"
+	baseURL := "/eu/ec/eci/data-extradelay/"
 
 	t.WriteFile(l.Path(baseURL), render.Merge(render.Na("html", "lang", l.String()).N(
 		render.N("head",
@@ -63,7 +63,7 @@ func renderDataExtraDelay(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language
 }
 
 func renderDataThreshold(t *tool.Tool, l language.Language) {
-	baseURL := "/eu/ec/eci/data/threshold/"
+	baseURL := "/eu/ec/eci/data-threshold/"
 	tr := translate.T[l]
 	DATA_THRESHOLD := tr.EU_EC_ECI.DATA_THRESHOLD
 	countries := translate.Countries(l)
