@@ -37,11 +37,13 @@ var (
 // A footer node. It should be the last element in the page.
 // It contain in the end, so the DOM is complete when it's executed.
 func Footer(l language.Language, flag uint) render.Node {
-	return render.N("footer",
-		translate.T[l].GLOBAL.FooterBuild,
-		time.Now(),
-		render.H("<br>"),
-		render.Na("a", "href", l.Path("/about/")).N(translate.T[l].GLOBAL.AboutTextLink),
+	return render.N("",
+		render.N("footer",
+			translate.T[l].GLOBAL.FooterBuild,
+			time.Now(),
+			render.H("<br>"),
+			render.Na("a", "href", l.Path("/about/")).N(translate.T[l].GLOBAL.AboutTextLink),
+		),
 		scripts[flag],
 	)
 }
