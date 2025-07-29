@@ -19,7 +19,6 @@ import (
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/render"
-	"sniffle/tool/toollog"
 	"sniffle/tool/writefile"
 	"time"
 )
@@ -30,10 +29,6 @@ func main() {
 	config := tool.CLI(nil)
 	writerSitemap := writefile.Sitemap(&config.Writefile)
 	config.LongTasksMap[rimage.NameResizeJpeg] = rimage.FetchResizeJpeg
-
-	defer func(f func() []byte) {
-		config.Writefile.WriteFile("/log", f())
-	}(toollog.CountFail(&config.LogHandler))
 
 	// Service call
 	config.Run("front", front.Do)
