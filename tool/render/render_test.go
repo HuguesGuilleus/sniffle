@@ -41,8 +41,7 @@ func TestRender(t *testing.T) {
 		`42`+
 		`-1`+
 		`ab`+
-		`1s`+
-		`</body>`,
+		`1s`,
 		string(h))
 }
 
@@ -60,22 +59,21 @@ func TestIf(t *testing.T) {
 	n = If(true, func() Node { return N("img") })
 	assert.Equal(t, `<img>`, string(n.mergeSlice(nil)))
 }
-func TestIfS(t *testing.T) {
-	n := IfS(false, N("img"))
-	assert.Nil(t, n.mergeSlice(nil))
-	n = IfS(true, N("img"))
-	assert.Equal(t, `<img>`, string(n.mergeSlice(nil)))
-}
 func TestIfElse(t *testing.T) {
 	n := IfElse(true, func() Node { return N("a") }, func() Node { return N("b") })
 	assert.Equal(t, `<a></a>`, string(n.mergeSlice(nil)))
 	n = IfElse(false, func() Node { return N("a") }, func() Node { return N("b") })
 	assert.Equal(t, `<b></b>`, string(n.mergeSlice(nil)))
 }
-
-func TestIsSAny(t *testing.T) {
-	assert.Equal(t, 3, IfSAny(false, 1, 3))
-	assert.Equal(t, 1, IfSAny(true, 1, 3))
+func TestIfS(t *testing.T) {
+	n := N("", IfS(false, 1))
+	assert.Nil(t, n.mergeSlice(nil))
+	n = N("", IfS(true, 1))
+	assert.Equal(t, `1`, string(n.mergeSlice(nil)))
+}
+func TestIsElseS(t *testing.T) {
+	assert.Equal(t, 3, IfElseS(false, 1, 3))
+	assert.Equal(t, 1, IfElseS(true, 1, 3))
 }
 
 func TestEspaceString(t *testing.T) {
@@ -164,6 +162,14 @@ func TestSlice(t *testing.T) {
 		S(s, ",", func(b bool) Node {
 			return N("code", b)
 		}))
+	assert.Equal(t,
+		[]Node{
+			{"code", nil, []any{true}},
+			{"code", nil, []any{false}},
+		},
+		S(s, "", func(b bool) Node {
+			return N("code", b)
+		}))
 	assert.Nil(t, S[any](nil, "", nil))
 }
 
@@ -176,6 +182,14 @@ func TestSliceSeparator(t *testing.T) {
 			{"code", nil, []any{1, false}},
 		},
 		S2(s, "/", func(i int, b bool) Node {
+			return N("code", i, b)
+		}))
+	assert.Equal(t,
+		[]Node{
+			{"code", nil, []any{0, true}},
+			{"code", nil, []any{1, false}},
+		},
+		S2(s, "", func(i int, b bool) Node {
 			return N("code", i, b)
 		}))
 	assert.Nil(t, S2[any](nil, "", nil))

@@ -148,7 +148,7 @@ func debugRender(index []*deebugfile) []byte {
 							" ",
 						)
 					}),
-					render.IfSAny(f.txt == "", "-- ", ""),
+					render.IfElseS(f.txt == "", "-- ", ""),
 					render.IfS(f.Status/100 == 2, render.N("span.s2", "s", f.Status)),
 					render.IfS(f.Status/100 == 3, render.N("span.s3", "s", f.Status)),
 					render.IfS(f.Status/100 == 4, render.N("span.s4", "s", f.Status)),

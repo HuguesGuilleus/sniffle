@@ -40,18 +40,21 @@ type NodeAttrBuilder struct {
 func Na(tags string, key, value string) NodeAttrBuilder {
 	return NodeAttrBuilder{tags, attributes{{key, value}}}
 }
+
+// A adds an new attribute and returns na to chain method.
 func (na NodeAttrBuilder) A(key, value string) NodeAttrBuilder {
 	na.attr = append(na.attr, [2]string{key, value})
 	return na
 }
 
 // N method create a Node with configurate tag and attribute.
-// N is equivalent of N function for children.
+// N is equivalent of [N] function for children.
 func (na NodeAttrBuilder) N(children ...any) Node {
 	return Node{na.tags, na.attr, children}
 }
 
-// One HTML node, used to
+// One HTML node.
+// Use [Merge] function to render it.
 type Node struct {
 	tags string
 	attr attributes
@@ -66,13 +69,13 @@ type Node struct {
 //
 // Support children type:
 //   - []any
-//   - Node, NodeAttrBuilder, []Node: render as sub element
-//   - H, []H: append without change
-//   - Z, nil: do nothing
+//   - [Node], [][Node] or [NodeAttrBuilder]: render as child element
+//   - [H], []H: append without change
+//   - [Z], nil: do nothing
 //   - string: escape and print
-//   - Int: decimal print without space
+//   - [Int]: decimal print without space
 //   - int, uint: decimal print with narrow no-break space between thousand
-//   - time.Time: print in a <time datetime> element according to time zone.
+//   - [time.Time]: print in a <time datetime> element according to time zone.
 //   - other: call fmt.Sprint
 func N(tags string, children ...any) Node { return Node{tags, nil, children} }
 
@@ -87,14 +90,6 @@ func If(b bool, f func() Node) Node {
 	return Z
 }
 
-// Return b if b is true, else return Z.
-func IfS(b bool, n Node) Node {
-	if b {
-		return n
-	}
-	return Z
-}
-
 // If b is true, return yes call else return no call.
 func IfElse(b bool, yes, no func() Node) Node {
 	if b {
@@ -104,8 +99,16 @@ func IfElse(b bool, yes, no func() Node) Node {
 	}
 }
 
-// If b is true, return yes, else return no.
-func IfSAny(b bool, yes, no any) any {
+// IfS returns v value when b is true, else return nil.
+func IfS(b bool, v any) any {
+	if b {
+		return v
+	}
+	return nil
+}
+
+// IfElseS returns yes value when b is true, else returns no value.
+func IfElseS(b bool, yes, no any) any {
 	if b {
 		return yes
 	} else {
@@ -116,6 +119,7 @@ func IfSAny(b bool, yes, no any) any {
 // Merge all nodes to a HTML page.
 // So the root should be a HTML tag.
 // Add doctype tag.
+// `html` and `body` tag are not closed because minify.
 func Merge(root Node) []byte {
 	h := make([]byte, 0)
 	h = append(h, `<!DOCTYPE html>`...)
@@ -181,9 +185,11 @@ func (node *Node) mergeSlice(h []byte) []byte {
 
 	// End tag
 	switch tagName {
-	// Source: https://html.spec.whatwg.org/multipage/syntax.html#elements-2
 	case "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr":
+		// Source: https://html.spec.whatwg.org/multipage/syntax.html#elements-2
 		// Do not close
+	case "html", "body":
+		// we chose to not close these tag
 	default:
 		h = append(h, '<', '/')
 		h = append(h, tagName...)
@@ -298,6 +304,8 @@ func espaceString(h []byte, s string) []byte {
 	return h
 }
 
+// Map creates a node for each field of m.
+// The keys are sorted before call f.
 func Map[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
 	keys := make([]K, 0, len(m))
 	for k := range m {
@@ -307,6 +315,8 @@ func Map[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
 	return mapCall(keys, m, f)
 }
 
+// MapReverse creates a node for each field of m.
+// The keys are sorted in reverse order before call f.
 func MapReverse[K cmp.Ordered, V any](m map[K]V, f func(k K, v V) Node) []Node {
 	keys := make([]K, 0, len(m))
 	for k := range m {
@@ -326,37 +336,47 @@ func mapCall[K cmp.Ordered, V any](keys []K, m map[K]V, f func(k K, v V) Node) [
 }
 
 // S render a slice with f(item) result and between the separator.
-// Return nil is the slice is empty.
+// Return nil if the slice is empty.
 func S[V any](s []V, separator H, f func(v V) Node) []Node {
 	if len(s) == 0 {
 		return nil
 	}
-	sep := Z
-	if separator != "" {
-		sep = N("", separator)
+	if separator == "" {
+		nodes := make([]Node, len(s))
+		for i, v := range s {
+			nodes[i] = f(v)
+		}
+		return nodes
+	} else {
+		sep := N("", separator)
+		nodes := make([]Node, 1, len(s)*2-1)
+		nodes[0] = f(s[0])
+		for _, v := range s[1:] {
+			nodes = append(nodes, sep, f(v))
+		}
+		return nodes
 	}
-	nodes := make([]Node, 0, len(s)*2-1)
-	nodes = append(nodes, f(s[0]))
-	for _, v := range s[1:] {
-		nodes = append(nodes, sep, f(v))
-	}
-	return nodes
 }
 
 // S render a slice with f(index, item) result and between the separator.
-// Return nil is the slice is empty.
+// Return nil if the slice is empty.
 func S2[V any](s []V, separator H, f func(i int, v V) Node) []Node {
 	if len(s) == 0 {
 		return nil
 	}
-	sep := Z
-	if separator != "" {
-		sep = N("", separator)
+	if separator == "" {
+		nodes := make([]Node, len(s))
+		for i, v := range s {
+			nodes[i] = f(i, v)
+		}
+		return nodes
+	} else {
+		sep := N("", separator)
+		nodes := make([]Node, 1, len(s)*2-1)
+		nodes[0] = f(0, s[0])
+		for i, v := range s[1:] {
+			nodes = append(nodes, sep, f(i+1, v))
+		}
+		return nodes
 	}
-	nodes := make([]Node, 0, len(s)*2-1)
-	nodes = append(nodes, f(0, s[0]))
-	for i, v := range s[1:] {
-		nodes = append(nodes, sep, f(i+1, v))
-	}
-	return nodes
 }
