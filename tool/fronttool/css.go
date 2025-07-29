@@ -1,3 +1,4 @@
+// Tools collection to minify and prepare assets.
 package fronttool
 
 import (
@@ -14,7 +15,12 @@ import (
 	"github.com/tdewolff/minify/v2/css"
 )
 
-// Merge all **.css files from fsys.
+// Merge and minify all **.css files from fsys.
+// The paths are sorted before the merge.
+//
+// Replace all `(_[\w\d]+)` with value of map m.
+//
+// It panics on error.
 func CSS(fsys fs.FS, m map[string]string) []byte {
 	paths := make([]string, 0)
 	err := fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
@@ -55,7 +61,9 @@ func CSS(fsys fs.FS, m map[string]string) []byte {
 	return out.Bytes()
 }
 
-// Sha256 of the data for a shortHash (use it in file name) the integrity checksum.
+// FileSum hashs with sha256 the data.
+//   - shortHash return is the hex of the hash.
+//   - integrity is the integrity use as html attribute.
 func FileSum(data []byte) (shortHash string, integrity string) {
 	hash := sha256.Sum256(data)
 	shortHash = hex.EncodeToString(hash[:4])

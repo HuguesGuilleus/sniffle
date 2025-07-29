@@ -8,7 +8,7 @@ import (
 )
 
 // Create a inline JS from multiple files.
-// Use strict JS.
+// Use strict JS and wrap all in a closure with document as argument.
 // It panic if an minify error occurs.
 func InlineJs(chuncks ...[]byte) render.H {
 	src := bytes.Buffer{}
