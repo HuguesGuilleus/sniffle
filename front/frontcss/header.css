@@ -31,14 +31,14 @@ header {
 	margin: 0 _sp _sp 0;
 	padding: _spThin;
 	font-size: x-large;
-	background: _colorA;
+	background: var(--color);
 }
 
 .headerTitle {
 	display: table;
 	padding: _spThin;
 	font-size: xx-large;
-	background: _colorA;
+	background: var(--color);
 }
 
 .headerLangs {
@@ -53,12 +53,12 @@ header {
 }
 
 .summary {
-	border: dashed _line1 _colorA;
+	border: dashed _line1 var(--color);
 	padding: _sp;
 	margin-bottom: _sp;
 }
 
 .summary hr {
 	border: none;
-	border-top: dashed _line1 _colorA;
+	border-top: dashed _line1 var(--color);
 }

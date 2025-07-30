@@ -11,8 +11,8 @@
 }
 
 .doc:hover {
-	background: _colorA;
-	border-color: _colorA;
+	background: var(--color);
+	border-color: var(--color);
 	text-decoration: underline;
 }
 

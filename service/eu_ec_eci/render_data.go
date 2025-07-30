@@ -116,11 +116,11 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 					render.S(thresholds[:], "", func(threshold *Threshold) render.Node {
 						return render.N("",
 							render.N("h2", DATA_THRESHOLD.From, " ", threshold.Begin),
+							render.N("p.noindent", threshold.Legal.Render(l)),
 							render.N("div.edito",
 								render.N("div.editoT", DATA_THRESHOLD.Calculation),
 								tr.EU_EC_ECI.ThresholdRule[threshold.Rule],
 							),
-							render.N("p.noindent", threshold.Legal.Render(l)),
 						)
 					}),
 				),

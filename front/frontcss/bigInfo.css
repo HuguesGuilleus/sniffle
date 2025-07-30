@@ -4,7 +4,7 @@
 	gap: _spThin _sp;
 	align-items: center;
 	margin-bottom: _sp;
-	border: solid _line2 _colorA;
+	border: solid _line2 var(--color);
 	padding: _spThin;
 }
 

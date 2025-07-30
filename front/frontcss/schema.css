@@ -1,5 +1,5 @@
 pre.sch {
-	border: dashed _line2;
+	border: dashed _line2 var(--color);
 	padding: _spThin;
 	tab-size: 4ex;
 	font-family: "Noto Sans Mono", monospace;
@@ -7,7 +7,7 @@ pre.sch {
 
 pre.sch hr {
 	border: none;
-	border-top: dashed _line2;
+	border-top: dashed _line2 var(--color);
 }
 
 .sch-base,

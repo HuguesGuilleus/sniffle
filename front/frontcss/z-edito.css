@@ -1,17 +1,7 @@
-.edito #toc,
-.edito .summary,
-.edito h1,
-.edito h2,
-.edito hr,
-.edito pre.sch {
-	border-color: _colorEdito;
+.edito {
+	--color: _colorEdito;
 }
 
-.edito .headerID,
-.edito .headerTitle,
-.edito .tag {
-	background: _colorEdito;
-}
 
 div.edito {
 	border: solid _line2 _colorEdito;

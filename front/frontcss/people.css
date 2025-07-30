@@ -5,7 +5,7 @@
 
 .people {
 	margin-bottom: _sp1;
-	border: _colorA dotted _line2;
+	border: var(--color) dotted _line2;
 	padding: _spThin;
 	border-radius: _sp;
 	background:

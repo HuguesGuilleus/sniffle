@@ -15,7 +15,7 @@ input[type=search] {
 	display: grid;
 	grid-template-columns: 1fr auto;
 	grid-gap: 0 _sp;
-	border: solid _line2 _colorA;
+	border: solid _line2 var(--color);
 	padding: _spThin;
 	margin-top: _sp;
 	text-decoration: none;

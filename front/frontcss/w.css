@@ -20,7 +20,7 @@
 }
 
 #toc {
-	border: solid _line2 _colorA;
+	border: solid _line2 var(--color);
 	margin-bottom: _sp;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .wi:hover {
-	background: _colorA;
+	background: var(--color);
 }
 
 .wi2 {

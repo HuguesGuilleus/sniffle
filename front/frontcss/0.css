@@ -2,6 +2,10 @@
 	display: none !important;
 }
 
+:root {
+	--color: _colorA;
+}
+
 body {
 	display: flex;
 	flex-direction: column;
@@ -13,13 +17,13 @@ body {
 }
 
 h1 {
-	border: _colorA _line2;
+	border: var(--color) _line2;
 	border-style: solid none;
 }
 
 h2 {
 	display: table;
-	border: _colorA _line2;
+	border: var(--color) _line2;
 	border-style: double none;
 }
 
@@ -63,7 +67,7 @@ tr:hover {
 .box {
 	display: inline-block;
 	padding: _line1 _sp;
-	background: _colorA;
+	background: var(--color);
 	align-content: center;
 }
 
@@ -97,7 +101,7 @@ p.noindent {
 }
 
 hr {
-	border-color: _colorA;
+	border-color: var(--color);
 	width: 100%;
 }
 
@@ -112,12 +116,12 @@ pre {
 	border-radius: _spThin;
 	padding: 0 _spThin;
 	font-weight: bolder;
-	background: _colorA;
+	background: var(--color);
 }
 
 .active {
 	padding: 0 _spThin;
-	background: _colorA;
+	background: var(--color);
 }
 
 .logo {
