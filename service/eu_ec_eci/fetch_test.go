@@ -272,9 +272,9 @@ var fetcher = fetch.Test(
 )
 
 func TestFetchIndex(t *testing.T) {
-	wf, to := tool.NewTestTool(fetcher)
+	wfs, to := tool.NewTestTool(fetcher)
 	items := fetchAcceptedIndex(to)
-	assert.True(t, wf.NoCalled())
+	assert.Empty(t, wfs)
 	assert.Equal(t, []indexItem{
 		{id: 8846, year: 2024, number: 8},
 		{id: 8845, year: 2024, number: 9},
@@ -291,7 +291,7 @@ func TestFetchDetail(t *testing.T) {
 		year:   2024,
 		number: 9,
 	})
-	assert.True(t, wfs.NoCalled())
+	assert.Empty(t, wfs)
 
 	assert.Equal(t, &ECIOut{
 		ID:         648,

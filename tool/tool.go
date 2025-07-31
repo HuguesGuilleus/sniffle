@@ -9,7 +9,6 @@ import (
 	"log/slog"
 	"os"
 	"sniffle/tool/fetch"
-	"sniffle/tool/writefile"
 	"sniffle/tool/writefs"
 	"strings"
 	"time"
@@ -20,7 +19,7 @@ const NoticeLevel = slog.LevelInfo + 2
 type Config struct {
 	LogHandler slog.Handler
 
-	Writefile writefile.WriteFile
+	Writefile writefs.Creator
 	Fetcher   []fetch.Fetcher
 
 	LongTasksCache writefs.CreateOpener
@@ -50,7 +49,7 @@ func (config *Config) Run(name string, do func(*Tool)) {
 type Tool struct {
 	*slog.Logger
 
-	writefile writefile.WriteFile
+	writefile writefs.Creator
 	fetcher   []fetch.Fetcher
 
 	longTasksCache writefs.CreateOpener
@@ -70,7 +69,7 @@ func New(config *Config) *Tool {
 }
 
 func (t *Tool) WriteFile(path string, data []byte) {
-	err := t.writefile.WriteFile(path, data)
+	err := writefs.WriteFile(t.writefile, path, data)
 	if err != nil {
 		t.Warn("out.fail", "path", path, "err", err.Error())
 	} else {
@@ -142,8 +141,8 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 	return out
 }
 
-func NewTestTool(fetcher fetch.Fetcher) (writefile.T, *Tool) {
-	wfs := writefile.T{}
+func NewTestTool(fetcher fetch.Fetcher) (writefs.T, *Tool) {
+	wfs := writefs.T{}
 	return wfs, New(&Config{
 		LogHandler: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelWarn,

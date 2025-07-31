@@ -11,8 +11,8 @@ import (
 )
 
 func TestFetchRefused(t *testing.T) {
-	wf, to := tool.NewTestTool(fetcher)
-	defer assert.True(t, wf.NoCalled())
+	wfs, to := tool.NewTestTool(fetcher)
+	defer assert.Empty(t, wfs)
 	assert.Equal(t, []*ECIRefused{
 		{
 			ID:         42,

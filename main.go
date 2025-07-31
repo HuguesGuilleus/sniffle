@@ -18,7 +18,7 @@ import (
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/render"
-	"sniffle/tool/writefile"
+	"sniffle/tool/writefs"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	globalBegin := time.Now()
 
 	config := tool.CLI(nil)
-	writerSitemap := writefile.Sitemap(&config.Writefile)
+	writerSitemap := writefs.Sitemap(&config.Writefile)
 	config.LongTasksMap[rimage.NameResizeJpeg] = rimage.FetchResizeJpeg
 
 	// Service call
@@ -41,7 +41,7 @@ func main() {
 	config.Run("//eu_eca", eu_eca.Do)
 	config.Run("//eu_parl_mep", eu_parl_mep.Do)
 
-	config.Writefile.WriteFile("/sitemap.txt", writerSitemap.Sitemap(common.Host))
+	writefs.WriteFile(config.Writefile, "/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
 	// Make cache debug index.
 	if tool.DevMode {

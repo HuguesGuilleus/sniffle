@@ -29,7 +29,16 @@ type Creator interface {
 	Create(path string) (io.WriteCloser, error)
 }
 
+// A sub type of [Creator] with one write.
+type WriteFileFS interface {
+	WriteFile(path string, data []byte) error
+}
+
 func WriteFile(c Creator, path string, data []byte) error {
+	if fs, ok := c.(WriteFileFS); ok {
+		return fs.WriteFile(path, data)
+	}
+
 	w, err := c.Create(path)
 	if err != nil {
 		return err

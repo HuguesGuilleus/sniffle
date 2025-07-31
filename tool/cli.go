@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"sniffle/myhandler"
 	"sniffle/tool/fetch"
-	"sniffle/tool/writefile"
 	"sniffle/tool/writefs"
 	"time"
 )
@@ -40,7 +39,7 @@ func CLI(delay map[string]time.Duration) *Config {
 		config.LogHandler = myhandler.New(logFile, level.Level)
 	}
 
-	config.Writefile = writefile.Os(*out)
+	config.Writefile = writefs.Os(*out)
 
 	if *cacheRemove {
 		if err := os.RemoveAll(filepath.Join(*cache, "http")); err != nil {
