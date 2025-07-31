@@ -3,7 +3,8 @@ package sch
 import (
 	"fmt"
 	"math"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type arrayType struct {

@@ -7,10 +7,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	"slices"
-	"sniffle/tool/render"
-	"sniffle/tool/writefs"
 	"strconv"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 const (

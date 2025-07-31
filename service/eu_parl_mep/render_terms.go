@@ -2,11 +2,12 @@ package eu_parl_mep
 
 import (
 	"fmt"
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func renderTerm(t *tool.Tool, l language.Language, term int, list []mep) {

@@ -5,10 +5,11 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"sniffle/myhandler"
-	"sniffle/tool/fetch"
-	"sniffle/tool/writefs"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/myhandler"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 // Add some flags, call [flag.Parse], and use result in the config.

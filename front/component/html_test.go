@@ -1,10 +1,10 @@
 package component
 
 import (
-	"sniffle/common/language"
-	"sniffle/tool/render"
 	"testing"
 
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 

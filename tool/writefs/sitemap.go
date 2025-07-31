@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"io"
 	"slices"
-	"sniffle/tool/render"
 	"strings"
 	"sync"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 // SitemapWatcher collect all HTML path to create a sitemap.

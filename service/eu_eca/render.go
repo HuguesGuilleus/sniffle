@@ -2,13 +2,14 @@ package eu_eca
 
 import (
 	"slices"
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/render"
 	"strconv"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func renderReportIndex(t *tool.Tool, l language.Language, reportByYear map[int][]*report) {

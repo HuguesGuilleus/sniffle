@@ -3,9 +3,10 @@ package front
 
 import (
 	"embed"
-	"sniffle/common"
-	"sniffle/tool"
-	"sniffle/tool/fronttool"
+
+	"github.com/HuguesGuilleus/sniffle/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fronttool"
 )
 
 //go:embed favicon.ico

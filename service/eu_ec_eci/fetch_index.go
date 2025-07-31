@@ -1,9 +1,9 @@
 package eu_ec_eci
 
 import (
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/sch"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/sch"
 )
 
 const acceptedIndexURL = "https://register.eci.ec.europa.eu/core/api/register/search/ALL/EN/0/0"

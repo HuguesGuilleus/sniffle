@@ -3,9 +3,10 @@ package fetch
 import (
 	"fmt"
 	"slices"
-	"sniffle/tool/writefs"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 // Clear cache.

@@ -2,11 +2,12 @@
 package release
 
 import (
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/tool"
-	"sniffle/tool/render"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 var steps = []render.Node{

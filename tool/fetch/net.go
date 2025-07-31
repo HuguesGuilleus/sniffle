@@ -3,10 +3,11 @@ package fetch
 import (
 	"bytes"
 	"net/http"
-	"sniffle/tool/writefs"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 type netFetcher struct {

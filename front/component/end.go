@@ -2,11 +2,12 @@ package component
 
 import (
 	_ "embed"
-	"sniffle/common/language"
-	"sniffle/front/translate"
-	"sniffle/tool/fronttool"
-	"sniffle/tool/render"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool/fronttool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 const (

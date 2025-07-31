@@ -1,7 +1,7 @@
 package fetch
 
 import (
-	"sniffle/tool/writefs"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 type cacheFetcher struct {

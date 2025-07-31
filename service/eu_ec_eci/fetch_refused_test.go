@@ -1,12 +1,12 @@
 package eu_ec_eci
 
 import (
-	"sniffle/common/language"
-	"sniffle/tool"
-	"sniffle/tool/render"
 	"testing"
 	"time"
 
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 

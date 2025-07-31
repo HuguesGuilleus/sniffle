@@ -1,9 +1,9 @@
 package sch
 
 import (
-	"sniffle/tool/render"
 	"testing"
 
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 

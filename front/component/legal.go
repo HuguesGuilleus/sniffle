@@ -1,9 +1,9 @@
 package component
 
 import (
-	"sniffle/common/language"
-	"sniffle/front/translate"
-	"sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Legal struct {

@@ -3,8 +3,9 @@ package translate
 import (
 	"cmp"
 	"slices"
-	"sniffle/common/country"
-	"sniffle/common/language"
+
+	"github.com/HuguesGuilleus/sniffle/common/country"
+	"github.com/HuguesGuilleus/sniffle/common/language"
 )
 
 // Get countries sorted in language l.

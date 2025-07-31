@@ -1,10 +1,11 @@
 package eu_ec_eci
 
 import (
-	"sniffle/common/country"
-	"sniffle/front/component"
-	"sniffle/tool/render"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/common/country"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Threshold struct {

@@ -2,8 +2,8 @@ package fronttool
 
 import (
 	"bytes"
-	"sniffle/tool/render"
 
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/tdewolff/minify/v2/js"
 )
 

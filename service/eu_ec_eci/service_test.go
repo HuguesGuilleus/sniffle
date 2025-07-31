@@ -3,12 +3,12 @@ package eu_ec_eci
 import (
 	"io"
 	"log/slog"
-	"sniffle/common/language"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/writefs"
 	"testing"
 
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 	"github.com/stretchr/testify/assert"
 )
 

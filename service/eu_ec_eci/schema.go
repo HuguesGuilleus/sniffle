@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"math"
 	"reflect"
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/tool/render"
-	"sniffle/tool/sch"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/tool/sch"
 )
 
 var dateType = sch.Time("02/01/2006")

@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"sniffle/tool/render"
 	"strconv"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 const (

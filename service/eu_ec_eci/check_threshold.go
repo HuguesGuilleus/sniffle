@@ -2,8 +2,9 @@ package eu_ec_eci
 
 import (
 	"bytes"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func checkThreashold(t *tool.Tool) {

@@ -2,16 +2,16 @@ package eu_ec_eci
 
 import (
 	"net/url"
-	"sniffle/common/country"
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
 	"testing"
 	"time"
 
+	"github.com/HuguesGuilleus/sniffle/common/country"
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 

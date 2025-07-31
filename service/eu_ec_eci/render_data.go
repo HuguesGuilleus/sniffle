@@ -1,12 +1,12 @@
 package eu_ec_eci
 
 import (
-	"sniffle/common/country"
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/common/country"
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func renderDataExtraDelay(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language) {

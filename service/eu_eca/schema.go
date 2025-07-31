@@ -2,10 +2,11 @@ package eu_eca
 
 import (
 	"fmt"
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/tool/render"
-	"sniffle/tool/sch"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/tool/sch"
 )
 
 var annualReportsType = sch.Array(sch.Map(

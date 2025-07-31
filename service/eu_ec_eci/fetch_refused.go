@@ -3,15 +3,16 @@ package eu_ec_eci
 import (
 	"net/url"
 	"slices"
-	"sniffle/common/language"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
-	"sniffle/tool/securehtml"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/tool/securehtml"
 )
 
 func fetchRefusedAll(t *tool.Tool) []*ECIRefused {

@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"sniffle/tool/render"
 	"strings"
 	"testing"
 
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 

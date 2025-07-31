@@ -9,15 +9,16 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
-	"sniffle/common/language"
-	"sniffle/common/rimage"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
-	"sniffle/tool/securehtml"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/common/rimage"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/tool/securehtml"
 )
 
 type report struct {

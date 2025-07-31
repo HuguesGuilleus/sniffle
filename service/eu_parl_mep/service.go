@@ -2,9 +2,10 @@ package eu_parl_mep
 
 import (
 	"fmt"
-	"sniffle/front/lredirect"
-	"sniffle/front/translate"
-	"sniffle/tool"
+
+	"github.com/HuguesGuilleus/sniffle/front/lredirect"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 const termLen = 11

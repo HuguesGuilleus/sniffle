@@ -3,7 +3,8 @@ package sch
 import (
 	"errors"
 	"fmt"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type mapType struct {

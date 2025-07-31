@@ -3,9 +3,10 @@ package eu_parl_mep
 import (
 	"encoding/xml"
 	"fmt"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 const (

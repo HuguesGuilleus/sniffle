@@ -1,8 +1,9 @@
 package sch
 
 import (
-	"sniffle/tool/render"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 /* AND */

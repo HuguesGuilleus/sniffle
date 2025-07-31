@@ -3,7 +3,8 @@ package component
 import (
 	"encoding/json"
 	"fmt"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 // Print the v in JSON, and render in a .working component.

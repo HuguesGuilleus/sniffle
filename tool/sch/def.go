@@ -1,7 +1,7 @@
 // sch check that data observe a schema.
 package sch
 
-import "sniffle/tool/render"
+import "github.com/HuguesGuilleus/sniffle/tool/render"
 
 type defType struct {
 	id string

@@ -1,6 +1,6 @@
 package eu_ec_eci
 
-import "sniffle/front/component"
+import "github.com/HuguesGuilleus/sniffle/front/component"
 
 var extraDelay_2020_9226 = component.Legal{
 	Num:   "C(2020)9226",

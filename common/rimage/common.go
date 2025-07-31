@@ -4,9 +4,10 @@ package rimage
 import (
 	"bytes"
 	"image"
-	"sniffle/tool"
-	"sniffle/tool/render"
 	"strconv"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 const (

@@ -1,6 +1,6 @@
 package sch
 
-import "sniffle/tool/render"
+import "github.com/HuguesGuilleus/sniffle/tool/render"
 
 type Type interface {
 	// Check if a value math the pattern.

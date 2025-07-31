@@ -5,10 +5,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"sniffle/tool/fetch"
 	"testing"
 	"time"
 
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"github.com/stretchr/testify/assert"
 )
 

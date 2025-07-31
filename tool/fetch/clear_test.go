@@ -5,11 +5,11 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"sniffle/tool/fetch"
-	"sniffle/tool/writefs"
 	"testing"
 	"time"
 
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 	"github.com/stretchr/testify/assert"
 )
 

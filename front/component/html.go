@@ -2,11 +2,11 @@
 package component
 
 import (
-	"sniffle/common"
-	"sniffle/common/language"
-	"sniffle/front"
-	"sniffle/front/translate"
-	"sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/common"
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 // Meta information about the page

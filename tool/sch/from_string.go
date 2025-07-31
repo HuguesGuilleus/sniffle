@@ -6,9 +6,10 @@ import (
 	"mime"
 	"net/url"
 	"regexp"
-	"sniffle/tool/render"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 var (

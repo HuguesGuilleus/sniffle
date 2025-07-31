@@ -3,8 +3,9 @@ package tool
 import (
 	"encoding/json"
 	"io"
-	"sniffle/tool/fetch"
-	"sniffle/tool/sch"
+
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/sch"
 )
 
 // Fetch and decode in JSON to dto.

@@ -7,9 +7,9 @@ import (
 	"image/jpeg"
 	_ "image/jpeg"
 	_ "image/png"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"github.com/nfnt/resize"
 )
 

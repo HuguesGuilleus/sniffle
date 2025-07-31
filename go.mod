@@ -1,12 +1,12 @@
-module sniffle
+module github.com/HuguesGuilleus/sniffle
 
 go 1.24.3
 
 require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/stretchr/testify v1.10.0
-	github.com/tdewolff/minify/v2 v2.23.8
-	golang.org/x/net v0.41.0
+	github.com/tdewolff/minify/v2 v2.23.10
+	golang.org/x/net v0.42.0
 )
 
 require (

@@ -5,10 +5,11 @@ import (
 	"os"
 	"reflect"
 	"slices"
-	"sniffle/common/language"
-	"sniffle/tool/render"
 	"strings"
 	"testing"
+
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func TestGenerate(t *testing.T) {

@@ -3,8 +3,9 @@ package securehtml
 import (
 	"bytes"
 	"net/url"
-	"sniffle/tool/render"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 
 	"golang.org/x/net/html"
 )

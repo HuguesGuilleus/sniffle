@@ -1,10 +1,10 @@
 package eu_parl_mep
 
 import (
-	"sniffle/common/language"
-	"sniffle/front/component"
-	"sniffle/front/translate"
-	"sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func idNamespace(l language.Language) render.Node {

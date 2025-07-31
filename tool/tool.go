@@ -8,10 +8,11 @@ import (
 	"io/fs"
 	"log/slog"
 	"os"
-	"sniffle/tool/fetch"
-	"sniffle/tool/writefs"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 const NoticeLevel = slog.LevelInfo + 2

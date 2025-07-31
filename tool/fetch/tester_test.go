@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"io"
 	"net/http"
-	"sniffle/tool/fetch"
 	"testing"
 
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"github.com/stretchr/testify/assert"
 )
 

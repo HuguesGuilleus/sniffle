@@ -4,9 +4,10 @@ package translate
 import (
 	_ "embed"
 	"encoding/json"
-	"sniffle/common/country"
-	"sniffle/common/language"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/common/country"
+	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Translation struct {

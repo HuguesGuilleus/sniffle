@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
-	"sniffle/tool/render"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"

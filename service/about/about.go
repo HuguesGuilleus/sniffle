@@ -2,11 +2,11 @@
 package about
 
 import (
-	"sniffle/front/component"
-	"sniffle/front/lredirect"
-	"sniffle/front/translate"
-	"sniffle/tool"
-	"sniffle/tool/render"
+	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/lredirect"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 // Write about pages.
