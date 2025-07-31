@@ -44,6 +44,8 @@ func Footer(l language.Language, flag uint) render.Node {
 			time.Now(),
 			render.H("<br>"),
 			render.Na("a", "href", l.Path("/about/")).N(translate.T[l].GLOBAL.AboutTextLink),
+			" ",
+			render.Na("a", "href", "https://github.com/HuguesGuilleus/sniffle").N("GitHub"),
 		),
 		scripts[flag],
 	)
