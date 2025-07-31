@@ -141,14 +141,14 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 	return out
 }
 
-func NewTestTool(fetcherMap map[string]*fetch.TestResponse) (writefile.T, *Tool) {
-	wf := writefile.T{}
-	return wf, New(&Config{
+func NewTestTool(fetcher fetch.Fetcher) (writefile.T, *Tool) {
+	wfs := writefile.T{}
+	return wfs, New(&Config{
 		LogHandler: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelWarn,
 		}),
 
-		Writefile: wf,
-		Fetcher:   []fetch.Fetcher{fetch.Test(fetcherMap)},
+		Writefile: wfs,
+		Fetcher:   []fetch.Fetcher{fetcher},
 	})
 }

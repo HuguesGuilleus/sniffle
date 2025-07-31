@@ -23,11 +23,13 @@ func TestRequestID(t *testing.T) {
 	id := "150ee78242120c0e38fc747a175c56068c2f07f8b0c57345a7ee6cdd5a172d05"
 	assert.Equal(t, id, r.ID())
 	assert.Equal(t, id, r.ID())
-	assert.Equal(t, id, r.ID())
 	assert.Equal(t, id, r.id)
+	assert.Equal(t, "GET", r.Method)
 
 	r = &Request{URL: u}
 	r.ID()
 	assert.Equal(t, "GET", r.Method)
 	assert.NotNil(t, r.Header)
+
+	assert.Equal(t, `err://http://example.com/%25%25`, URL("http://example.com/%%").URL.String())
 }

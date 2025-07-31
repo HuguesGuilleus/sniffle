@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// Information about a request and response, saved in cache file or used for the test.
 type Meta struct {
 	Time time.Time `json:"time"`
 
@@ -23,10 +24,15 @@ type Meta struct {
 	Status         int         `json:"status"`
 	ResponseHeader http.Header `json:"responseHeader"`
 
+	// Response body used only for test
+	ResponseBody []byte `json:"-"`
+
 	id   string `json:"-"`
 	path string `json:"-"`
 }
 
+// Calculate the ID with [Request.ID].
+// Cache the id, so you must not edit m after this method call.
 func (m *Meta) ID() string {
 	if m.id != "" {
 		return m.id
@@ -42,6 +48,8 @@ func (m *Meta) ID() string {
 	return m.id
 }
 
+// Return the path where save the request.
+// Use [Meta.ID] method, so you must not edit m after this method call.
 func (m *Meta) Path() string {
 	if m.path != "" {
 		return m.path
@@ -53,6 +61,8 @@ func (m *Meta) Path() string {
 	return m.path
 }
 
+// Write meta information then response body into w writer.
+// See README.md for format details.
 func SaveHTTP(request *Request, response *Response, now time.Time, w io.Writer) error {
 	defer response.Body.Close()
 
@@ -103,7 +113,7 @@ func ReadMeta(r io.ReadCloser) (*Meta, error) {
 }
 
 // Read only header of the file, then you can read the body.
-func ReadOnlyMeta(r io.ReadCloser) (*Meta, error) {
+func ReadOnlyMeta(r io.Reader) (*Meta, error) {
 	head := [8]byte{}
 	if _, err := io.ReadFull(r, head[:]); err != nil {
 		return nil, err

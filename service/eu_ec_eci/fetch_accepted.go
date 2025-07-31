@@ -282,7 +282,7 @@ type signatureDTO struct {
 }
 
 func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
-	request := fetch.URL(fmt.Sprintf(detailURL, info.year, info.number))
+	request := fetch.Fmt(detailURL, info.year, info.number)
 	if tool.DevMode {
 		t.WriteFile(
 			fmt.Sprintf("/eu/ec/eci/%d/%d/src.json", info.year, info.number),

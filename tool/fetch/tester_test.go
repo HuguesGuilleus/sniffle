@@ -1,7 +1,9 @@
 package fetch_test
 
 import (
+	"bytes"
 	"io"
+	"net/http"
 	"sniffle/tool/fetch"
 	"testing"
 
@@ -9,37 +11,34 @@ import (
 )
 
 func TestTester(t *testing.T) {
-	f := fetch.Test(map[string]*fetch.TestResponse{
-		"https://example.org/dir/file": fetch.TRs(200, "Hello World!", "Content-Type", "text/plain; charset=utf-8"),
-
-		"PATCH\nhttps://example.org/api/title\n" +
-			"Content-Type: application/json\n" +
-			"\n" +
-			`{"title":"Yolo"}` + "\n": fetch.TR(205, nil, "X-Header"),
-	})
+	f := fetch.Test(
+		fetch.Fmt("https://example.org/dir/%s", "file").Ts(200, "Hello World!", "Content-Type", "text/plain; charset=utf-8"),
+		fetch.Rs("PATCH", "https://example.org/api/title", `{"title":"Yolo"}`, "Content-Type", "application/json").T(205, nil, "X-Header"),
+	)
 	assert.Equal(t, "test", f.Name())
 
 	response, err := f.Fetch(fetch.R("", "https://example.org/dir/file", nil))
 	assert.NoError(t, err)
-	assert.Equal(t, *fetch.TRs(200, "Hello World!", "Content-Type", "text/plain; charset=utf-8"), fromResponse(response))
+	assert.Equal(t, &fetch.Response{
+		Status: 200,
+		Header: http.Header{
+			"Content-Type": []string{"text/plain; charset=utf-8"},
+		},
+		Body: io.NopCloser(bytes.NewReader([]byte("Hello World!"))),
+	}, response)
 
 	response, err = f.Fetch(fetch.Rs("PATCH", "https://example.org/api/title",
 		`{"title":"Yolo"}`,
 		"Content-Type", "application/json",
 	))
 	assert.NoError(t, err)
-	assert.Equal(t, *fetch.TR(205, []byte{}), fromResponse(response))
-}
+	assert.Equal(t, &fetch.Response{
+		Status: 205,
+		Header: http.Header{},
+		Body:   io.NopCloser(bytes.NewReader(nil)),
+	}, response)
 
-func fromResponse(r *fetch.Response) fetch.TestResponse {
-	defer r.Body.Close()
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-	return fetch.TestResponse{
-		Status: r.Status,
-		Header: r.Header,
-		Body:   body,
-	}
+	response, err = f.Fetch(fetch.URL("https://example.org/404"))
+	assert.Error(t, err)
+	assert.Nil(t, response)
 }

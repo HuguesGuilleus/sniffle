@@ -15,8 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var fetcher = map[string]*fetch.TestResponse{
-	acceptedIndexURL: fetch.TRs(200, `{
+var fetcher = fetch.Test(
+	fetch.URL(acceptedIndexURL).Ts(200, `{
 		"entries": [
 			{
 				"id": 8846,
@@ -30,7 +30,7 @@ var fetcher = map[string]*fetch.TestResponse{
 			}
 		]
 	}`),
-	"https://register.eci.ec.europa.eu/core/api/register/details/2024/000009": fetch.TRs(200, `{
+	fetch.URL("https://register.eci.ec.europa.eu/core/api/register/details/2024/000009").Ts(200, `{
 		"status": "ONGOING",
 		"latestUpdateDate": "24/07/2024 13:52",
 		"deadline": "17/05/2025",
@@ -233,12 +233,12 @@ var fetcher = map[string]*fetch.TestResponse{
 			]
 		}
 	}`),
-	"https://register.eci.ec.europa.eu/core/api/register/search/REFUSED/EN/0/0": fetch.TRs(200, `{
+	fetch.URL("https://register.eci.ec.europa.eu/core/api/register/search/REFUSED/EN/0/0").Ts(200, `{
 		"entries": [
 			{"id": 42}
 		]
 	}`),
-	"https://register.eci.ec.europa.eu/core/api/register/details/42": fetch.TRs(200, `{
+	fetch.URL("https://register.eci.ec.europa.eu/core/api/register/details/42").Ts(200, `{
 		"refusalDate": "30/04/2019",
 		"refusalDocument": {
 			"id": 4373,
@@ -269,7 +269,7 @@ var fetcher = map[string]*fetch.TestResponse{
 			}
 		}]
 	}`),
-}
+)
 
 func TestFetchIndex(t *testing.T) {
 	wf, to := tool.NewTestTool(fetcher)
@@ -285,13 +285,13 @@ func TestFetchDetail(t *testing.T) {
 	defer func(langs []language.Language) { translate.Langs = langs }(translate.Langs)
 	translate.Langs = []language.Language{language.English, language.French}
 
-	wf, to := tool.NewTestTool(fetcher)
+	wfs, to := tool.NewTestTool(fetcher)
 	eci := fetchDetail(to, indexItem{
 		id:     648,
 		year:   2024,
 		number: 9,
 	})
-	assert.True(t, wf.NoCalled())
+	assert.True(t, wfs.NoCalled())
 
 	assert.Equal(t, &ECIOut{
 		ID:         648,

@@ -39,7 +39,6 @@ func TestSaveHTTP(t *testing.T) {
 	// Read
 	savedResponse, err := fetch.ReadResponse(io.NopCloser(&buff))
 	assert.NoError(t, err)
-
 	assert.Equal(t, &fetch.Response{
 		Status: 200,
 		Header: http.Header{
@@ -71,4 +70,10 @@ func TestSaveHTTP(t *testing.T) {
 			"content-type": []string{"application/json"},
 		},
 	}, m)
+
+	// multiple call to check cache of id and path.
+	assert.Equal(t, "e3f2c2ce79cb587525022983d1229bed07fbb499ff9efe02de768e2f173379bc", m.ID())
+	assert.Equal(t, "e3f2c2ce79cb587525022983d1229bed07fbb499ff9efe02de768e2f173379bc", m.ID())
+	assert.Equal(t, "https/example.com/e3f2c2ce79cb587525022983d1229bed07fbb499ff9efe02de768e2f173379bc.http", m.Path())
+	assert.Equal(t, "https/example.com/e3f2c2ce79cb587525022983d1229bed07fbb499ff9efe02de768e2f173379bc.http", m.Path())
 }

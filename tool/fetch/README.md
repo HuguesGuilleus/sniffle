@@ -4,7 +4,8 @@ Each request is saved in a separaated file.
 
 ## File path
 
-The path for `scheme://host/...` in base is `base/{scheme}/{host}/{ID}.http`
+The path for `scheme://host/...` in `base` directory is
+`base/{scheme}/{host}/{ID}.http`
 
 The ID is the SHA256 in hexadecimal of:
 
@@ -22,7 +23,7 @@ BODY...\n
 > A newline at end. The newline character is `\n` or `0x0A`. The header name is
 > `Aaaa-Bbbb-Cccc`.
 
-Example
+## Example
 
 ```txt
 GET

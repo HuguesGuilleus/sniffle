@@ -47,7 +47,7 @@ func Debug(cacheRoot string, keeper func(host string) int) error {
 	slices.SortFunc(index, func(a, b *deebugfile) int {
 		return cmp.Or(
 			cmp.Compare(a.RawURL, b.RawURL),
-			cmp.Compare(a.Path(), b.Path()),
+			cmp.Compare(a.ID(), b.ID()),
 		)
 	})
 

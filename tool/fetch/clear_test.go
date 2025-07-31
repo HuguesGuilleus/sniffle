@@ -1,6 +1,8 @@
 package fetch_test
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 	"os"
 	"sniffle/tool/fetch"
@@ -21,7 +23,13 @@ func TestClearCache(t *testing.T) {
 	assert.NoError(t, err)
 	fetch.SaveHTTP(
 		request,
-		fetch.TRs(200, "...", "H1", "v1", "H1", "v2").Response(),
+		&fetch.Response{
+			Status: 200,
+			Header: http.Header{
+				"H1": []string{"v1", "v2"},
+			},
+			Body: io.NopCloser(bytes.NewReader([]byte("..."))),
+		},
 		now,
 		f,
 	)

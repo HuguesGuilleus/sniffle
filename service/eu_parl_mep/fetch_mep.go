@@ -26,7 +26,7 @@ func fetchVersion(t *tool.Tool, term int) (version int) {
 			VersionLabel int `json:",string"`
 		}
 	}{}
-	if tool.FetchJSON(t, metaType, &dtoMeta, fetch.URL(fmt.Sprintf(metaURL, term))) {
+	if tool.FetchJSON(t, metaType, &dtoMeta, fetch.Fmt(metaURL, term)) {
 		return -1
 	}
 
