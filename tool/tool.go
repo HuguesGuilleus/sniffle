@@ -10,6 +10,7 @@ import (
 	"os"
 	"sniffle/tool/fetch"
 	"sniffle/tool/writefile"
+	"sniffle/tool/writefs"
 	"strings"
 	"time"
 )
@@ -22,7 +23,7 @@ type Config struct {
 	Writefile writefile.WriteFile
 	Fetcher   []fetch.Fetcher
 
-	LongTasksCache writefile.WriteReadFile
+	LongTasksCache writefs.CreateOpener
 	LongTasksMap   map[string]func(*Tool, []byte) ([]byte, error)
 }
 
@@ -52,7 +53,7 @@ type Tool struct {
 	writefile writefile.WriteFile
 	fetcher   []fetch.Fetcher
 
-	longTasksCache writefile.WriteReadFile
+	longTasksCache writefs.CreateOpener
 	longTasksMap   map[string]func(*Tool, []byte) ([]byte, error)
 }
 
@@ -116,7 +117,7 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 	id := hex.EncodeToString(idH[:])
 	path := name + "/" + id
 
-	if out, err := t.longTasksCache.ReadFile(path); err == nil {
+	if out, err := writefs.ReadAll(t.longTasksCache, path); err == nil {
 		t.Info("longtask.cache", "name", name, "id", id, "ref", logRef)
 		return out
 	} else if !errors.Is(err, fs.ErrNotExist) {
@@ -133,7 +134,7 @@ func (t *Tool) LongTask(name, logRef string, input []byte) []byte {
 	if err != nil {
 		t.Warn("longtask.err", "name", name, "id", id, "ref", logRef, "err", err.Error())
 		return nil
-	} else if err := t.longTasksCache.WriteFile(path, out); err != nil {
+	} else if err := writefs.WriteFile(t.longTasksCache, path, out); err != nil {
 		t.Warn("longtask.writeErr", "name", name, "id", id, "ref", logRef, "err", err.Error())
 	}
 
