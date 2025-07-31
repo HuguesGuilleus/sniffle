@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -46,8 +45,8 @@ func main() {
 
 	// Make cache debug index.
 	if tool.DevMode {
-		err := fetch.Debug(flag.CommandLine.Lookup("cache").Value.String(), func(host string) int {
-			switch host {
+		err := fetch.Debug(tool.CLICache(), func(m *fetch.Meta) int {
+			switch m.URL.Host {
 			case "register.eci.ec.europa.eu":
 				return fetch.DebugKeepIndex
 			default:

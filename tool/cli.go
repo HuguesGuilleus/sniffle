@@ -65,10 +65,16 @@ func CLI(delay map[string]time.Duration) *Config {
 		fetch.Net(nil, writefs.Os(*cache), delay),
 	}
 
-	config.LongTasksCache = writefile.Os(filepath.Join(*cache, "longtask"))
+	config.LongTasksCache = writefs.Os(filepath.Join(*cache, "longtask"))
 	config.LongTasksMap = make(map[string]func(*Tool, []byte) ([]byte, error))
 
 	return config
+}
+
+// Return the cache file system from CLI value.
+// It need to call CLI before.
+func CLICache() writefs.CompleteFS {
+	return writefs.Os(flag.CommandLine.Lookup("cache").Value.String())
 }
 
 type levelValue struct {
