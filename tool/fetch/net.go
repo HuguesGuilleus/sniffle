@@ -3,8 +3,7 @@ package fetch
 import (
 	"bytes"
 	"net/http"
-	"os"
-	"path/filepath"
+	"sniffle/tool/writefs"
 	"strings"
 	"sync"
 	"time"
@@ -12,14 +11,14 @@ import (
 
 type netFetcher struct {
 	roundTripper http.RoundTripper
-	cacheBase    string
+	cache        writefs.CreateOpener
 	// Sleep interval between each request
 	delayDuration map[string]time.Duration
 	delayChannels map[string]<-chan struct{}
 	delayMutex    sync.Mutex
 }
 
-func Net(roundTripper http.RoundTripper, cacheBase string, delay map[string]time.Duration) Fetcher {
+func Net(roundTripper http.RoundTripper, cache writefs.CreateOpener, delay map[string]time.Duration) Fetcher {
 	if roundTripper == nil {
 		roundTripper = http.DefaultTransport
 	}
@@ -31,7 +30,7 @@ func Net(roundTripper http.RoundTripper, cacheBase string, delay map[string]time
 	delay[""] = max(delay[""], 0)
 	return &netFetcher{
 		roundTripper:  roundTripper,
-		cacheBase:     filepath.Clean(cacheBase),
+		cache:         cache,
 		delayDuration: delay,
 		delayChannels: make(map[string]<-chan struct{}),
 	}
@@ -60,11 +59,8 @@ func (fetcher *netFetcher) Fetch(request *Request) (*Response, error) {
 		Body:   httpResponse.Body,
 	}
 
-	if err := os.MkdirAll(getDir(fetcher.cacheBase, request), 0o775); err != nil {
-		return nil, err
-	}
-	path := getPath(fetcher.cacheBase, request)
-	if f, err := os.Create(path); err != nil {
+	path := request.Path()
+	if f, err := fetcher.cache.Create(path); err != nil {
 		return nil, err
 	} else if err := SaveHTTP(request, response, time.Now(), f); err != nil {
 		return nil, err
@@ -72,7 +68,7 @@ func (fetcher *netFetcher) Fetch(request *Request) (*Response, error) {
 		return nil, err
 	}
 
-	f, err := os.Open(path)
+	f, err := fetcher.cache.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +76,14 @@ func (fetcher *netFetcher) Fetch(request *Request) (*Response, error) {
 }
 
 func (fetcher *netFetcher) wait(host string) func() {
+	delay, ok := time.Duration(0), false
+	for h := host; !ok; _, h, _ = strings.Cut(h, ".") {
+		delay, ok = fetcher.delayDuration[h]
+	}
+	if delay == 0 {
+		return func() {}
+	}
+
 	newChannel := make(chan struct{})
 
 	fetcher.delayMutex.Lock()
@@ -89,11 +93,6 @@ func (fetcher *netFetcher) wait(host string) func() {
 
 	if previousChannel != nil {
 		<-previousChannel
-	}
-
-	delay, ok := time.Duration(0), false
-	for h := host; !ok; _, h, _ = strings.Cut(h, ".") {
-		delay, ok = fetcher.delayDuration[h]
 	}
 
 	return func() {

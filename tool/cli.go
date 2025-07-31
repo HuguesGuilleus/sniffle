@@ -8,6 +8,7 @@ import (
 	"sniffle/myhandler"
 	"sniffle/tool/fetch"
 	"sniffle/tool/writefile"
+	"sniffle/tool/writefs"
 	"time"
 )
 
@@ -60,8 +61,8 @@ func CLI(delay map[string]time.Duration) *Config {
 	}
 
 	config.Fetcher = []fetch.Fetcher{
-		fetch.Cache(*cache),
-		fetch.Net(nil, *cache, delay),
+		fetch.Cache(writefs.Os(*cache)),
+		fetch.Net(nil, writefs.Os(*cache), delay),
 	}
 
 	config.LongTasksCache = writefile.Os(filepath.Join(*cache, "longtask"))

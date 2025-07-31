@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"sniffle/tool/fetch"
+	"sniffle/tool/writefs"
 	"testing"
 	"time"
 
@@ -47,12 +48,12 @@ func TestNetAndCache(t *testing.T) {
 	}
 
 	// Network
-	assert.Equal(t, "net", fetch.Net(nil, "", nil).Name())
-	testResponse(fetch.Net(fakeRoundTrip{}, "_cache", make(map[string]time.Duration)))
+	assert.Equal(t, "net", fetch.Net(nil, nil, nil).Name())
+	testResponse(fetch.Net(fakeRoundTrip{}, writefs.Os("_cache"), make(map[string]time.Duration)))
 
 	// Cache
-	assert.Equal(t, "cache", fetch.Cache("").Name())
-	testResponse(fetch.Cache("_cache"))
+	assert.Equal(t, "cache", fetch.Cache(nil).Name())
+	testResponse(fetch.Cache(writefs.Os("_cache")))
 }
 
 type fakeRoundTrip struct{}

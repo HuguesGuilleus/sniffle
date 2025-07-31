@@ -54,10 +54,10 @@ func (m *Meta) Path() string {
 	if m.path != "" {
 		return m.path
 	}
-	m.path = getPath("", &Request{
+	m.path = (&Request{
 		URL: m.URL,
 		id:  m.ID(),
-	})
+	}).Path()
 	return m.path
 }
 

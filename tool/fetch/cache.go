@@ -1,15 +1,19 @@
 package fetch
 
-import "os"
+import (
+	"sniffle/tool/writefs"
+)
 
-type cache string
+type cacheFetcher struct {
+	fs writefs.Opener
+}
 
-func Cache(cacheBase string) Fetcher { return cache(cacheBase) }
+func Cache(fs writefs.Opener) Fetcher { return &cacheFetcher{fs} }
 
-func (cache) Name() string { return "cache" }
+func (*cacheFetcher) Name() string { return "cache" }
 
-func (cache cache) Fetch(request *Request) (*Response, error) {
-	f, err := os.Open(getPath(string(cache), request))
+func (c *cacheFetcher) Fetch(request *Request) (*Response, error) {
+	f, err := c.fs.Open(request.Path())
 	if err != nil {
 		return nil, err
 	}

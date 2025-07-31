@@ -2,8 +2,9 @@ package fetch
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+	"slices"
+	"sniffle/tool/writefs"
+	"strings"
 	"time"
 )
 
@@ -12,15 +13,15 @@ import (
 // Each filter return a duration to keep the request.
 // If meta.Time < now+maxAge => remove it.
 // The filter should not the edit meta.
-func ClearCache(cacheBase string, filters ...func(*Meta) time.Duration) error {
-	m, err := filepath.Glob(filepath.Join(cacheBase, filepath.FromSlash("/*/*/*.http")))
+func ClearCache(fsys writefs.CompleteFS, filters ...func(*Meta) time.Duration) error {
+	paths, err := indexHTTPFiles(fsys)
 	if err != nil {
 		return err
 	}
 
 	now := time.Now()
-	for _, p := range m {
-		f, err := os.Open(p)
+	for _, p := range paths {
+		f, err := fsys.Open(p)
 		if err != nil {
 			return err
 		}
@@ -35,11 +36,21 @@ func ClearCache(cacheBase string, filters ...func(*Meta) time.Duration) error {
 		}
 
 		if meta.Time.Add(maxAge).Before(now) {
-			if err := os.Remove(p); err != nil {
+			if err := fsys.Remove(p); err != nil {
 				return fmt.Errorf("remove cache %q: %w", p, err)
 			}
 		}
 	}
 
 	return nil
+}
+
+func indexHTTPFiles(fsys writefs.CompleteFS) ([]string, error) {
+	index, err := fsys.FileIndex()
+	if err != nil {
+		return nil, err
+	}
+	index = slices.DeleteFunc(index, func(path string) bool { return !strings.HasSuffix(path, ".http") })
+	slices.Sort(index)
+	return index, nil
 }

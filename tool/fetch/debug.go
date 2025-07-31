@@ -6,10 +6,9 @@ import (
 	_ "embed"
 	"encoding/base64"
 	"fmt"
-	"os"
-	"path/filepath"
 	"slices"
 	"sniffle/tool/render"
+	"sniffle/tool/writefs"
 	"strconv"
 	"time"
 )
@@ -20,50 +19,38 @@ const (
 	DebugKeepData
 )
 
-type deebugfile struct {
-	*Meta
-	txt string
-}
-
 // Debug create cacheRoot/index.html with a index of all cache request.
 // The keeper return a const like [DebugKeepIgnore].
-func Debug(cacheRoot string, keeper func(host string) int) error {
-	index := []*deebugfile{}
-
-	paths, err := filepath.Glob(filepath.Join(cacheRoot, filepath.FromSlash("/*/*/*.http")))
+func Debug(fsys writefs.CompleteFS, keeper func(m *Meta) int) error {
+	paths, err := indexHTTPFiles(fsys)
 	if err != nil {
 		return err
 	}
+
+	index := []*Meta{}
 	for _, p := range paths {
-		meta, err := debugRead(p, keeper)
+		meta, err := debugRead(fsys, p, keeper)
 		if err != nil {
 			return err
-		}
-		if meta != nil {
+		} else if meta != nil {
 			index = append(index, meta)
 		}
 	}
 
-	slices.SortFunc(index, func(a, b *deebugfile) int {
+	slices.SortFunc(index, func(a, b *Meta) int {
 		return cmp.Or(
 			cmp.Compare(a.RawURL, b.RawURL),
 			cmp.Compare(a.ID(), b.ID()),
 		)
 	})
 
-	os.WriteFile(
-		filepath.Join(cacheRoot, "index.html"),
-		debugRender(index),
-		0o664,
-	)
-
-	return nil
+	return writefs.WriteFile(fsys, "index.html", debugRender(index))
 }
 
-func debugRead(path string, keeper func(host string) int) (*deebugfile, error) {
-	f, err := os.Open(path)
+func debugRead(fsys writefs.Opener, path string, keeper func(*Meta) int) (*Meta, error) {
+	f, err := fsys.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("debug read: %w", err)
 	}
 	defer f.Close()
 
@@ -72,25 +59,21 @@ func debugRead(path string, keeper func(host string) int) (*deebugfile, error) {
 		return nil, fmt.Errorf("read cache %q: %w", path, err)
 	}
 
-	switch keeper(meta.URL.Host) {
+	switch keeper(meta) {
 	case DebugKeepIgnore:
 		return nil, nil
 	case DebugKeepIndex:
-		return &deebugfile{
-			Meta: meta,
-		}, nil
+		return meta, nil
 	}
 
-	begin := [4096]byte{}
+	begin := make([]byte, 4096)
 	n, _ := f.Read(begin[:])
+	meta.ResponseBody = begin[:n]
 
-	return &deebugfile{
-		Meta: meta,
-		txt:  debugPrint(meta, begin[:n]),
-	}, nil
+	return meta, nil
 }
 
-func debugPrint(meta *Meta, begin []byte) string {
+func debugPrint(meta *Meta) []byte {
 	buff := bytes.Buffer{}
 
 	buff.WriteString(meta.Path())
@@ -115,9 +98,9 @@ func debugPrint(meta *Meta, begin []byte) string {
 	meta.ResponseHeader.Write(&buff)
 	buff.WriteString("\n")
 
-	buff.Write(begin)
+	buff.Write(meta.ResponseBody)
 
-	return buff.String()
+	return buff.Bytes()
 }
 
 //go:embed debug.css
@@ -126,7 +109,7 @@ var debugcss render.H
 //go:embed debug.js
 var debugjs render.H
 
-func debugRender(index []*deebugfile) []byte {
+func debugRender(index []*Meta) []byte {
 	return render.Merge(render.N("html",
 		render.N("head",
 			render.H(`<meta charset=utf-8>`),
@@ -136,27 +119,27 @@ func debugRender(index []*deebugfile) []byte {
 		),
 		render.N("body",
 			render.H(`<input id=s type=search placeholder="Search ...">`),
-			render.N("ul", render.S(index, "", func(f *deebugfile) render.Node {
+			render.N("ul", render.S(index, "", func(meta *Meta) render.Node {
 				return render.N("li",
-					render.Na("code", "data-id", f.Path()).N(f.ID()[:7]),
+					render.Na("code", "data-id", meta.Path()).N(meta.ID()[:7]),
 					" ",
-					render.If(len(f.txt) > 0, func() render.Node {
+					render.If(len(meta.ResponseBody) > 0, func() render.Node {
 						return render.N("",
-							render.Na("a", "data-b64", base64.StdEncoding.EncodeToString([]byte(f.txt))).
-								A("data-title", f.URL.Host+"/"+f.ID()[:7]).
+							render.Na("a", "data-b64", base64.StdEncoding.EncodeToString(debugPrint(meta))).
+								A("data-title", meta.URL.Host+"/"+meta.ID()[:7]).
 								N("~>"),
 							" ",
 						)
 					}),
-					render.IfElseS(f.txt == "", "-- ", ""),
-					render.IfS(f.Status/100 == 2, render.N("span.s2", "s", f.Status)),
-					render.IfS(f.Status/100 == 3, render.N("span.s3", "s", f.Status)),
-					render.IfS(f.Status/100 == 4, render.N("span.s4", "s", f.Status)),
-					render.IfS(f.Status/100 == 5, render.N("span.s5", "s", f.Status)),
+					render.IfS(len(meta.ResponseBody) == 0, "-- "),
+					render.IfS(meta.Status/100 == 2, render.N("span.s2", "s", meta.Status)),
+					render.IfS(meta.Status/100 == 3, render.N("span.s3", "s", meta.Status)),
+					render.IfS(meta.Status/100 == 4, render.N("span.s4", "s", meta.Status)),
+					render.IfS(meta.Status/100 == 5, render.N("span.s5", "s", meta.Status)),
 					" ",
-					render.N("span.m", f.Method),
+					render.N("span.m", meta.Method),
 					" ",
-					f.URL,
+					meta.URL,
 					render.N(""),
 				)
 			})),

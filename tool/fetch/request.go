@@ -9,7 +9,7 @@ import (
 	"maps"
 	"net/http"
 	"net/url"
-	"path/filepath"
+	"path"
 	"slices"
 )
 
@@ -130,19 +130,10 @@ func (r *Request) ID() string {
 	return r.id
 }
 
-func getPath(base string, request *Request) string {
-	return filepath.Join(
-		base,
-		request.URL.Scheme,
-		request.URL.Host,
-		request.ID()+".http",
-	)
-}
-
-func getDir(base string, request *Request) string {
-	return filepath.Join(
-		base,
-		request.URL.Scheme,
-		request.URL.Host,
+func (r *Request) Path() string {
+	return path.Join(
+		r.URL.Scheme,
+		r.URL.Host,
+		r.ID()+".http",
 	)
 }
