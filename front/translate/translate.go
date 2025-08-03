@@ -14,6 +14,7 @@ type Translation struct {
 	GLOBAL struct {
 		AboutTextLink render.H `help:"About text for link"`
 		Byte          render.H
+		ExternLink    render.H `help:"A link to page outside sniffle.eu like europa.eu or page NGO website"`
 		FooterBuild   render.H `help:"In Footer, before build date"`
 		HELP          render.H
 		InDev         render.H `help:"This page is actualy on development"`

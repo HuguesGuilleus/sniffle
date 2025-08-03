@@ -2,6 +2,7 @@
 	"GLOBAL": {
 		"AboutTextLink": "À propos",
 		"Byte": "octet",
+		"ExternLink": "Lien externe",
 		"FooterBuild": "Dernière génération de la page\u00A0: ",
 		"HELP": "AIDE",
 		"InDev": "Cette page est actuellement en développement",

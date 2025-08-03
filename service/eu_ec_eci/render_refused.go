@@ -33,12 +33,17 @@ func renderRefusedIndex(index []*ECIRefused, baseURL string, l language.Language
 				component.SearchBlock(l),
 				render.S(index, "", func(eci *ECIRefused) render.Node {
 					p := ""
+					isExternLink := true
 					if len(eci.Langs()) != 0 {
 						p = eci.Lang.Path(printUint(eci.ID) + "/")
+						isExternLink = false
 					} else {
 						p = eci.OfficielLink()
 					}
 					return render.Na("a.si.bigItem", "href", p).N(
+						render.If(isExternLink, func() render.Node {
+							return render.N("div.bigItemHead", tr.GLOBAL.ExternLink)
+						}),
 						render.N("div",
 							render.N("div",
 								render.N("span.tag.st",

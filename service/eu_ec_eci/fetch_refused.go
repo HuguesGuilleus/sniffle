@@ -124,6 +124,8 @@ func (eci *ECIRefused) OfficielLink() string {
 	return "https://citizens-initiative.europa.eu/initiatives/details/" + printUint(eci.ID) + "_" + eci.Lang.String()
 }
 
+// Langs returns the originate registration language in a one len slice if this language is include in [translate.Langs].
+// Else returns nil.
 func (eci *ECIRefused) Langs() []language.Language {
 	for _, l := range translate.Langs {
 		if eci.Lang == l {
