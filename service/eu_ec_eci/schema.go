@@ -191,8 +191,11 @@ var eciType = sch.Map(
 	})).Assert(sch.AssertOnlyOneTrue("active", func(progress any) bool {
 		return progress.(map[string]any)["active"].(bool)
 	})),
-	sch.Assert(`eci.status == this.progress[with .active].name`, func(eci map[string]any, _ any) error {
+	sch.Assert(`eci.status == this.progress[with .active].name OR (eci.status == "REGISTERED" AND this.progress[with .active].name == "COLLECTION_START_DATE")`, func(eci map[string]any, _ any) error {
 		eciStatus := eci["status"].(string)
+		if eciStatus == "REGISTERED" {
+			eciStatus = "COLLECTION_START_DATE"
+		}
 		for _, p := range eci["progress"].([]any) {
 			if progress := p.(map[string]any); progress["active"].(bool) {
 				if active := progress["name"].(string); active != eciStatus {
@@ -285,6 +288,7 @@ var eciType = sch.Map(
 			}
 			return nil
 		}),
+		sch.FieldSO("onlineSosUpdateDate", timeType),
 	), false).Comment("sosReport when collect is not validated, else submission field."),
 	sch.BlankField(),
 	sch.FieldSO("preAnswer", sch.Map(
