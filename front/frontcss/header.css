@@ -62,3 +62,7 @@ header {
 	border: none;
 	border-top: dashed _line1 var(--color);
 }
+
+.summary :last-child {
+	margin-bottom: 0;
+}
