@@ -58,10 +58,7 @@ func fetchAnnualReport(t *tool.Tool) (reportByYear map[int][]*report) {
 
 	// Set a description for all languages.
 	for _, r := range mapReports {
-		baseDesc := r.Description[language.French]
-		if baseDesc.Title == "" {
-			baseDesc = r.Description[language.English]
-		}
+		baseDesc := cmp.Or(r.Description[language.French], r.Description[language.English])
 		for _, l := range translate.Langs {
 			if r.Description[l].Title == "" {
 				r.Description[l] = baseDesc
@@ -70,7 +67,10 @@ func fetchAnnualReport(t *tool.Tool) (reportByYear map[int][]*report) {
 	}
 
 	// Sort reports by
-	reports := slices.AppendSeq(make([]*report, 0, len(mapReports)), maps.Values(mapReports))
+	reports := slices.AppendSeq(
+		make([]*report, 0, len(mapReports)),
+		maps.Values(mapReports),
+	)
 	slices.SortFunc(reports, func(a, b *report) int {
 		return cmp.Or(
 			b.PubDate.Truncate(time.Hour*24).Compare(a.PubDate.Truncate(time.Hour*24)),
@@ -110,20 +110,20 @@ func fetchReports(t *tool.Tool, mapReports map[string]*report, reportType string
 	}
 
 	dto := make([]struct {
-		Title                string
-		Description          string
-		ImageUrl             string
-		PublicationDate      pubDate
-		ReportLandingPageUrl string
-		ReportUrl            string
-		Languages            []language.Language
+		Title                string              `json:"Title"`
+		Description          string              `json:"Description"`
+		ImageUrl             string              `json:"ImageUrl"`
+		PublicationDate      pubDate             `json:"PublicationDate"`
+		ReportLandingPageUrl string              `json:"ReportLandingPageUrl"`
+		ReportUrl            string              `json:"ReportUrl"`
+		Languages            []language.Language `json:"Languages"`
 	}, 0)
 	if tool.FetchJSON(t, annualReportsType, &dto, request) {
 		return
 	}
 
 	for _, dto := range dto {
-		id := strings.Split(dto.ReportLandingPageUrl, "/")[3]
+		id := strings.TrimPrefix(strings.Split(dto.ReportLandingPageUrl, "/")[3], "\u200B")
 		r := mapReports[id]
 
 		if r == nil {
@@ -131,7 +131,6 @@ func fetchReports(t *tool.Tool, mapReports map[string]*report, reportType string
 				Type:    reportType,
 				PubDate: dto.PublicationDate.Time.In(render.DateZone),
 			}
-			mapReports[id] = r
 			if dto.ImageUrl != "" {
 				url := "https://www.eca.europa.eu" + dto.ImageUrl
 				h := sha256.Sum256([]byte(url))
@@ -142,6 +141,8 @@ func fetchReports(t *tool.Tool, mapReports map[string]*report, reportType string
 			for _, l := range dto.Languages {
 				r.Langs[l] = true
 			}
+
+			mapReports[id] = r
 		}
 
 		r.Langs[l] = true
@@ -157,8 +158,6 @@ func fetchReports(t *tool.Tool, mapReports map[string]*report, reportType string
 			PDFURL: securehtml.ParseURL(dto.ReportUrl),
 		}
 	}
-
-	return
 }
 
 var langName = [language.Len]string{

@@ -254,5 +254,16 @@
 			"2012-04-01": "Until 2019, the thresholds correspond to the number of the Members of the European Parliament elected in each member state, multiplied by 750.",
 			"2020-01-01": "Starting from 2020, the thresholds correspond to the number of the Members of the European Parliament elected in each member state, multiplied by the total number of Members of the European Parliament."
 		}
+	},
+
+	"EU_ECA": {
+		"Name": "European Court of Auditors",
+		"ReportPage": "Report webpage",
+		"ReportPDFHelp": "PDF",
+		"INDEX_BY_YEAR": {
+			"Title": "Report index for the year %d",
+			"Desc": "All year report index from European Court of Auditors.",
+			"Count": "Report count for this year"
+		}
 	}
 }

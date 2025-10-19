@@ -65,6 +65,10 @@ tr:hover {
 	margin-bottom: _sp;
 }
 
+.boxFlexTop {
+	margin-top: _sp;
+}
+
 .box {
 	display: inline-block;
 	padding: _line1 _sp;

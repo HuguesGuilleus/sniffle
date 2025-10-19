@@ -19,6 +19,10 @@ input[type=search] {
 	text-decoration: none;
 }
 
+.bigItem>:last-child {
+	margin-bottom: 0;
+}
+
 .bigItem::after {
 	content: "";
 	clear: both;

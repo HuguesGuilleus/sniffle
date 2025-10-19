@@ -2,6 +2,8 @@
 package eu_eca
 
 import (
+	"fmt"
+
 	"github.com/HuguesGuilleus/sniffle/front/lredirect"
 	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/tool"
@@ -13,8 +15,11 @@ func Do(t *tool.Tool) {
 	t.WriteFile("/eu/eca/report/schema.html", schemaPage)
 	t.WriteFile("/eu/eca/report/index.html", lredirect.All)
 
-	for _, l := range translate.Langs {
-		renderReportIndex(t, l, reportByYear)
+	for year, reports := range reportByYear {
+		t.WriteFile(fmt.Sprintf("/eu/eca/%d/index.html", year), lredirect.All)
+		for _, l := range translate.Langs {
+			renderIndexByYear(t, l, year, reports)
+		}
 	}
 
 	for _, reports := range reportByYear {

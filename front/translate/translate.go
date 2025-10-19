@@ -149,6 +149,17 @@ type Translation struct {
 		Categorie     map[string]render.H
 		ThresholdRule map[string]render.H
 	}
+
+	EU_ECA struct {
+		Name          string
+		ReportPage    string
+		ReportPDFHelp string
+		INDEX_BY_YEAR struct {
+			Title string
+			Desc  string
+			Count string
+		}
+	}
 }
 
 var Langs = []language.Language{

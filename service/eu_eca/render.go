@@ -1,9 +1,9 @@
 package eu_eca
 
 import (
+	"cmp"
 	"slices"
 	"strconv"
-	"strings"
 
 	"github.com/HuguesGuilleus/sniffle/common/language"
 	"github.com/HuguesGuilleus/sniffle/front/component"
@@ -74,23 +74,19 @@ func renderReportIndex(t *tool.Tool, l language.Language, reportByYear map[int][
 	)))
 }
 
-func headerSupECA(l language.Language) render.Node {
-	tr := translate.T[l]
-	return render.N("div.headerID",
-		component.HomeAnchor(l),
-		render.Na("a", "href", l.Path("/eu/")).A("title", tr.EU.Name).N("eu"), " / ",
-		render.Na("a", "href", l.Path("/eu/eca/")).A("title", "$Europea court of Auditor").N("eca"),
-	)
-}
-
-func renderAvailableLangs(pageLang language.Language, langs [language.Len]bool) string {
+func renderAvailableLangs(pageLang language.Language, langs [language.Len]bool) any {
 	tr := translate.T[pageLang]
-	available := make([]string, 0, language.Len)
+	available := make([]language.Language, 0, language.Len)
 	for l, ok := range langs {
 		if ok {
-			available = append(available, string(tr.Langage[l]))
+			available = append(available, language.Language(l))
 		}
 	}
-	slices.Sort(available)
-	return strings.Join(available, ", ")
+	slices.SortFunc(available, func(a, b language.Language) int {
+		return cmp.Compare(tr.Langage[a], tr.Langage[b])
+	})
+
+	return render.S(available, ", ", func(l language.Language) render.Node {
+		return render.Na("span", "title", string(tr.Langage[l])).N(l.Upper())
+	})
 }

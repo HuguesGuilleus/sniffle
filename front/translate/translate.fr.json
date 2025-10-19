@@ -254,5 +254,16 @@
 			"2012-04-01": "Jusqu'en 2019, les seuils correspondent au nombre de députés au Parlement européen élus dans chaque état membre, multiplié par 750.",
 			"2020-01-01": "À partir de 2020, les seuils correspondent au nombre de députés au Parlement européen élus dans chaque état membre, multiplié par le nombre total de députés au Parlement européen."
 		}
+	},
+
+	"EU_ECA": {
+		"Name": "Cour des comptes européenne",
+		"ReportPage": "Page du rapport",
+		"ReportPDFHelp": "PDF",
+		"INDEX_BY_YEAR": {
+			"Title": "Rapports de la Cour en %d",
+			"Desc": "Liste annuelle de tout les rapports de la Cour des comptes européenne.",
+			"Count": "Nombre de rapports cette année"
+		}
 	}
 }
