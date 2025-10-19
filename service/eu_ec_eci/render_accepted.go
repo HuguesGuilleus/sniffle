@@ -51,6 +51,7 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 								l = eci.OriginalLangage
 							}
 							return render.Na("a.si.bigItem", "href", fmt.Sprintf("%d/%d/%s.html", eci.Year, eci.Number, l)).N(
+								renderImage(eci, true, tr.GLOBAL.LogoTitle),
 								render.N("div",
 									render.N("span.tag.st", render.Int(eci.Year), "/", render.Int(eci.Number)),
 									render.N("span.tag.st", tr.EU_EC_ECI.Status[eci.Status]),
@@ -60,7 +61,6 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 									return render.N("span.st", tr.EU_EC_ECI.Categorie[categorie])
 								})),
 								render.N("p.itemDesc", eci.Description[l].PlainDesc),
-								renderImage(eci, true, tr.GLOBAL.LogoTitle),
 							)
 						}),
 					)

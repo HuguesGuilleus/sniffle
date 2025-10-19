@@ -12,16 +12,17 @@ input[type=search] {
 }
 
 .bigItem {
-	display: grid;
+	display: block;
 	border: solid _line2 var(--color);
 	padding: _spThin;
 	margin-top: _sp;
 	text-decoration: none;
 }
 
-.bigItem:has(img.logo) {
-	grid-template-columns: 1fr auto;
-	gap: 0 _sp;
+.bigItem::after {
+	content: "";
+	clear: both;
+	display: table;
 }
 
 .bigItem:hover {
@@ -36,11 +37,6 @@ input[type=search] {
 	font-weight: bold;
 }
 
-@media screen and (max-width: 30rem) {
-	.bigItem {
-		display: block;
-	}
-}
 
 .itemTitle {
 	font-size: larger;
@@ -53,12 +49,7 @@ input[type=search] {
 	text-indent: 0;
 }
 
-.bigItem>* {
-	grid-column: 1 / 2;
-}
-
 .bigItem>.logo {
-	grid-column: 2 / 3;
-	grid-row: 1 / 10;
-	margin-left: auto;
+	float: right;
+	padding: 0 0 _spThin _spThin;
 }
