@@ -10,6 +10,7 @@ import (
 type mapType struct {
 	fields      []MapField
 	extraFields bool
+	containID   bool
 }
 type MapField struct {
 	fieldKey   TypeStringer
@@ -17,14 +18,24 @@ type MapField struct {
 	required   bool
 	comments   []string
 	asserts    []assertFunc
+	isID       bool
 }
 type assertFunc struct {
 	name string
 	test func(this map[string]any, field any) error
 }
 
-func Map(fields ...MapField) Type      { return &mapType{fields, false} }
-func MapExtra(fields ...MapField) Type { return &mapType{fields, true} }
+func Map(fields ...MapField) TypeRejectID      { return &mapType{fields, false, mapContainID(fields)} }
+func MapExtra(fields ...MapField) TypeRejectID { return &mapType{fields, true, mapContainID(fields)} }
+
+func mapContainID(fields []MapField) (containID bool) {
+	for _, f := range fields {
+		if f.isID {
+			return true
+		}
+	}
+	return false
+}
 
 // Add a black line
 func BlankField() MapField {
@@ -33,7 +44,7 @@ func BlankField() MapField {
 
 // Add a field to the map.
 func Field(key TypeStringer, value Type, required bool) MapField {
-	return MapField{key, value, required, nil, nil}
+	return MapField{key, value, required, nil, nil, false}
 }
 
 // Add a required field to the map.
@@ -49,7 +60,7 @@ func FieldSO(key string, value Type) MapField {
 }
 
 func Assert(name string, test func(this map[string]any, _ any) error) MapField {
-	return MapField{nil, nil, false, nil, []assertFunc{{name, test}}}
+	return MapField{nil, nil, false, nil, []assertFunc{{name, test}}, false}
 }
 
 // TODO: add in method
@@ -64,6 +75,40 @@ func (f MapField) Comment(c ...string) MapField {
 	return f
 }
 
+func (f MapField) SetID() MapField {
+	f.isID = true
+	return f
+}
+
+func (m *mapType) RejectID(v any) bool {
+	if !m.containID {
+		return false
+	}
+
+	mv, ok := v.(map[string]any)
+	if !ok {
+		return true
+	}
+
+fields:
+	for _, f := range m.fields {
+		if !f.isID {
+			continue
+		}
+		for k, v := range mv {
+			if f.fieldKey.Match(k) == nil {
+				if f.fieldValue.Match(v) != nil {
+					return true
+				}
+				continue fields
+			}
+		}
+		return true
+	}
+
+	return false
+}
+
 func (m *mapType) Match(v any) error {
 	mv, ok := v.(map[string]any)
 	if !ok {
@@ -75,7 +120,7 @@ func (m *mapType) Match(v any) error {
 		keys[k] = true
 	}
 
-	errs := make(ErrorSlice, 0, len(mv)+len(keys))
+	errs := make(ErrorSlice, 0)
 	for _, field := range m.fields {
 		if field.fieldKey == nil {
 			if len(errs) == 0 {
@@ -91,7 +136,7 @@ func (m *mapType) Match(v any) error {
 		key, ok := mapSearchKey(field, keys)
 		if !ok {
 			if field.required {
-				errs = append(errs, fmt.Errorf("not found field for %s", field.fieldKey))
+				errs.Append(key, errors.New("No found field"))
 			}
 			continue
 		}
@@ -159,12 +204,10 @@ func (m *mapType) HTML(indent string) render.Node {
 				}
 				return render.N("",
 					comments,
-					render.If(field.fieldKey != nil, func() render.Node {
-						return render.N("", indentAdd,
-							field.fieldKey.HTML(indentAdd), sep,
-							field.fieldValue.HTML(indentAdd),
-						)
-					}),
+					indentAdd,
+					render.IfS(field.isID, "#id "),
+					field.fieldKey.HTML(indentAdd), sep,
+					field.fieldValue.HTML(indentAdd),
 					render.IfS(len(asserts) > 0, render.N("", " ", asserts)),
 					",\n",
 				)

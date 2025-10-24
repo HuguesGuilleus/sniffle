@@ -14,3 +14,10 @@ type TypeStringer interface {
 	// Return a string, used in structure field key.
 	String() string
 }
+
+type TypeRejectID interface {
+	Type
+	// Match only if the object is match the ID of this type.
+	// Example: `Map(FieldSR("type", String("null")).SetID())`.
+	RejectID(any) bool
+}

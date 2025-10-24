@@ -24,6 +24,9 @@ func TestOr(t *testing.T) {
 	assert.Equal(t, `<span class=sch-str>&#34;a&#34;</span> | <span class=sch-base>true</span>`, genHTML(or))
 	assert.Panics(t, func() { Or() })
 	assert.Panics(t, func() { Or(True()) })
+
+	assert.Len(t, Or(Map(FieldSR("link", String("yo"))), True()).Match(false), 2)
+	assert.Len(t, Or(Map(FieldSR("link", String("yo")).SetID()), True()).Match(false), 1)
 }
 
 func TestEnumString(t *testing.T) {

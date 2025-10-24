@@ -66,8 +66,11 @@ func Or(types ...Type) Type {
 }
 
 func (or orType) Match(v any) error {
-	errs := make(ErrorSlice, 0, len(or))
+	errs := make(ErrorSlice, 0)
 	for _, t := range or {
+		if t, ok := t.(TypeRejectID); ok && t.RejectID(v) {
+			continue
+		}
 		err := t.Match(v)
 		if err == nil {
 			return nil

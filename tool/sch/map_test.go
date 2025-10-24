@@ -14,7 +14,7 @@ func TestMap(t *testing.T) {
 	assertCall := 0
 	assertThis := map[string]any{"k1": false, "k2": true, "as": "UP"}
 	m := Map(
-		FieldSR("k1", False()),
+		FieldSR("k1", False()).SetID(),
 		FieldSO("k2", True()),
 		FieldSO("as", AnyString()).Assert(`uppercase`, func(this map[string]any, field any) error {
 			assertCall++
@@ -41,10 +41,16 @@ func TestMap(t *testing.T) {
 	assert.Error(t, m.Match(assertThis))
 	assert.Equal(t, 3, assertCall)
 
+	assert.True(t, m.RejectID(1))
+	assert.True(t, m.RejectID(map[string]any{"k1": true}))
+	assert.True(t, m.RejectID(map[string]any{"k2": true}))
+	assert.False(t, m.RejectID(map[string]any{"k1": false, "k2": false}))
+	assert.False(t, Map().RejectID(1))
+
 	assert.Error(t, Map(Assert(``, func(this map[string]any, _ any) error { return errors.New("e") })).Match(map[string]any{}))
 
 	m = MapExtra(
-		FieldSR("k1", False()),
+		FieldSR("k1", False()).SetID(),
 		FieldSO("k2", True()).
 			Comment("c1", "c2").
 			Assert(`a1`, func(this map[string]any, field any) error { return nil }).
@@ -55,7 +61,7 @@ func TestMap(t *testing.T) {
 	assert.NoError(t, m.Match(map[string]any{"k1": false, "x": nil}))
 
 	assert.Equal(t, "{"+
-		"\n\t\t<span class=sch-str>&#34;k1&#34;</span>: <span class=sch-base>false</span>,"+
+		"\n\t\t#id <span class=sch-str>&#34;k1&#34;</span>: <span class=sch-base>false</span>,"+
 		"\n\t\t<span class=sch-comment>// c1</span>"+
 		"\n\t\t<span class=sch-comment>// c2</span>"+
 		"\n\t\t<span class=sch-str>&#34;k2&#34;</span>?: <span class=sch-base>true</span>"+
