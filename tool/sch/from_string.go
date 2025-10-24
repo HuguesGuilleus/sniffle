@@ -6,6 +6,7 @@ import (
 	"mime"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,8 +24,6 @@ type anyMailType struct{}
 
 func AnyMail() TypeStringer { return anyMailType{} }
 
-// var anyMailRegexp = regexp.MustCompile(`^\w[\w.-]+\w@[\w-]+(\.[\w-]+)+$`)
-
 func (anyMailType) Match(v any) error {
 	s, ok := v.(string)
 	if !ok {
@@ -35,8 +34,6 @@ func (anyMailType) Match(v any) error {
 		return fmt.Errorf("not email adress: %q", s)
 	}
 
-	// fmt.Println("any_mail:", s)
-
 	return nil
 }
 
@@ -45,6 +42,59 @@ func (anyMailType) HTML(_ string) render.Node {
 }
 
 func (anyMailType) String() string { return "mail-address" }
+
+/* Flags */
+
+type flagsType struct {
+	flags     map[string]bool
+	separator string
+	flagsJoin string
+}
+
+// A string with multiple flags join by the separator.
+func Flags(separator string, flags ...string) TypeStringer {
+	flagsSet := make(map[string]bool, len(flags))
+	for _, f := range flags {
+		flagsSet[f] = true
+	}
+
+	return &flagsType{
+		flags:     flagsSet,
+		separator: separator,
+		flagsJoin: strings.Join(flags, separator),
+	}
+}
+
+func (f *flagsType) String() string { return f.flagsJoin }
+
+func (f *flagsType) Match(v any) error {
+	s, ok := v.(string)
+	if !ok {
+		return fmt.Errorf(notStringFormat, v)
+	}
+
+	alreadyFound := make(map[string]bool)
+	for _, sub := range strings.Split(s, f.separator) {
+		if !f.flags[sub] {
+			return fmt.Errorf("substring %q from %q do not exist in flags %s", sub, s, f.flagsJoin)
+		}
+		if alreadyFound[sub] {
+			return fmt.Errorf("Already found substring %q in %s", sub, s)
+		}
+		alreadyFound[sub] = true
+	}
+
+	return nil
+}
+
+func (f *flagsType) HTML(string) render.Node {
+	return render.N(xstringMarkup, "flags(",
+		render.Map(f.flags, func(k string, _ bool) render.Node {
+			return render.N("", render.N(stringMarkup, strconv.Quote(k)), ", ")
+		}),
+		"separator=", strconv.Quote(f.separator),
+		")")
+}
 
 /* MIME */
 

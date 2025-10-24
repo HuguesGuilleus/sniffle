@@ -21,6 +21,24 @@ func TestEmailAdress(t *testing.T) {
 	assert.Equal(t, "mail-address", AnyMail().String())
 }
 
+func TestFlags(t *testing.T) {
+	f := Flags(",", "a", "b")
+	assert.Equal(t, f.String(), "a,b")
+	assert.NoError(t, f.Match("a"))
+	assert.NoError(t, f.Match("b"))
+	assert.NoError(t, f.Match("b,a"))
+	assert.Error(t, f.Match(""))
+	assert.Error(t, f.Match("a,a"))
+	assert.Error(t, f.Match("a,c"))
+	assert.Error(t, f.Match(1))
+
+	assert.Equal(t, `<span class=sch-xstr>flags(`+
+		`<span class=sch-str>&#34;a&#34;</span>, `+
+		`<span class=sch-str>&#34;b&#34;</span>, `+
+		`separator=&#34;,&#34;)</span>`,
+		genHTML(f))
+}
+
 func TestMime(t *testing.T) {
 	assert.Panics(t, func() { MIME("; charset=utf-8") })
 	assert.Panics(t, func() { MIME("x; charset=utf-8") })
