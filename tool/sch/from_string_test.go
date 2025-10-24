@@ -87,3 +87,12 @@ func TestURL(t *testing.T) {
 	assert.Equal(t, `<span class=sch-xstr>url(<u>http.s://**.europa.eu/**?a=1&amp;x=*</u>)</span>`, genHTML(u))
 	assert.Equal(t, "http.s://**.europa.eu/**?a=1&x=*", u.String())
 }
+
+func TestUUID(t *testing.T) {
+	assert.NoError(t, UUID().Match("0c37852b-34d0-418e-91c6-2ac25af4be5b"))
+	assert.Error(t, UUID().Match("0C37852b-34d0-418e-91c6-2ac25af4be5b"))
+	assert.Error(t, UUID().Match(" 0c37852b-34d0-418e-91c6-2ac25af4be5b"))
+	assert.Error(t, UUID().Match("00c37852b-34d0-418e-91c6-2ac25af4be5b"))
+	assert.Error(t, UUID().Match(1))
+	assert.Equal(t, `<span class=sch-xstr>uuid</span>`, genHTML(UUID()))
+}

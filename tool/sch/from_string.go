@@ -316,3 +316,30 @@ func (ut urlType) HTML(_ string) render.Node {
 }
 
 func (ut urlType) String() string { return ut.rawURL }
+
+/* UUID */
+
+var uuidRegexp = regexp.MustCompile(`^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$`)
+
+type uuidType struct{}
+
+// A UUID string.
+// Match string like`xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` where x is digit or a to f in lower case.
+func UUID() Type { return uuidType{} }
+
+func (uuidType) Match(v any) error {
+	s, ok := v.(string)
+	if !ok {
+		return fmt.Errorf(notStringFormat, v)
+	}
+
+	if !uuidRegexp.MatchString(s) {
+		return fmt.Errorf("string %q is not a uuid", s)
+	}
+
+	return nil
+}
+
+func (uuidType) HTML(string) render.Node {
+	return render.N(xstringMarkup, "uuid")
+}
