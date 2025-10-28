@@ -37,3 +37,22 @@ func TestEmptyArray(t *testing.T) {
 	assert.Error(t, EmptyArray().Match([]any{"a"}))
 	assert.Equal(t, `[]`, genHTML(EmptyArray()))
 }
+
+func TestArrayItems(t *testing.T) {
+	ty := ArrayItems(
+		True(),
+		AnyString(),
+	)
+
+	assert.NoError(t, ty.Match([]any{true, ""}))
+	assert.Error(t, ty.Match([]any{true, "", 1}))
+	assert.Error(t, ty.Match([]any{true}))
+	assert.Error(t, ty.Match([]any{1, "a"}))
+	assert.Error(t, ty.Match(1))
+
+	assert.Equal(t, "(2)[\n"+
+		"\t\t<span class=sch-base>true</span>,\n"+
+		"\t\t<span class=sch-base>string</span>,\n"+
+		"\t]",
+		genHTML(ty))
+}

@@ -86,3 +86,37 @@ func (emptyArray) Match(v any) error {
 func (emptyArray) HTML(indent string) render.Node {
 	return render.N("", "[]")
 }
+
+/* ARRAY ITEMS */
+
+type arrayItemsType []Type
+
+// A array type with a specific type for eeach item.
+func ArrayItems(types ...Type) Type { return arrayItemsType(types) }
+
+func (t arrayItemsType) Match(v any) error {
+	slice, ok := v.([]any)
+	if !ok {
+		return fmt.Errorf(notArrayFormat, v)
+	} else if len(t) != len(slice) {
+		return fmt.Errorf("Expected len %d but get %d", len(t), len(slice))
+	}
+
+	errs := make(ErrorSlice, 0, len(slice))
+	for index, t := range t {
+		if err := t.Match(slice[index]); err != nil {
+			errs.Append(fmt.Sprintf("[%d]", index), err)
+		}
+	}
+
+	return errs.Return()
+}
+
+func (t arrayItemsType) HTML(indent string) render.Node {
+	indentItem := indent + "\t"
+	return render.N("", "(", len(t), ")[\n",
+		render.S(t, "", func(t Type) render.Node {
+			return render.N("", indentItem, t.HTML(indentItem), ",\n")
+		}),
+		indent, "]")
+}
