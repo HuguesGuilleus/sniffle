@@ -23,6 +23,9 @@ func ArraySize(size int, item Type) Type { return arrayType{size, size, item} }
 // Check the value is an array with min <= length.
 func ArrayMin(min int, item Type) Type { return arrayType{min, math.MaxInt, item} }
 
+// Check the value is an array with min <= length.
+func ArrayMax(max int, item Type) Type { return arrayType{0, max, item} }
+
 // Check the value is an array with min <= length <= max.
 func ArrayRange(min, max int, item Type) Type {
 	return arrayType{min, max, item}

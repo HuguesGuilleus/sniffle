@@ -23,6 +23,11 @@ func TestArray(t *testing.T) {
 	assert.Error(t, ArrayMin(1, True()).Match([]any{}))
 	assert.Equal(t, `[1..]<span class=sch-base>true</span>`, genHTML(ArrayMin(1, True())))
 
+	assert.NoError(t, ArrayMax(1, True()).Match([]any{true}))
+	assert.Error(t, ArrayMax(1, True()).Match([]any{true, true}))
+	assert.NoError(t, ArrayMax(1, True()).Match([]any{}))
+	assert.Equal(t, `[0..1]<span class=sch-base>true</span>`, genHTML(ArrayMax(1, True())))
+
 	assert.NoError(t, ArrayRange(1, 2, True()).Match([]any{true}))
 	assert.NoError(t, ArrayRange(1, 2, True()).Match([]any{true, true}))
 	assert.Error(t, ArrayRange(1, 2, True()).Match([]any{true, true, true}))
