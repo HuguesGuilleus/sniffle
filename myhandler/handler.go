@@ -74,9 +74,19 @@ func (h *handler) clone() (n *handler) {
 
 func (h *handler) Handle(_ context.Context, record slog.Record) error {
 	buff := bytes.Buffer{}
+	switch {
+	case record.Level >= slog.LevelError:
+		buff.WriteString("\033[31m")
+	case record.Level >= slog.LevelWarn:
+		buff.WriteString("\033[33m")
+	case record.Level >= slog.LevelInfo:
+		buff.WriteString("\033[32m")
+	default:
+		buff.WriteString("\033[34m")
+	}
 	buff.WriteString(record.Time.UTC().Format("15:04:05 "))
 	buff.WriteString(record.Level.String())
-	for range 16 - buff.Len() {
+	for range 5 + 9 + 7 - buff.Len() {
 		buff.WriteByte('_')
 	}
 	buff.WriteByte(' ')
