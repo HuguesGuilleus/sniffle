@@ -206,7 +206,7 @@ func (buff *buffer) walk(node *html.Node) {
 			defer buff.end(atom.Strong)
 		case atom.Table, atom.Tr, atom.Th, atom.Td, atom.Tbody:
 			fallthrough // use this for one celle table.
-		case atom.Html, atom.Body, atom.Span, atom.Div, atom.Font:
+		case atom.Html, atom.Body, atom.Span, atom.Div, atom.Font, atom.Header, atom.Section, atom.Footer:
 			// Ignore markup but render children.
 		case atom.Br:
 			buff.add(atom.Br)

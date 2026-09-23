@@ -13,8 +13,7 @@ import (
 	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/service/about"
 	"github.com/HuguesGuilleus/sniffle/service/eu_ec_eci"
-	"github.com/HuguesGuilleus/sniffle/service/eu_eca"
-	"github.com/HuguesGuilleus/sniffle/service/eu_parl_mep"
+	"github.com/HuguesGuilleus/sniffle/service/eu_eca_report"
 	"github.com/HuguesGuilleus/sniffle/service/home"
 	"github.com/HuguesGuilleus/sniffle/service/release"
 	"github.com/HuguesGuilleus/sniffle/tool"
@@ -39,8 +38,7 @@ func main() {
 	config.Run("home", home.Do)
 
 	config.Run("eu_ec_eci", eu_ec_eci.Do)
-	config.Run("//eu_eca", eu_eca.Do)
-	config.Run("//eu_parl_mep", eu_parl_mep.Do)
+	config.Run("//eu_eca_report", eu_eca_report.Do)
 
 	writefs.WriteFile(config.Writefile, "/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
