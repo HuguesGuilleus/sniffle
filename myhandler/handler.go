@@ -112,7 +112,7 @@ func (h *handler) Handle(_ context.Context, record slog.Record) error {
 		printAttr(&buff, attr, g)
 		return true
 	})
-	buff.WriteByte('\n')
+	buff.WriteString("\033[0m\n")
 
 	h.m.Lock()
 	defer h.m.Unlock()
