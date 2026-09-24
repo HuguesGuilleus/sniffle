@@ -167,7 +167,7 @@ func mapSearchKey(field MapField, keys map[string]bool) (key string, ok bool) {
 			return k, true
 		}
 	}
-	return "", false
+	return field.fieldKey.String(), false
 }
 
 func (m *mapType) HTML(indent string) render.Node {
