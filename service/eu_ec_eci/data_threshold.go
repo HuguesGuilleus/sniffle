@@ -17,7 +17,7 @@ type Threshold struct {
 type ThresholdArray = [country.Len]uint
 
 var (
-	threshold_lastCheck   = time.Date(2025, time.July, 20, 0, 0, 0, 0, render.DateZone)
+	threshold_lastCheck   = time.Date(2026, time.September, 25, 0, 0, 0, 0, render.DateZone)
 	rule_since_2012_04_01 = "2012-04-01"
 	rule_since_2020_01_01 = "2020-01-01"
 
