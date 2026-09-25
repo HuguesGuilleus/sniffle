@@ -177,6 +177,9 @@ type Sponsor struct {
 	IsPrivate bool
 	Amount    float64
 	Date      time.Time
+	// Type of support provided by the sponsor.
+	// It's not display on official website.
+	OtherSupport string
 }
 type Document struct {
 	URL      *url.URL
@@ -266,6 +269,7 @@ type acceptedDTO struct {
 			Name           string  `json:"name"`
 			PrivateSponsor bool    `json:"privateSponsor"`
 			Anonymized     bool    `json:"anonymized"`
+			OtherSupport   string  `json:"otherSupport"`
 		}
 		TotalAmount float64 `json:"totalAmount"`
 		Document    *docDTO `json:"document"`
@@ -498,11 +502,15 @@ func fetchDetail(t *tool.Tool, info indexItem) *ECIOut {
 			if s.Anonymized {
 				name = ""
 			}
+			if s.OtherSupport == "0" {
+				s.OtherSupport = ""
+			}
 			eci.Sponsor[i] = Sponsor{
-				Name:      name,
-				IsPrivate: s.PrivateSponsor,
-				Amount:    s.Amount,
-				Date:      s.Date.Time,
+				Name:         name,
+				IsPrivate:    s.PrivateSponsor,
+				Amount:       s.Amount,
+				Date:         s.Date.Time,
+				OtherSupport: s.OtherSupport,
 			}
 		}
 	}

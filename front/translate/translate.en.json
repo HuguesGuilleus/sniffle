@@ -184,7 +184,7 @@
 				"Name": "Funding",
 				"Total": "Total sum",
 				"Sponsor": "Sponsor",
-				"Kind": "Kind",
+				"OtherSupport": "Other Support",
 				"Amount": "Amount",
 				"Date": "Date",
 				"Anonymous": "[Anonymous]",
@@ -253,6 +253,15 @@
 		"ThresholdRule": {
 			"2012-04-01": "Until 2019, the thresholds correspond to the number of the Members of the European Parliament elected in each member state, multiplied by 750.",
 			"2020-01-01": "Starting from 2020, the thresholds correspond to the number of the Members of the European Parliament elected in each member state, multiplied by the total number of Members of the European Parliament."
+		},
+		"OtherSupport": {
+			"Film Screening Exhibition (Organisation, Design and Set-Up, Communication)": "Film Screening Exhibition",
+			"in-kind donation": "in-kind",
+			"In-kind staff time for campaign coordination, legal drafting, content creation and partner outreach.": "In-kind staff time",
+			"National Press Conference (Organisation, Speakers, Communication)": "National Press Conference",
+			"Research and Network": "Research and Network",
+			"Traveling Exhibition (Organisation, Design and Set-Up, Conference, Communication)": "Traveling Exhibition",
+			"Voluntary support provided by various parties that is not economically quantifiable": "Support no economically quantifiable"
 		}
 	},
 

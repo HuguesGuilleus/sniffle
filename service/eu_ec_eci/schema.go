@@ -230,9 +230,12 @@ var eciType = sch.Map(
 				sch.FieldSO("otherSupport", sch.EnumString(
 					"Film Screening Exhibition (Organisation, Design and Set-Up, Communication)",
 					"in-kind donation",
+					"In-kind staff time for campaign coordination, legal drafting, content creation and partner outreach.",
 					"National Press Conference (Organisation, Speakers, Communication)",
 					"Research and Network",
 					"Traveling Exhibition (Organisation, Design and Set-Up, Conference, Communication)",
+					"Voluntary support provided by various parties that is not economically quantifiable",
+					"0",
 				)).Comment("Found only in ECI 2025/1"),
 			))),
 			sch.FieldSR("totalAmount", sch.PositiveFloat()).Assert(`totalAmount == sum(sponsors[*].amount)`, func(this map[string]any, field any) error {

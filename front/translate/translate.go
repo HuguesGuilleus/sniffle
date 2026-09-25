@@ -112,7 +112,7 @@ type Translation struct {
 				Name             render.H
 				Total            render.H
 				Sponsor          render.H
-				Kind             render.H
+				OtherSupport     render.H
 				Amount           render.H
 				Date             render.H
 				KindPrivate      render.H
@@ -148,6 +148,7 @@ type Translation struct {
 		Status        map[string]render.H
 		Categorie     map[string]render.H
 		ThresholdRule map[string]render.H
+		OtherSupport  map[string]render.H
 	}
 
 	EU_ECA struct {

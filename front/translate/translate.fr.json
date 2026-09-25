@@ -184,7 +184,7 @@
 				"Name": "Financement",
 				"Total": "Somme total",
 				"Sponsor": "Donateur·trice",
-				"Kind": "Type",
+				"OtherSupport": "Autres soutiens",
 				"Amount": "Montant",
 				"Date": "Date",
 				"Anonymous": "[Anonyme]",
@@ -253,6 +253,15 @@
 		"ThresholdRule": {
 			"2012-04-01": "Jusqu'en 2019, les seuils correspondent au nombre de députés au Parlement européen élus dans chaque état membre, multiplié par 750.",
 			"2020-01-01": "À partir de 2020, les seuils correspondent au nombre de députés au Parlement européen élus dans chaque état membre, multiplié par le nombre total de députés au Parlement européen."
+		},
+		"OtherSupport": {
+			"Film Screening Exhibition (Organisation, Design and Set-Up, Communication)": "Projection de film",
+			"in-kind donation": "En nature",
+			"In-kind staff time for campaign coordination, legal drafting, content creation and partner outreach.": "Temps de travail",
+			"National Press Conference (Organisation, Speakers, Communication)": "Conférence de presse national",
+			"Research and Network": "Recherche et réseautage",
+			"Traveling Exhibition (Organisation, Design and Set-Up, Conference, Communication)": "Exposition itinérante",
+			"Voluntary support provided by various parties that is not economically quantifiable": "Support non quantifiable"
 		}
 	},
 
