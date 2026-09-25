@@ -32,7 +32,7 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 					),
 					render.N("div.edito",
 						render.N("div.editoT", tr.GLOBAL.Presentation),
-						tr.EU_EC_ECI.INDEX.Help,
+						render.N("div", tr.EU_EC_ECI.INDEX.Help),
 					),
 					render.N("div.boxFlex",
 						render.Na("a.box", "href", l.Path("refused/")).N(tr.EU_EC_ECI.REFUSED_INDEX.Name),

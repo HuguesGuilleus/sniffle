@@ -18,7 +18,7 @@ var timeType = sch.Time("02/01/2006 15:04")
 var countriesUpper, countriesUpperDef = sch.Def("CountriesUpper", sch.EnumString("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"))
 var countriesLower, countriesLowerDef = sch.Def("CountriesLower", sch.EnumString("at", "be", "bg", "cy", "cz", "de", "dk", "ee", "es", "fi", "fr", "gb", "gr", "hr", "hu", "ie", "it", "lt", "lu", "lv", "mt", "nl", "pl", "pt", "ro", "se", "si", "sk"))
 var langs, langsDef = sch.Def("Languages", sch.EnumString("BG", "CS", "DA", "DE", "EL", "EN", "ES", "ET", "FI", "FR", "GA", "HR", "HU", "IT", "LT", "LV", "MT", "NL", "PL", "PT", "RO", "SK", "SL", "SV"))
-var statusType, statusTypeDef = sch.Def("Status", sch.EnumString("ANSWERED", "CLOSED", "COLLECTION_START_DATE", "INSUFFICIENT_SUPPORT", "ONGOING", "REGISTERED", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN"))
+var statusType, statusTypeDef = sch.Def("Status", sch.EnumString("ANSWERED", "CLOSED", "COLLECTION_START_DATE", "INSUFFICIENT_SUPPORT", "INSUFFICIENT_SUPPORT_AFTER_VERIFICATION", "ONGOING", "REGISTERED", "REJECTED", "SUBMITTED", "VERIFICATION", "WITHDRAWN"))
 
 var docType, docTypeDef = sch.Def("Document", sch.Map(
 	sch.FieldSR("id", sch.StrictPositiveInt()).Comment(
@@ -170,16 +170,6 @@ var eciType = sch.Map(
 		sch.FieldSR("active", sch.AnyBool()),
 		sch.FieldSR("name", statusType),
 		sch.FieldSO("date", dateType),
-		sch.Assert(`date == null => name == "COLLECTION_START_DATE" && active == false`, func(this map[string]any, _ any) error {
-			status := this["name"].(string)
-			if this["date"] == nil && status != "COLLECTION_START_DATE" {
-				return fmt.Errorf("wrong status when no date: %q", status)
-			}
-			if this["date"] == nil && this["active"].(bool) {
-				return fmt.Errorf("must not be active")
-			}
-			return nil
-		}),
 		sch.FieldSO("footnoteType", sch.String("COLLECTION_EARLY_CLOSURE")).Assert(`this.name == "CLOSED"`, func(this map[string]any, field any) error {
 			if this["name"] != "CLOSED" {
 				return fmt.Errorf("expect this.name == CLOSED, but get %q", this["name"])
@@ -193,12 +183,9 @@ var eciType = sch.Map(
 	})),
 	sch.Assert(`eci.status == this.progress[with .active].name OR (eci.status == "REGISTERED" AND this.progress[with .active].name == "COLLECTION_START_DATE")`, func(eci map[string]any, _ any) error {
 		eciStatus := eci["status"].(string)
-		if eciStatus == "REGISTERED" {
-			eciStatus = "COLLECTION_START_DATE"
-		}
 		for _, p := range eci["progress"].([]any) {
 			if progress := p.(map[string]any); progress["active"].(bool) {
-				if active := progress["name"].(string); active != eciStatus {
+				if active := progress["name"].(string); active != eciStatus && (eciStatus == "REGISTERED" && active != "COLLECTION_START_DATE") {
 					return fmt.Errorf("Not same status: eci.status:%q, active:%q", eciStatus, active)
 				}
 				break
@@ -434,7 +421,11 @@ var refusedOneType = sch.Map(
 		}
 		return nil
 	}),
-	sch.FieldSO("refusalReasons", sch.ArraySize(1, sch.String("reason.action.registration.reject.competences"))),
+	sch.FieldSO("refusalReasons", sch.ArraySize(1, sch.EnumString(
+		"reason.action.registration.reject.abuse",
+		"reason.action.registration.reject.competences",
+		"reason.action.registration.reject.values",
+	))),
 )
 
 var schemaPage = func() []byte {
