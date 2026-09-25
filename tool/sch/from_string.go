@@ -15,7 +15,7 @@ import (
 
 var (
 	justHostRegexp = regexp.MustCompile(`^([\w-]+\.)+[\w-]{2,}$`)
-	anyMailRegexp  = regexp.MustCompile(`^\w[\w.-]+\w@([\w-]+\.)+[\w-]{2,}$`)
+	anyMailRegexp  = regexp.MustCompile(`^\w[\w.-]*\w@([\w-]+\.)+[\w-]{2,}$`)
 )
 
 /* EMAIL */
