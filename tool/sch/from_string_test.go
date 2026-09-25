@@ -8,6 +8,8 @@ import (
 
 func TestEmailAdress(t *testing.T) {
 	assert.NoError(t, AnyMail().Match("conduct@golang.org"))
+	assert.NoError(t, AnyMail().Match("a@golang.org"))
+	assert.NoError(t, AnyMail().Match("ab@golang.org"))
 	assert.Error(t, AnyMail().Match(1))
 	assert.Error(t, AnyMail().Match(""))
 	assert.Error(t, AnyMail().Match("conduct@golang."))
