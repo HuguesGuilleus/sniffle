@@ -244,6 +244,7 @@ var eciType = sch.Map(
 	sch.BlankField(),
 	sch.Field(sch.EnumString("sosReport", "submission"), sch.Map(
 		sch.FieldSO("updateDate", dateType),
+		sch.FieldSO("declaredByOrganisers", sch.False()),
 		sch.FieldSR("entry", sch.ArrayRange(3, 28, sch.Map(
 			sch.FieldSR("countryCodeType", countriesUpper),
 			sch.FieldSR("total", sch.PositiveInt()),
