@@ -12,8 +12,7 @@ import (
 	"github.com/HuguesGuilleus/sniffle/front"
 	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/service/about"
-	"github.com/HuguesGuilleus/sniffle/service/eu_ec_eci"
-	"github.com/HuguesGuilleus/sniffle/service/eu_eca_report"
+	"github.com/HuguesGuilleus/sniffle/service/eu_curia"
 	"github.com/HuguesGuilleus/sniffle/service/home"
 	"github.com/HuguesGuilleus/sniffle/service/release"
 	"github.com/HuguesGuilleus/sniffle/tool"
@@ -25,7 +24,10 @@ import (
 func main() {
 	globalBegin := time.Now()
 
-	config := tool.CLI(nil)
+
+	config := tool.CLI(map[string]time.Duration{
+		"infocuriaws.curia.europa.eu": time.Second / 2,
+	})
 	writerSitemap := writefs.Sitemap(&config.Writefile)
 	config.LongTasksMap[rimage.NameResizeJpeg] = rimage.FetchResizeJpeg
 
@@ -37,8 +39,8 @@ func main() {
 	config.Run("release", release.Do)
 	config.Run("home", home.Do)
 
-	config.Run("eu_ec_eci", eu_ec_eci.Do)
-	config.Run("//eu_eca_report", eu_eca_report.Do)
+
+	config.Run("//eu_curia", eu_curia.Do)
 
 	writefs.WriteFile(config.Writefile, "/sitemap.txt", writerSitemap.Sitemap(common.Host))
 
