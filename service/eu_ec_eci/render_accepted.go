@@ -88,7 +88,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 			render.N("header",
 				render.N("div.headerSup",
 					idNamespace(l),
-					render.N("div.headerID", render.Int(eci.Year), "/", render.Int(eci.Number)),
+					render.N("div.headerID", fmt.Sprintf("ECI(%4d)%06d", eci.Year, eci.Number)),
 				),
 				render.N("div.headerTitle", desc.Title),
 				component.HeaderLangs(eci.Langs(), l, ""),

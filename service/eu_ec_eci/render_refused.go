@@ -26,7 +26,7 @@ func renderRefusedIndex(index []*ECIRefused, baseURL string, l language.Language
 				render.N("div.summary",
 					render.N("div.edito",
 						render.N("div.editoT", tr.GLOBAL.Presentation),
-						tr.EU_EC_ECI.REFUSED_INDEX.Description,
+						render.N("div", tr.EU_EC_ECI.REFUSED_INDEX.Description),
 					),
 					render.Na("a.box", "href", "https://citizens-initiative.europa.eu/find-refused-requests-for-registration_"+l.String()).N(tr.GLOBAL.LinkOfficial),
 				),
