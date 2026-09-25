@@ -88,14 +88,14 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 			render.N("main.wt.wide", component.Toc(l), render.N("div.wc",
 				render.N("div.summary", DATA_THRESHOLD.Description),
 
-				render.N("p.noindent", DATA_THRESHOLD.LastCheck, threshold_lastCheck),
+				render.N("p.noindent", DATA_THRESHOLD.LastCheck, tr.DateLong(threshold_lastCheck)),
 
 				render.N("h1", DATA_THRESHOLD.H1Data),
 				render.N("table.right",
 					render.N("tr",
 						render.N("th", tr.EU_EC_ECI.ONE.Country),
 						render.S(thresholds[:], "", func(t *Threshold) render.Node {
-							return render.N("th", DATA_THRESHOLD.From, " ", t.Begin)
+							return render.N("th", DATA_THRESHOLD.From, " ", tr.DateShort(t.Begin))
 						}),
 					),
 					render.S(countries, "", func(c country.Country) render.Node {
@@ -115,7 +115,7 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 					render.N("h1", DATA_THRESHOLD.H1Rule),
 					render.S(thresholds[:], "", func(threshold *Threshold) render.Node {
 						return render.N("",
-							render.N("h2", DATA_THRESHOLD.From, " ", threshold.Begin),
+							render.N("h2", DATA_THRESHOLD.From, " ", tr.DateShort(threshold.Begin)),
 							render.N("p.noindent", threshold.Legal.Render(l)),
 							render.N("div.edito",
 								render.N("div.editoT", DATA_THRESHOLD.Calculation),

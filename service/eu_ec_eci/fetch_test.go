@@ -11,7 +11,6 @@ import (
 	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/fetch"
-	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -433,9 +432,9 @@ func TestFetchDetail(t *testing.T) {
 			{country.Sweden, 16420, false, 14_805, true},
 		},
 		TotalSignature:        88783,
-		PaperSignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, render.DateZone),
+		PaperSignaturesUpdate: time.Date(2024, time.July, 24, 0, 0, 0, 0, time.UTC),
 		Threshold: &Threshold{
-			Begin: time.Date(2020, 2, 1, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2020_01_01,
 			Legal: component.Legal{
 				Prefix: "COMMISSION DELEGATED REGULATION (EU)",
@@ -502,7 +501,7 @@ func TestFetchDetail(t *testing.T) {
 		},
 
 		// Funding
-		FundingUpdate: time.Date(2023, time.May, 15, 0, 0, 0, 0, render.DateZone),
+		FundingUpdate: time.Date(2023, time.May, 15, 0, 0, 0, 0, time.UTC),
 		FundingTotal:  12867.1,
 		FundingDocument: &Document{
 			URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/9122"),
@@ -515,20 +514,20 @@ func TestFetchDetail(t *testing.T) {
 				Name:      "Campaigns and Activism for Animals in the Industry",
 				IsPrivate: false,
 				Amount:    11986,
-				Date:      time.Date(2023, time.March, 1, 0, 0, 0, 0, render.DateZone),
+				Date:      time.Date(2023, time.March, 1, 0, 0, 0, 0, time.UTC),
 			},
 			{
 				Name:      "",
 				IsPrivate: true,
 				Amount:    881.1,
-				Date:      time.Date(2024, time.August, 19, 0, 0, 0, 0, render.DateZone),
+				Date:      time.Date(2024, time.August, 19, 0, 0, 0, 0, time.UTC),
 			},
 		},
 	}, eci)
 }
 
 func newDate(year int, month time.Month, day int) time.Time {
-	return time.Date(year, month, day, 0, 0, 0, 0, render.DateZone)
+	return time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
 }
 
 func parseURL(s string) *url.URL {

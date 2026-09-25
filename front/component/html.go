@@ -9,19 +9,6 @@ import (
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
-// Meta information about the page
-type Page struct {
-	Language language.Language
-
-	// <head> informations
-	Title       string
-	Description string
-
-	// The base URL of the page, without the lang.
-	// Ex: /eu/ec/
-	BaseURL string
-}
-
 var HeadBegin = render.H(`<meta charset=utf-8>` +
 	`<meta name=viewport content="width=device-width,initial-scale=1">` +
 	`<link rel=stylesheet href=/style.` + front.StyleHash + `.css integrity="` + front.StyleIntegrity + `">` +

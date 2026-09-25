@@ -6,7 +6,6 @@ import (
 
 	"github.com/HuguesGuilleus/sniffle/common/language"
 	"github.com/HuguesGuilleus/sniffle/tool"
-	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +37,7 @@ func TestFetchRefused(t *testing.T) {
 				MimeType: "application/pdf",
 			},
 
-			RefusedDate: time.Date(2019, time.April, 30, 0, 0, 0, 0, render.DateZone),
+			RefusedDate: time.Date(2019, time.April, 30, 0, 0, 0, 0, time.UTC),
 			RefusalDocument: Document{
 				URL:      parseURL("https://register.eci.ec.europa.eu/core/api/register/document/4373"),
 				Language: language.English,

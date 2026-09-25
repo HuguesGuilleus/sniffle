@@ -6,6 +6,7 @@ import (
 
 	"github.com/HuguesGuilleus/sniffle/common/language"
 	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
@@ -41,10 +42,11 @@ func Do(t *tool.Tool) {
 }
 
 func step(begin, end string, tag string, children ...any) render.Node {
+	tr := translate.T[language.English]
 	return render.N("div.timePoint",
 		render.N("div.timeHead",
 			render.N("span.tag", tag),
-			date(begin), render.If(end != "", func() render.Node { return render.N("", " ~> ", date(end)) }),
+			tr.DateLong(date(begin)), render.If(end != "", func() render.Node { return render.N("", " ~> ", tr.DateLong(date(end))) }),
 		),
 		render.N("", children...),
 	)
@@ -55,7 +57,7 @@ func date(s string) time.Time {
 	if s == "" {
 		return time.Time{}
 	}
-	t, err := time.ParseInLocation(time.DateOnly, s, render.DateZone)
+	t, err := time.Parse(time.DateOnly, s)
 	if err != nil {
 		panic(err)
 	}

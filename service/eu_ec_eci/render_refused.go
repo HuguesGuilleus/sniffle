@@ -47,7 +47,7 @@ func renderRefusedIndex(index []*ECIRefused, baseURL string, l language.Language
 						render.N("div",
 							render.N("div",
 								render.N("span.tag.st",
-									eci.RefusedDate.In(render.ShortDateZone),
+									tr.DateShort(eci.RefusedDate),
 								),
 								render.N("span.itemTitle.st", eci.Title),
 							),
@@ -90,7 +90,7 @@ func renderRefusedOne(eci *ECIRefused) []byte {
 					render.N("div",
 						ONE.DescriptionOriginalLangage, eci.Lang.Human(),
 					),
-					render.N("div",
+					render.N("div.boxFlex",
 						render.Na("a.box", "href", eci.OfficielLink()).N(tr.GLOBAL.LinkOfficial),
 						render.If(eci.Website != nil, func() render.Node {
 							return render.Na("a.box", "href", eci.Website.String()).N(ONE.LinkWebsite)
@@ -126,7 +126,7 @@ func renderRefusedOne(eci *ECIRefused) []byte {
 					render.N("li.timePoint",
 						render.N("div.timeHead",
 							render.N("span.tag", tr.EU_EC_ECI.Status["REJECTED"]),
-							eci.RefusedDate,
+							tr.DateLong(eci.RefusedDate),
 						),
 						render.Na("a.doc", "href", "https://eur-lex.europa.eu/legal-content/"+eci.Lang.Upper()+"/TXT/?uri=CELEX:"+eci.RefusedCELEX).N(render.N("div.docT", tr.EU_EC_ECI.REFUSED_ONE.RefusalOnline)),
 						renderDoc(eci.Lang, &eci.RefusalDocument, tr.EU_EC_ECI.REFUSED_ONE.RefusalDocument),

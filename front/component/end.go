@@ -27,7 +27,7 @@ var (
 	rawToc []byte
 
 	scripts = [...]render.H{
-		0:                fronttool.InlineJs(raw0),
+		0:                "",
 		JsSchema | JsToc: fronttool.InlineJs(raw0, rawSchema, rawToc),
 		JsSearch:         fronttool.InlineJs(raw0, rawSearch),
 		JsToc:            fronttool.InlineJs(raw0, rawToc),
@@ -41,7 +41,7 @@ func Footer(l language.Language, flag uint) render.Node {
 	return render.N("",
 		render.N("footer",
 			translate.T[l].GLOBAL.FooterBuild,
-			time.Now(),
+			translate.T[l].DateHourLong(time.Now().UTC()),
 			render.H("<br>"),
 			render.Na("a", "href", l.Path("/about/")).N(translate.T[l].GLOBAL.AboutTextLink),
 			" ",

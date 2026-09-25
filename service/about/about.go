@@ -31,7 +31,6 @@ func Do(t *tool.Tool) {
 					render.S(tr.ABOUT.Intro, "", func(p render.H) render.Node {
 						return render.N("p", p)
 					}),
-					render.N("hr"),
 					render.N("p.noindent", tr.ABOUT.Mail, "ghugues[at]netc[dot]fr"),
 					render.N("p.noindent", tr.ABOUT.Host, "OVH SAS\u202F; 2 rue Kellermann, 59100 Roubaix. France."),
 				),

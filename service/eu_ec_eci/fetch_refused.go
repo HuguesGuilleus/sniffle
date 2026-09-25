@@ -114,7 +114,7 @@ func fetchOneRefused(t *tool.Tool, id uint) *ECIRefused {
 		AnnexDoc:   desc.AnnexDoc.Document(desc.Lang),
 		DraftLegal: desc.DraftLegal.Document(desc.Lang),
 
-		RefusedDate:     dto.RefusedDate.Time.In(render.DateZone),
+		RefusedDate:     dto.RefusedDate.Time.UTC(),
 		RefusalDocument: *dto.RefusalDocument.Document(desc.Lang),
 		RefusedCELEX:    desc.CommissionDecision.CELEX,
 	}

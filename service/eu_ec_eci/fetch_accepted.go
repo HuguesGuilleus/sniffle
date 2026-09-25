@@ -597,7 +597,7 @@ func (dto *dtoDate) UnmarshalText(data []byte) error {
 	if len(data) == 0 {
 		return nil
 	}
-	t, err := time.ParseInLocation("02/01/2006", string(data), render.DateZone)
+	t, err := time.ParseInLocation("02/01/2006", string(data), time.UTC)
 	if err != nil {
 		return err
 	}

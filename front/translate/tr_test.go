@@ -95,6 +95,9 @@ func collect(m map[string]string, base string, v reflect.Value) {
 			collect(m, base+"."+field.Name, v.Field(i))
 		}
 	default:
+		if base == "T.Lang" {
+			return
+		}
 		panic("unknown kind type: " + v.Kind().String())
 	}
 }

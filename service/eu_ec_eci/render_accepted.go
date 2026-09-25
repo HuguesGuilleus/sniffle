@@ -111,7 +111,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 						}),
 					),
 					render.N("div", ONE.Status, render.N("span.tag", tr.EU_EC_ECI.Status[eci.Status])),
-					render.N("div", ONE.LastUpdate, eci.LastUpdate),
+					render.N("div", ONE.LastUpdate, tr.DateLong(eci.LastUpdate)),
 					render.N("div", ONE.Categorie, render.S(eci.Categorie, ", ", func(categorie string) render.Node {
 						return render.N("", tr.EU_EC_ECI.Categorie[categorie])
 					})),
@@ -182,10 +182,10 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 								}),
 							)
 						case "DEADLINE":
-							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[e.Status]), e.Date)
+							return render.N("li.timePoint.future", render.N("span.tag", tr.EU_EC_ECI.Status[e.Status]), tr.DateLong(e.Date))
 						}
 						return render.N("li.timePoint",
-							render.N("div.timeHead", render.N("span.tag", tr.EU_EC_ECI.Status[e.Status]), e.Date),
+							render.N("div.timeHead", render.N("span.tag", tr.EU_EC_ECI.Status[e.Status]), tr.DateLong(e.Date)),
 							child)
 					}),
 				),
@@ -195,7 +195,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					return render.N("",
 						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
 						render.If(!eci.PaperSignaturesUpdate.IsZero(), func() render.Node {
-							return render.N("div.marginBottom", ONE.PaperSignaturesUpdate, eci.PaperSignaturesUpdate)
+							return render.N("div.marginBottom", ONE.PaperSignaturesUpdate, tr.DateLong(eci.PaperSignaturesUpdate))
 						}),
 
 						render.N("div.bigInfo",
@@ -284,7 +284,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 									),
 									render.N("td", tr.EU_EC_ECI.OtherSupport[s.OtherSupport]),
 									render.N("td", printEuros(s.Amount)),
-									render.N("td", s.Date.In(render.ShortDateZone)),
+									render.N("td", tr.DateShort(s.Date)),
 								)
 							}),
 							render.N("caption",

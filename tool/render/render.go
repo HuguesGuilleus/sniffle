@@ -19,11 +19,6 @@ type H = template.HTML
 // A int display without space for thousand
 type Int int64
 
-// A fake time zone to indicate that this thime, is a date.
-// So hour, minute, seconds and milisecond must be ignored.
-var DateZone = time.FixedZone("DATE", 0)
-var ShortDateZone = time.FixedZone("SHORTDATE", 0)
-
 // Attributes, pair of key value.
 // If value is empty, create a empty attribute.
 // The value is auto escaped.
@@ -226,18 +221,7 @@ func renderChild(h []byte, child any) []byte {
 	case uint:
 		h = renderUint64(h, uint64(child))
 	case time.Time:
-		h = append(h, `<time datetime=`...)
-		if l := child.Location(); l == DateZone {
-			h = child.AppendFormat(h, `2006-01-02>2006-01-02`)
-		} else if l == ShortDateZone {
-			h = child.AppendFormat(h, `2006-01-02>2006_01_02`)
-		} else {
-			child = child.UTC().Truncate(time.Second)
-			h = child.AppendFormat(h, `2006-01-02T15:04:05Z`)
-			h = append(h, `>`...)
-			h = child.AppendFormat(h, `2006-01-02 15:04:05 UTC`)
-		}
-		h = append(h, `</time>`...)
+		h = child.UTC().AppendFormat(h, `<time datetime=2006-01-02T15:04:05Z>2006-01-02 15:04:05 UTC</time>`)
 	case nil:
 		// Nothing
 	case []any:

@@ -8,6 +8,7 @@ import (
 
 	"github.com/HuguesGuilleus/sniffle/common/language"
 	"github.com/HuguesGuilleus/sniffle/front/component"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/HuguesGuilleus/sniffle/tool/sch"
 )
@@ -547,7 +548,7 @@ var schemaPage = func() []byte {
 						render.Na("a", "href", "https://citizens-initiative.europa.eu/thresholds_en").N("https://citizens-initiative.europa.eu/thresholds_en"),
 						" and legal text. ",
 						render.Na("a", "href", "data-threshold/").N("See used data."),
-						" Last check: ", threshold_lastCheck, ".",
+						" Last check: ", translate.T[l].DateLong(threshold_lastCheck), ".",
 					),
 				),
 			),

@@ -4,13 +4,24 @@ package translate
 import (
 	_ "embed"
 	"encoding/json"
+	"html/template"
+	"time"
 
 	"github.com/HuguesGuilleus/sniffle/common/country"
 	"github.com/HuguesGuilleus/sniffle/common/language"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
+// Lang defines the interface for language-specific date formatting.
+type Lang interface {
+	DateHourLong(time.Time) template.HTML
+	DateShort(time.Time) template.HTML
+	DateLong(time.Time) template.HTML
+}
+
 type Translation struct {
+	Lang `json:"-"`
+
 	GLOBAL struct {
 		AboutTextLink render.H `help:"About text for link"`
 		Byte          render.H
@@ -169,10 +180,10 @@ var Langs = []language.Language{
 }
 
 var T = [...]Translation{
-	language.English: load(fileEN),
-	language.French:  load(fileFR),
+	language.English: load(fileEN, LangEnglish{}),
+	language.French:  load(fileFR, LangFrench{}),
 
-	language.AllEnglish: load(fileEN),
+	language.AllEnglish: load(fileEN, LangEnglish{}),
 }
 
 var (
@@ -182,7 +193,7 @@ var (
 	fileFR []byte
 )
 
-func load(data []byte) Translation {
+func load(data []byte, lang Lang) Translation {
 	dto := struct {
 		Translation
 		Country map[country.Country]render.H   `json:"$Country"`
@@ -200,5 +211,6 @@ func load(data []byte) Translation {
 		dto.Translation.Langage[l] = html
 	}
 
+	dto.Translation.Lang = lang
 	return dto.Translation
 }

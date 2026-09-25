@@ -5,7 +5,6 @@ import (
 
 	"github.com/HuguesGuilleus/sniffle/common/country"
 	"github.com/HuguesGuilleus/sniffle/front/component"
-	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Threshold struct {
@@ -17,13 +16,13 @@ type Threshold struct {
 type ThresholdArray = [country.Len]uint
 
 var (
-	threshold_lastCheck   = time.Date(2026, time.September, 25, 0, 0, 0, 0, render.DateZone)
+	threshold_lastCheck   = time.Date(2026, time.September, 25, 0, 0, 0, 0, time.UTC)
 	rule_since_2012_04_01 = "2012-04-01"
 	rule_since_2020_01_01 = "2020-01-01"
 
 	thresholds = [...]*Threshold{
 		{
-			Begin: time.Date(2024, 7, 16, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2024, 7, 16, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2020_01_01,
 			Legal: component.Legal{
 				Prefix: "COMMISSION DELEGATED REGULATION (EU)",
@@ -61,7 +60,7 @@ var (
 			},
 		},
 		{
-			Begin: time.Date(2020, 2, 1, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2020_01_01,
 			Legal: component.Legal{
 				Prefix: "COMMISSION DELEGATED REGULATION (EU)",
@@ -99,7 +98,7 @@ var (
 			},
 		},
 		{
-			Begin: time.Date(2020, 1, 1, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2020_01_01,
 			Legal: component.Legal{
 				Prefix: "REGULATION (EU) OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
@@ -138,7 +137,7 @@ var (
 			},
 		},
 		{
-			Begin: time.Date(2014, 07, 01, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2014, 07, 01, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2012_04_01,
 			Legal: component.Legal{
 				Prefix: "COMMISSION DELEGATED REGULATION (EU) No",
@@ -177,7 +176,7 @@ var (
 			},
 		},
 		{
-			Begin: time.Date(2013, time.July, 01, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2013, time.July, 01, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2012_04_01,
 			Legal: component.Legal{
 				Prefix: "COUNCIL REGULATION (EU) No",
@@ -216,7 +215,7 @@ var (
 			},
 		},
 		{
-			Begin: time.Date(2012, 4, 1, 0, 0, 0, 0, render.ShortDateZone),
+			Begin: time.Date(2012, 4, 1, 0, 0, 0, 0, time.UTC),
 			Rule:  rule_since_2012_04_01,
 			Legal: component.Legal{
 				Prefix: "COMMISSION DELEGATED REGULATION (EU) No",
