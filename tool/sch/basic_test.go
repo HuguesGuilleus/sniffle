@@ -80,16 +80,16 @@ func TestFloat(t *testing.T) {
 	assert.NoError(t, IntervalFloat(-1, 1).Match(json.Number("1.0")))
 	assert.Error(t, IntervalFloat(-1, 1).Match(json.Number("2.0")))
 
-	assert.Equal(t, `<span class=sch-float title=Float64>float64</span>`, genHTML(AnyFloat()))
-	assert.Equal(t, `<span class=sch-float title=Float64>( 0.0 .. )</span>`, genHTML(PositiveFloat()))
-	assert.Equal(t, `<span class=sch-float title=Float64>( 0.0 > .. )</span>`, genHTML(StrictPositiveFloat()))
-	assert.Equal(t, `<span class=sch-float title=Float64>( .. 0.0 )</span>`, genHTML(NegativeFloat()))
-	assert.Equal(t, `<span class=sch-float title=Float64>( .. < 0.0 )</span>`, genHTML(StrictNegativeFloat()))
-	assert.Equal(t, `<span class=sch-float title=Float64>( -1.567 .. 2.3 )</span>`, genHTML(IntervalFloat(-1.567, 2.3)))
-	assert.Equal(t, `<span class=sch-float title=Float64>( -1.1 .. 2.3 )</span>`, genHTML(IntervalFloat(-1.1, 2.3)))
-	assert.Equal(t, `<span class=sch-float title=Float64>3.123456789</span>`, genHTML(ConstFloat(3.123456789)))
-	assert.Equal(t, `<span class=sch-float title=Float64>3.0</span>`, genHTML(ConstFloat(3)))
-	assert.Equal(t, `<span class=sch-float title=Float64>0.0</span>`, genHTML(ConstFloat(0)))
+	assert.Equal(t, `<span class=sch-float title=Float>float64</span>`, genHTML(AnyFloat()))
+	assert.Equal(t, `<span class=sch-float title=Float>( 0.0 .. )</span>`, genHTML(PositiveFloat()))
+	assert.Equal(t, `<span class=sch-float title=Float>( 0.0 > .. )</span>`, genHTML(StrictPositiveFloat()))
+	assert.Equal(t, `<span class=sch-float title=Float>( .. 0.0 )</span>`, genHTML(NegativeFloat()))
+	assert.Equal(t, `<span class=sch-float title=Float>( .. < 0.0 )</span>`, genHTML(StrictNegativeFloat()))
+	assert.Equal(t, `<span class=sch-float title=Float>( -1.567 .. 2.3 )</span>`, genHTML(IntervalFloat(-1.567, 2.3)))
+	assert.Equal(t, `<span class=sch-float title=Float>( -1.1 .. 2.3 )</span>`, genHTML(IntervalFloat(-1.1, 2.3)))
+	assert.Equal(t, `<span class=sch-float title=Float>3.123456789</span>`, genHTML(ConstFloat(3.123456789)))
+	assert.Equal(t, `<span class=sch-float title=Float>3.0</span>`, genHTML(ConstFloat(3)))
+	assert.Equal(t, `<span class=sch-float title=Float>0.0</span>`, genHTML(ConstFloat(0)))
 }
 
 func TestStringFloat(t *testing.T) {

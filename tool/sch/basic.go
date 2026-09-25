@@ -133,7 +133,7 @@ func (t floatType) Match(v any) error {
 }
 
 func (t floatType) HTML(_ string) render.Node {
-	return render.Na(floatMarkup, "title", "Float64").N(t.htmlContent())
+	return render.Na(floatMarkup, "title", "Float").N(t.htmlContent())
 }
 func (t floatType) htmlContent() render.H {
 	format := func(f float64) string {
