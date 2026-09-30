@@ -4,31 +4,41 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/HuguesGuilleus/sniffle/common/language"
+	"github.com/HuguesGuilleus/sniffle/common/rimage"
+	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/securehtml"
 )
 
-func fetchReport(t *tool.Tool) {
-	types := []string{
-		"Annual report", "Specific Annual Report",
-
-		"Review",
-
-		"Activity Report",
-		"Journal",
-	}
-
-	for _, ty := range types {
-		fetchReportType(t, ty, "English", language.English)
-		fetchReportType(t, ty, "French", language.French)
+func fetchAllReport(t *tool.Tool) allReport {
+	return allReport{
+		AnnualReport:         fetchReportsByType(t, "Annual report"),
+		SpecificAnnualReport: fetchReportsByType(t, "Specific Annual Report"),
+		Review:               fetchReportsByType(t, "Review"),
+		ActivityJournal:      fetchReportsByType(t, "Activity Report"),
+		Journal:              fetchReportsByType(t, "Journal"),
 	}
 }
 
-func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) {
+func fetchReportsByType(t *tool.Tool, ty string) (all []report) {
+	langs := [language.Len]string{
+		language.English: "English",
+		language.French:  "French",
+	}
+	for _, l := range translate.Langs {
+		all = mergeReports(all, fetchReportType(t, ty, langs[l], l))
+	}
+	return
+}
+
+func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) (reports []report) {
 	body, _ := json.Marshal(struct {
 		S map[string]any `json:"searchInput"`
 	}{
@@ -70,18 +80,61 @@ func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) {
 		return
 	}
 
-	// Basic output
-	fmt.Println("fetch", docType, lang, len(dto))
-	data := make([]byte, 0)
-	for _, report := range dto {
-		data = fmt.Appendf(data, "%q /// %q\n- %s\n- %s\n- %s\n\n",
-			report.Title, report.Description, report.ReportLandingPageUrl, report.ReportUrl, report.PublicationDate.Time,
-		)
+	reports = make([]report, len(dto))
+	for i, r := range dto {
+		reports[i] = report{
+			ID:              r.ReportLandingPageUrl[len("/../publications/"):],
+			PublicationDate: r.PublicationDate.Time.UTC(),
+		}
+		if r.ImageUrl != "" {
+			reports[i].Image = rimage.New(t, "https://www.eca.europa.eu"+r.ImageUrl)
+		}
+		reports[i].L[l] = &reportL{
+			L:                    l,
+			Title:                r.Title,
+			Description:          securehtml.Secure(r.Description),
+			ReportLandingPageUrl: &url.URL{Scheme: "https", Host: "www.eca.europa.eu", Path: r.ReportLandingPageUrl},
+			ReportUrl:            securehtml.ParseURL(r.ReportUrl),
+		}
 	}
-	t.WriteFile(
-		fmt.Sprintf("/eu/eca/dev.%s.%s.txt", strings.ToLower(strings.ReplaceAll(docType, " ", "_")), l.String()),
-		data,
-	)
+
+	slices.SortFunc(reports, func(a, b report) int {
+		return a.PublicationDate.Compare(b.PublicationDate)
+	})
+
+	return reports
+}
+
+func mergeReports(reportsListA, reportsListB []report) (merge []report) {
+	if len(reportsListA) == 0 {
+		return reportsListB
+	} else if len(reportsListB) == 0 {
+		return reportsListA
+	}
+	merge = make([]report, 0, len(reportsListA)+len(reportsListB))
+	a, b := 0, 0
+	for a < len(reportsListA) && b < len(reportsListB) {
+		if reportsListA[a].ID == reportsListB[b].ID {
+			out := reportsListA[a]
+			for l, reportL := range reportsListB[b].L {
+				if reportL != nil {
+					out.L[l] = reportL
+				}
+			}
+			merge = append(merge, out)
+			a++
+			b++
+		} else if reportsListA[a].ID < reportsListB[b].ID {
+			merge = append(merge, reportsListA[a])
+			a++
+		} else {
+			merge = append(merge, reportsListB[b])
+			b++
+		}
+	}
+	merge = append(merge, reportsListA[a:]...)
+	merge = append(merge, reportsListB[b:]...)
+	return
 }
 
 type timeDTO struct {
