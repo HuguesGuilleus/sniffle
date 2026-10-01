@@ -39,7 +39,7 @@ func renderDataExtraDelay(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language
 					idNamespace(l),
 					render.N("div.headerID", "data/extradelay"),
 				),
-				render.N("div.headerTitle", tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
+				render.N("h1", tr.EU_EC_ECI.DATA_EXTRADELAY.Name),
 				component.HeaderLangs(translate.Langs, l, ""),
 			),
 			render.N("main.w",
@@ -82,7 +82,7 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 					idNamespace(l),
 					render.N("div.headerID", "data / threshold"),
 				),
-				render.N("div.headerTitle", DATA_THRESHOLD.Name),
+				render.N("h1", DATA_THRESHOLD.Name),
 				component.HeaderLangs(translate.Langs, l, ""),
 			),
 			render.N("main.wt.wide", component.Toc(l), render.N("div.wc",
@@ -90,7 +90,7 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 
 				render.N("p.noindent", DATA_THRESHOLD.LastCheck, tr.DateLong(threshold_lastCheck)),
 
-				render.N("h1", DATA_THRESHOLD.H1Data),
+				render.N("h2", DATA_THRESHOLD.H1Data),
 				render.N("table.right",
 					render.N("tr",
 						render.N("th", tr.EU_EC_ECI.ONE.Country),
@@ -112,7 +112,7 @@ func renderDataThreshold(t *tool.Tool, l language.Language) {
 				),
 
 				render.N("div.subw",
-					render.N("h1", DATA_THRESHOLD.H1Rule),
+					render.N("h2", DATA_THRESHOLD.H1Rule),
 					render.S(thresholds[:], "", func(threshold *Threshold) render.Node {
 						return render.N("",
 							render.N("h2", DATA_THRESHOLD.From, " ", tr.DateShort(threshold.Begin)),

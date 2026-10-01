@@ -1,7 +1,7 @@
 // DOM architecture:
 // [hidden]>input[type=search]
 // .sg [ // search group: if any search item is display, hide the group
-//     .si [ // if any queries match searcg target, hide this item.
+//     .si [ // if any queries match search target, hide this item.
 //         .st // search target: use this string to math the queries.
 //     ]
 // ]

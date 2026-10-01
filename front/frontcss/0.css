@@ -16,12 +16,12 @@ body {
 	background: _back;
 }
 
-h1 {
+h2 {
 	border: var(--color) _line2;
 	border-style: solid none;
 }
 
-h2 {
+h3 {
 	display: table;
 	border: var(--color) _line2;
 	border-style: double none;

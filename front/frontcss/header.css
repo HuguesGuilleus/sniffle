@@ -34,10 +34,10 @@ header {
 	background: var(--color);
 }
 
-.headerTitle {
+h1 {
 	display: table;
+	margin: 0;
 	padding: _spThin;
-	font-size: xx-large;
 	background: var(--color);
 }
 

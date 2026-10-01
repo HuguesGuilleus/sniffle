@@ -21,7 +21,7 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup", idNamespace(l)),
-				render.N("div.headerTitle", tr.EU_EC_ECI.INDEX.Name),
+				render.N("h1", tr.EU_EC_ECI.INDEX.Name),
 				component.HeaderLangs(translate.Langs, l, ""),
 			),
 			render.N("main.wt", component.Toc(l), render.N("div.wc",
@@ -44,7 +44,7 @@ func writeIndex(t *tool.Tool, eciByYear map[uint][]*ECIOut, l language.Language)
 				component.SearchBlock(l),
 				render.MapReverse(eciByYear, func(year uint, slice []*ECIOut) render.Node {
 					return render.N("div.sg",
-						render.N("h1", render.Int(year)),
+						render.N("h2", render.Int(year)),
 						render.S(slice, "", func(eci *ECIOut) render.Node {
 							l := l
 							if eci.Description[l] == nil {
@@ -90,7 +90,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 					idNamespace(l),
 					render.N("div.headerID", fmt.Sprintf("ECI(%4d)%06d", eci.Year, eci.Number)),
 				),
-				render.N("div.headerTitle", desc.Title),
+				render.N("h1", desc.Title),
 				component.HeaderLangs(eci.Langs(), l, ""),
 			),
 			render.N("main.wt", component.Toc(l), render.N("div.wc",
@@ -129,11 +129,11 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				renderImage(eci, false, tr.GLOBAL.LogoTitle),
 
 				// Text description
-				render.N("h1", ONE.H1Description),
+				render.N("h2", ONE.H1Description),
 				render.N("div.text", desc.Objective),
 				render.If(desc.Annex != "", func() render.Node {
 					return render.N("",
-						render.N("h2", ONE.H1DescriptionAnnex),
+						render.N("h3", ONE.H1DescriptionAnnex),
 						render.N("div.text", desc.Annex),
 					)
 				}),
@@ -141,13 +141,13 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				renderDoc(l, desc.DraftLegal, ONE.DraftLegal),
 				render.If(desc.Treaty != "", func() render.Node {
 					return render.N("",
-						render.N("h2", ONE.H1Treaty),
+						render.N("h3", ONE.H1Treaty),
 						render.N("p.noindent", desc.Treaty),
 					)
 				}),
 
 				// Timeline
-				render.N("h1", ONE.H1Timeline),
+				render.N("h2", ONE.H1Timeline),
 				render.N("ol.timeLine",
 					render.S(eci.Timeline, "", func(e Event) render.Node {
 						child := render.Z
@@ -193,7 +193,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Signature
 				render.If(len(eci.Signature) != 0, func() render.Node {
 					return render.N("",
-						render.N("h1", tr.EU_EC_ECI.ONE.H1Signature),
+						render.N("h2", tr.EU_EC_ECI.ONE.H1Signature),
 						render.If(!eci.PaperSignaturesUpdate.IsZero(), func() render.Node {
 							return render.N("div.marginBottom", ONE.PaperSignaturesUpdate, tr.DateLong(eci.PaperSignaturesUpdate))
 						}),
@@ -246,7 +246,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				}),
 
 				// Members
-				render.N("h1", ONE.Member.H1),
+				render.N("h2", ONE.Member.H1),
 				render.N("ul.peopleIndex", render.S(eci.Members, "", func(m Member) render.Node {
 					return renderMember(l, &m)
 				})),
@@ -254,7 +254,7 @@ func writeOne(t *tool.Tool, eci *ECIOut, l language.Language) {
 				// Funding
 				render.If(!eci.FundingUpdate.IsZero(), func() render.Node {
 					return render.N("",
-						render.N("h1", ONE.Funding.Name),
+						render.N("h2", ONE.Funding.Name),
 						render.N("div.marginBottom", ONE.LastUpdate, eci.FundingUpdate),
 						render.N("div.bigInfo",
 							render.N("div.bigInfoMeta", ONE.Funding.Total),

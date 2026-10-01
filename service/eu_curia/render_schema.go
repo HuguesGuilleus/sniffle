@@ -20,10 +20,10 @@ var schemaHTML = render.Merge(render.Na("html", "lang", "en").N(
 			render.N("div.wc",
 				render.N("div.summary", "our usage of the API https://infocuriaws.curia.europa.eu/ to get index and details of European Citizens' Initiative. It is full empiric, be careful!"),
 
-				render.N("h1", "Index"),
+				render.N("h2", "Index"),
 				render.N("pre.sch", indexTypes.HTML("")),
 
-				render.N("h1", "Affair"),
+				render.N("h2", "Affair"),
 				render.N("pre.sch", procedureTypes.HTML("")),
 			),
 		),

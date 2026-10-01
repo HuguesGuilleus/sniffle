@@ -19,7 +19,7 @@ func renderRefusedIndex(index []*ECIRefused, baseURL string, l language.Language
 					idNamespace(l),
 					render.N("div.headerID", "refused"),
 				),
-				render.N("div.headerTitle", tr.EU_EC_ECI.REFUSED_INDEX.Name),
+				render.N("h1", tr.EU_EC_ECI.REFUSED_INDEX.Name),
 				component.HeaderLangs(translate.Langs, l, ""),
 			),
 			render.N("main.w",
@@ -104,7 +104,7 @@ func renderRefusedOne(eci *ECIRefused) []byte {
 					}),
 				),
 
-				render.N("h1", tr.EU_EC_ECI.ONE.H1Description),
+				render.N("h2", tr.EU_EC_ECI.ONE.H1Description),
 				render.N("div.text", eci.Objectives),
 				render.If(eci.AnnexText != "", func() render.Node {
 					return render.N("",
@@ -116,12 +116,12 @@ func renderRefusedOne(eci *ECIRefused) []byte {
 				renderDoc(eci.Lang, eci.DraftLegal, tr.EU_EC_ECI.ONE.DraftLegal),
 				render.If(eci.Treaties != "", func() render.Node {
 					return render.N("",
-						render.N("h1", tr.EU_EC_ECI.ONE.H1Treaty),
+						render.N("h3", tr.EU_EC_ECI.ONE.H1Treaty),
 						render.N("p", eci.Treaties),
 					)
 				}),
 
-				render.N("h1", tr.EU_EC_ECI.ONE.H1Timeline),
+				render.N("h2", tr.EU_EC_ECI.ONE.H1Timeline),
 				render.N("ol.timeLine",
 					render.N("li.timePoint",
 						render.N("div.timeHead",
