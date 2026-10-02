@@ -270,12 +270,13 @@
 		"Name": "Cour des comptes européenne",
 		"ReportPage": "Page du rapport",
 		"ReportPDF": "PDF",
+		"PublicationDate": "Publié le\u202F: ",
 		"INDEX_ALL": {
 			"Name": "Tous les rapports",
 			"Desc": "La liste de tous les rapports de la Cour des comptes européennes"
 		},
 		"INDEX_BY_YEAR": {
-			"Name": "Les rapports de la Cour ds compte en %d",
+			"Name": "Les rapports de la Cour des comptes en %d",
 			"Desc": "Liste annuelle de tout les rapports de la Cour des comptes européenne.",
 			"Count": "Nombre de rapports cette année"
 		},

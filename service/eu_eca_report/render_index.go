@@ -20,9 +20,9 @@ func renderAll(l language.Language, reports []report) []byte {
 					render.N("div.headerID",
 						component.HomeAnchor(l),
 						render.Na("a", "href", l.Path("/eu/")).A("title", tr.EU.Name).N("eu"), " / ",
-						render.Na("a", "href", l.Path("/eu/eca/")).A("title", tr.EU_ECA.Name).N("eca"), " / ",
-						render.Na("a", "href", l.Path("/eu/eca/report/")).N("report")),
-					render.N("div.headerID", "all"),
+						render.Na("a", "href", l.Path("/eu/eca/")).A("title", tr.EU_ECA.Name).N("eca"),
+					),
+					render.N("div.headerID", "report / all"),
 					render.N("h1", tr.EU_ECA.INDEX_ALL.Name),
 				),
 				component.HeaderLangs(translate.Langs, l, "all."),
@@ -45,7 +45,6 @@ func renderAll(l language.Language, reports []report) []byte {
 						tr.DateShort(r.PublicationDate),
 						" | ", tr.EU_ECA.Kind[r.Kind],
 						" [", r.ID, "] ",
-
 						title,
 					)
 				})),

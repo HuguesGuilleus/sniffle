@@ -1,9 +1,14 @@
 /* For translate element */
-.tr,
+.tr:not(.bigItem),
 .tri {
 	border: forestgreen dashed .2ex;
 	padding: .7ex;
 	font-style: italic;
+}
+
+.tr.bigItem {
+	border-color: forestgreen;
+	border-style: dashed;
 }
 
 /* translate inline */

@@ -90,7 +90,9 @@ func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) (r
 			PublicationDate: r.PublicationDate.Time.UTC(),
 		}
 		if r.ImageUrl != "" {
-			reports[i].Image = rimage.New(t, "https://www.eca.europa.eu"+r.ImageUrl)
+			url := "https://www.eca.europa.eu" + r.ImageUrl
+			reports[i].ImageURL = url
+			reports[i].Image = rimage.New(t, url)
 		}
 		reports[i].L[l] = &reportL{
 			L:                    l,

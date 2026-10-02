@@ -9,23 +9,6 @@ import (
 type LangFrench struct{}
 
 func (LangFrench) DateHourLong(t time.Time) template.HTML {
-	weekday := ""
-	switch t.Weekday() {
-	case time.Sunday:
-		weekday = "dimanche"
-	case time.Monday:
-		weekday = "lundi"
-	case time.Tuesday:
-		weekday = "mardi"
-	case time.Wednesday:
-		weekday = "mercredi"
-	case time.Thursday:
-		weekday = "jeudi"
-	case time.Friday:
-		weekday = "vendredi"
-	case time.Saturday:
-		weekday = "samedi"
-	}
 
 	year, month, day := t.Date()
 	return template.HTML(fmt.Sprintf("<time datetime=%d-%02d-%02dT%02d:%02d:%02dZ>%s %d %s %d à %02d:%02d:%02d %s</time>",
@@ -36,7 +19,7 @@ func (LangFrench) DateHourLong(t time.Time) template.HTML {
 		t.Minute(),
 		t.Second(),
 
-		weekday,
+		LangFrench{}.weekday(t.Weekday()),
 		day,
 		LangFrench{}.month(month),
 		year,
@@ -53,14 +36,35 @@ func (LangFrench) DateShort(t time.Time) template.HTML {
 
 func (LangFrench) DateLong(t time.Time) template.HTML {
 	year, month, day := t.Date()
-	return template.HTML(fmt.Sprintf("<time datetime=%d-%02d-%02d>%d %s %d</time>",
+	return template.HTML(fmt.Sprintf("<time datetime=%d-%02d-%02d>%s %d %s %d</time>",
 		year,
 		month,
 		day,
+		LangFrench{}.weekday(t.Weekday()),
 		day,
 		LangFrench{}.month(month),
 		year,
 	))
+}
+
+func (LangFrench) weekday(w time.Weekday) (weekday string) {
+	switch w {
+	case time.Sunday:
+		weekday = "dimanche"
+	case time.Monday:
+		weekday = "lundi"
+	case time.Tuesday:
+		weekday = "mardi"
+	case time.Wednesday:
+		weekday = "mercredi"
+	case time.Thursday:
+		weekday = "jeudi"
+	case time.Friday:
+		weekday = "vendredi"
+	case time.Saturday:
+		weekday = "samedi"
+	}
+	return
 }
 
 func (LangFrench) month(month time.Month) string {

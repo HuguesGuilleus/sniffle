@@ -270,12 +270,13 @@
 		"Name": "European Court of Auditors",
 		"ReportPage": "Report webpage",
 		"ReportPDF": "PDF",
+		"PublicationDate": "Publish at: ",
 		"INDEX_ALL": {
 			"Name": "All reports",
 			"Desc": "Index of all European Court of Auditors reports"
 		},
 		"INDEX_BY_YEAR": {
-			"Title": "Report index for the year %d",
+			"Name": "Report index for the year %d",
 			"Desc": "All year report index from European Court of Auditors.",
 			"Count": "Report count for this year"
 		},

@@ -163,10 +163,11 @@ type Translation struct {
 	}
 
 	EU_ECA struct {
-		Name       string
-		ReportPage string
-		ReportPDF  string
-		INDEX_ALL  struct {
+		Name            string
+		ReportPage      string
+		ReportPDF       string
+		PublicationDate string
+		INDEX_ALL       struct {
 			Name string
 			Desc string
 		}

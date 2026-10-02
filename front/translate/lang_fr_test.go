@@ -15,5 +15,5 @@ func TestLangFrench(t *testing.T) {
 		l.DateHourLong(date),
 	)
 	assert.EqualValues(t, `<time datetime=2026-09-25>25/09/2026</time>`, l.DateShort(date))
-	assert.EqualValues(t, `<time datetime=2026-09-25>25 septembre 2026</time>`, l.DateLong(date))
+	assert.EqualValues(t, `<time datetime=2026-09-25>vendredi 25 septembre 2026</time>`, l.DateLong(date))
 }
