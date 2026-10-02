@@ -172,9 +172,12 @@ type Translation struct {
 			Desc string
 		}
 		INDEX_BY_YEAR struct {
-			Name  string
+			Name string
+			Desc string
+		}
+		INDEX_BY_KIND struct {
 			Desc  string
-			Count string
+			Edito map[string]string
 		}
 		Kind map[string]string
 	}

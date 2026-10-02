@@ -14,7 +14,7 @@ func renderIndexByYear(t *tool.Tool, l language.Language, year int, reports []*r
 	tr := translate.T[l]
 	ECA := tr.EU_ECA
 	basePath := fmt.Sprintf("/eu/eca/%d/", year)
-	title := fmt.Sprintf(ECA.INDEX_BY_YEAR.Title, year)
+	title := fmt.Sprintf(ECA.INDEX_BY_YEAR.Name, year)
 
 	t.WriteFile(l.Path(basePath), render.Merge(render.Na("html", "lang", l.String()).N(
 		component.Head(l, basePath, title, ECA.INDEX_BY_YEAR.Desc),
@@ -31,7 +31,7 @@ func renderIndexByYear(t *tool.Tool, l language.Language, year int, reports []*r
 			),
 			render.N("main.w",
 				render.N("div.bigInfo",
-					render.N("div.bigInfoMeta", ECA.INDEX_BY_YEAR.Count),
+					// render.N("div.bigInfoMeta", ECA.INDEX_BY_YEAR.Count),
 					render.N("div.bigInfoMain.bigInfoData", len(reports)),
 				),
 				component.SearchBlock(l),

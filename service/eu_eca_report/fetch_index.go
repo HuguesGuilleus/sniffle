@@ -104,7 +104,7 @@ func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) (r
 	}
 
 	slices.SortFunc(reports, func(a, b report) int {
-		return a.PublicationDate.Compare(b.PublicationDate)
+		return b.PublicationDate.Compare(a.PublicationDate)
 	})
 
 	return reports

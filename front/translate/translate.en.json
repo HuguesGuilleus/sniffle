@@ -277,8 +277,17 @@
 		},
 		"INDEX_BY_YEAR": {
 			"Name": "Report index for the year %d",
-			"Desc": "All year report index from European Court of Auditors.",
-			"Count": "Report count for this year"
+			"Desc": "All year report index from European Court of Auditors."
+		},
+		"INDEX_BY_KIND": {
+			"Desc": "Index of all report of kind: ",
+			"Edito": {
+				"Annual report": "Our annual reports describe the results of our financial and compliance audit work on the EU budget, the Recovery and Resilience Facility, and the European Development Funds. They contain our statement of assurance, which the European Parliament uses when deciding whether to approve the implementation of the EU budget (discharge procedure) for the year.",
+				"Specific Annual Report": "In specific annual reports, we present the results of our annual financial audits of EU agencies, decentralised bodies and joint undertakings.",
+				"Review": "In reviews we provide description and analysis of a topical EU policy area or issue. ",
+				"Activity Report": "The “Our activities” report gives an overview of the ECA’s key results and achievements during the year, and describes the main developments in its audit environment and any changes in the way the institution is organised. The activity report of the authorising officer by delegation contains information about how the ECA manages its resources and deploys its internal control systems. The report provides management accountability both internally and externally, since it is sent to the European Commission and the budgetary authority (European Parliament and Council) as part of the annual budget discharge procedure.",
+				"Journal": "The ECA Journal is a periodical focusing on key issues in public audit across the EU. It offers a window onto the ECA’s role and work, with each edition featuring articles on a specific theme by both internal and external contributors. The articles may identify new developments and practices, or present the perspective of policymakers, auditors, academics or other experts on a given topic. The content of the interviews and articles is the sole responsibility of the interviewees and authors and does not reflect the opinion of the European Court of Auditors. "
+			}
 		},
 		"Kind": {
 			"Annual report": "Annual report",

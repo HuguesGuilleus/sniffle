@@ -277,8 +277,17 @@
 		},
 		"INDEX_BY_YEAR": {
 			"Name": "Les rapports de la Cour des comptes en %d",
-			"Desc": "Liste annuelle de tout les rapports de la Cour des comptes européenne.",
-			"Count": "Nombre de rapports cette année"
+			"Desc": "Liste annuelle de tout les rapports de la Cour des comptes européenne."
+		},
+		"INDEX_BY_KIND": {
+			"Desc": "Liste de tout les rapports de la Cour des comptes européenne du type\u202F: ",
+			"Edito": {
+				"Annual report": "Notre rapport annuel décrit les résultats de nos travaux d'audit financier et d'audit de conformité sur le budget de l'UE. Il contient notre déclaration d'assurance, sur laquelle le Parlement européen s'appuie lorsqu'il décide d'approuver ou non l'exécution du budget de l'UE (dans le cadre de la procédure de décharge) pour l'exercice concerné. ",
+				"Specific Annual Report": "Dans nos rapports annuels spécifiques, nous présentons les résultats de nos audits financiers annuels des agences, organismes décentralisés et entreprises communes de l'UE.",
+				"Review": "Dans les documents d'analyse, nous décrivons et analysons un domaine d'action ou une question concernant l'UE qui est au centre de l'actualité. ",
+				"Activity Report": "Le rapport «Nos activités» donne une vue d'ensemble des principaux résultats et réalisations de la Cour pendant l'année concernée et décrit les évolutions majeures de l'environnement d'audit et tout changement dans l'organisation de l'institution. Le rapport d'activités de l'ordonnateur délégué comporte des informations sur la manière dont la Cour gère ses ressources et applique ses systèmes de contrôle interne. Il permet de rendre compte de la gestion tant en interne que vis-à-vis de l'extérieur, étant donné qu'il est envoyé à la Commission européenne et à l'autorité budgétaire (le Parlement européen et le Conseil) dans le cadre de la procédure de décharge budgétaire annuelle.",
+				"Journal": "Le Journal de la Cour des comptes européenne est une revue périodique centrée sur les questions-clés relatives à l'audit des finances publiques au sein de l'UE. Il est une fenêtre ouverte sur le rôle et les travaux de la Cour des comptes européenne. En effet, chaque numéro contient des articles sur des thèmes spécifiques, vus par des contributeurs internes et externes. Les articles peuvent traiter de nouvelles évolutions et pratiques ou présenter les points de vue de décideurs politiques, d'auditeurs, d'universitaires ou autres experts sur un sujet donné. Le contenu des entretiens et des articles relève de la responsabilité exclusive des personnes interrogées et des auteurs et ne reflète pas l'opinion de la Cour des comptes européenne. "
+			}
 		},
 		"Kind": {
 			"Annual report": "Rapport annuel",
