@@ -269,11 +269,22 @@
 	"EU_ECA": {
 		"Name": "European Court of Auditors",
 		"ReportPage": "Report webpage",
-		"ReportPDFHelp": "PDF",
+		"ReportPDF": "PDF",
+		"INDEX_ALL": {
+			"Name": "All reports",
+			"Desc": "Index of all European Court of Auditors reports"
+		},
 		"INDEX_BY_YEAR": {
 			"Title": "Report index for the year %d",
 			"Desc": "All year report index from European Court of Auditors.",
 			"Count": "Report count for this year"
+		},
+		"Kind": {
+			"Annual report": "Annual report",
+			"Specific Annual Report": "Specific Annual Report",
+			"Review": "Review",
+			"Activity Report": "Activity Report",
+			"Journal": "Journal"
 		}
 	}
 }

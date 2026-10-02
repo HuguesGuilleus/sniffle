@@ -1,6 +1,7 @@
 package eu_eca_report
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,6 +36,7 @@ func fetchReportsByType(t *tool.Tool, ty string) (all []report) {
 	for _, l := range translate.Langs {
 		all = mergeReports(all, fetchReportType(t, ty, langs[l], l))
 	}
+	fillDefault(all)
 	return
 }
 
@@ -84,6 +86,7 @@ func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) (r
 	for i, r := range dto {
 		reports[i] = report{
 			ID:              r.ReportLandingPageUrl[len("/../publications/"):],
+			Kind:            docType,
 			PublicationDate: r.PublicationDate.Time.UTC(),
 		}
 		if r.ImageUrl != "" {
@@ -135,6 +138,18 @@ func mergeReports(reportsListA, reportsListB []report) (merge []report) {
 	merge = append(merge, reportsListA[a:]...)
 	merge = append(merge, reportsListB[b:]...)
 	return
+}
+
+func fillDefault(reports []report) {
+	for i := range reports {
+		for l := range reports[i].L {
+			reports[i].L[l] = cmp.Or(
+				reports[i].L[l],
+				reports[i].L[language.English],
+				reports[i].L[language.French],
+			)
+		}
+	}
 }
 
 type timeDTO struct {

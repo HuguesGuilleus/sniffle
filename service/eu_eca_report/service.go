@@ -4,19 +4,23 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/HuguesGuilleus/sniffle/front/translate"
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func Do(t *tool.Tool) {
-	reports := fetchAllReport(t)
+	allReports := fetchAllReport(t)
 
-	t.WriteFile("/eu/eca/report/index.txt", []byte(strings.Join(reports.Ids(), "\n")))
+	t.WriteFile("/eu/eca/report/index.txt", []byte(strings.Join(allReports.Ids(), "\n")))
+	t.WriteFile("/eu/eca/report/index.html", render.Back)
 
-	for report := range reports.All() {
+	reports := allReports.All()
+	for _, report := range reports {
 		j, _ := json.Marshal(report)
-		t.WriteFile("/eu/eca/report/"+report.ID+"/data.json", j)
+		t.WriteFile("/eu/eca/report/"+report.ID+".json", j)
 	}
-
-	t.WriteFile("/eu/eca/report/", render.Back)
+	for _, l := range translate.Langs {
+		t.WriteFile(l.Path("/eu/eca/report/all."), renderAll(l, reports))
+	}
 }

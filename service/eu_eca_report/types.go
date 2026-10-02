@@ -19,7 +19,10 @@ type allReport struct {
 	Journal              []report
 }
 type report struct {
-	ID              string
+	ID string
+	// The type of report.
+	// Values is equal to API `ECADocType`.
+	Kind            string
 	PublicationDate time.Time
 	Image           *rimage.Image
 	L               [language.Len]*reportL
@@ -58,12 +61,39 @@ func (all *allReport) Ids() (allIds []string) {
 	return
 }
 
-func (all *allReport) All() iter.Seq[report] {
-	return func(yield func(report) bool) {
-		slices.Values(all.AnnualReport)(yield)
-		slices.Values(all.SpecificAnnualReport)(yield)
-		slices.Values(all.Review)(yield)
-		slices.Values(all.ActivityJournal)(yield)
-		slices.Values(all.Journal)(yield)
+func (all *allReport) All() (a []report) {
+	a = make([]report, 0,
+		len(all.AnnualReport)+
+			len(all.SpecificAnnualReport)+
+			len(all.Review)+
+			len(all.ActivityJournal)+
+			len(all.Journal),
+	)
+	a = append(a, all.AnnualReport...)
+	a = append(a, all.SpecificAnnualReport...)
+	a = append(a, all.Review...)
+	a = append(a, all.ActivityJournal...)
+	a = append(a, all.Journal...)
+	slices.SortFunc(a, func(a, b report) int {
+		return b.PublicationDate.Compare(a.PublicationDate)
+	})
+	return
+}
+
+func (all *allReport) ByYear() iter.Seq2[int, []*report] {
+	byYears := make(map[int][]*report)
+	for _, r := range all.All() {
+		year := r.PublicationDate.Year()
+		byYears[year] = append(byYears[year], &r)
+	}
+	return func(yield func(int, []*report) bool) {
+		for year, reports := range byYears {
+			slices.SortFunc(reports, func(a, b *report) int {
+				return b.PublicationDate.Compare(a.PublicationDate)
+			})
+			if !yield(year, reports) {
+				return
+			}
+		}
 	}
 }

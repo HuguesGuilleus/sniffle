@@ -269,11 +269,22 @@
 	"EU_ECA": {
 		"Name": "Cour des comptes européenne",
 		"ReportPage": "Page du rapport",
-		"ReportPDFHelp": "PDF",
+		"ReportPDF": "PDF",
+		"INDEX_ALL": {
+			"Name": "Tous les rapports",
+			"Desc": "La liste de tous les rapports de la Cour des comptes européennes"
+		},
 		"INDEX_BY_YEAR": {
-			"Title": "Rapports de la Cour en %d",
+			"Name": "Les rapports de la Cour ds compte en %d",
 			"Desc": "Liste annuelle de tout les rapports de la Cour des comptes européenne.",
 			"Count": "Nombre de rapports cette année"
+		},
+		"Kind": {
+			"Annual report": "Rapport annuel",
+			"Specific Annual Report": "Rapport spécifique annuel",
+			"Review": "Analyse",
+			"Activity Report": "Rapport d'activité",
+			"Journal": "Journal"
 		}
 	}
 }

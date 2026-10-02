@@ -114,6 +114,8 @@ func (l Language) String() string {
 	return language2iso[l]
 }
 
+func (l Language) MarshalText() ([]byte, error) { return []byte(l.String()), nil }
+
 // Two upper ascii letter of the ISO language code.
 // If unknwon return "??".
 func (l Language) Upper() string {
@@ -202,7 +204,7 @@ func (l Language) Human() string {
 
 // Create path.
 // If l == [AllEnglish], return without change.
-// Is this case, the basePath must ends with a '/', else panic.
+// In this case, the basePath must ends with a '/', else panic.
 func (l Language) Path(basePath string) string {
 	if l == AllEnglish {
 		if !strings.HasSuffix(basePath, "/") {

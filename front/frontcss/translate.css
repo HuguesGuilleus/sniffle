@@ -1,6 +1,12 @@
 /* For translate element */
-.tr {
+.tr,
+.tri {
 	border: forestgreen dashed .2ex;
 	padding: .7ex;
 	font-style: italic;
+}
+
+/* translate inline */
+.tri {
+	padding: 0;
 }

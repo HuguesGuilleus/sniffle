@@ -11,11 +11,11 @@ const makeSearchGroupItem = (searchGroup) => [
 		searchGroup || {},
 		qsa(".si", (searchItem) => [
 			searchItem,
-			qsa(
+			(qsa(
 				".st",
-				(searchTarget) => searchTarget[INNERTEXT].toLowerCase(),
+				(searchTarget) => searchTarget[INNERTEXT],
 				searchItem,
-			).join(" "),
+			).join(" ") || searchItem[INNERTEXT]).toLowerCase(),
 		], searchGroup),
 	],
 	// Type: [][searchGroup|{}, [][searchItem, searchTarget:string]]
