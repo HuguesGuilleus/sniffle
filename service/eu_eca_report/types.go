@@ -98,3 +98,18 @@ func (all *allReport) ByYear() iter.Seq2[int, []*report] {
 		}
 	}
 }
+
+func getYearsRange(reports []report) []int {
+	oldest := reports[0].PublicationDate.Year()
+	newest := reports[0].PublicationDate.Year()
+	for _, r := range reports[1:] {
+		year := r.PublicationDate.Year()
+		oldest = min(oldest, year)
+		newest = max(newest, year)
+	}
+	years := make([]int, 0, newest-oldest+1)
+	for i := oldest; i <= newest; i++ {
+		years = append(years, i)
+	}
+	return years
+}

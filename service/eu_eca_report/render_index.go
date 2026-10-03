@@ -13,7 +13,6 @@ func renderAll(l language.Language, reports []report) []byte {
 	return render.Merge(render.Na("html", "lang", l.String()).N(
 		component.Head(l, "all", tr.EU_ECA.INDEX_ALL.Name, tr.EU_ECA.INDEX_ALL.Desc),
 		render.N("body",
-			component.InDevHeader(l),
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup",

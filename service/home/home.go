@@ -27,7 +27,7 @@ func Do(t *tool.Tool) {
 					render.N("h2", tr.HOME.EU),
 					render.N("ul",
 						render.N("li", render.Na("a", "href", l.Path("/eu/ec/eci/")).N("[/eu/ec/eci/] ", tr.EU_EC_ECI.Name)),
-						render.IfS(tool.DevMode, render.N("li", render.Na("a", "href", l.Path("/eu/eca/report/")).N("[/eu/eca/report] ", "!ECA report"))),
+						render.N("li", render.Na("a", "href", l.Path("/eu/eca/")).N("[/eu/eca/report] ", tr.EU_ECA.Name)),
 						render.IfS(tool.DevMode, render.N("li", render.Na("a", "href", l.Path("/eu/parl/mep/")).N("[/eu/parl/mep] ", "!Palr MEPS"))),
 					),
 

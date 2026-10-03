@@ -69,7 +69,6 @@ func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) (r
 	request := fetch.R(http.MethodPost, "https://www.eca.europa.eu/_vti_bin/ECA.Internet/DocSetService.svc/SearchDocs", body,
 		"Accept", "application/json",
 		"Content-Type", "application/json",
-		"Referer", "https://www.eca.europa.eu/"+l.String()+"/multiple-reports",
 	)
 	if tool.DevMode {
 		t.WriteFile(
