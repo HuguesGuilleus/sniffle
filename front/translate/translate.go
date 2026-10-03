@@ -164,6 +164,7 @@ type Translation struct {
 
 	EU_ECA struct {
 		Name            string
+		Desc            string
 		ReportPage      string
 		ReportPDF       string
 		PublicationDate string

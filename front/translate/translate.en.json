@@ -268,6 +268,7 @@
 
 	"EU_ECA": {
 		"Name": "European Court of Auditors",
+		"Desc": "The European Union's external auditor performs independent, high-quality and impactful audits to improve the governance, accountability, transparency and sound financial management of EU action, thereby enhancing citizens' trust and contributing effectively to the response to current and future challenges facing the EU.",
 		"ReportPage": "Report webpage",
 		"ReportPDF": "PDF",
 		"PublicationDate": "Publish at: ",
