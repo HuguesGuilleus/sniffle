@@ -19,6 +19,7 @@ func Do(t *tool.Tool) {
 	t.WriteFile("/eu/eca/report/index.html", render.Back)
 	t.WriteFile("/eu/eca/index.html", lredirect.All)
 	t.WriteFile("/eu/eca/report/schema.html", schemaPage)
+	t.WriteFile("/eu/eca/report/data.html", reuseData)
 
 	for _, report := range reports {
 		j, _ := json.Marshal(report)

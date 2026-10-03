@@ -3,11 +3,9 @@ package eu_eca_report
 import (
 	"cmp"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/HuguesGuilleus/sniffle/common/language"
@@ -70,12 +68,6 @@ func fetchReportType(t *tool.Tool, docType, lang string, l language.Language) (r
 		"Accept", "application/json",
 		"Content-Type", "application/json",
 	)
-	if tool.DevMode {
-		t.WriteFile(
-			fmt.Sprintf("/eu/eca/dev.%s.%s.json", strings.ToLower(strings.ReplaceAll(docType, " ", "_")), l.String()),
-			tool.FetchAll(t, request),
-		)
-	}
 	if tool.FetchJSON(t, indexTypes, &dto, request) {
 		t.Logger.Warn("json.fail", "type", docType, "lang", lang)
 		return

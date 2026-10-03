@@ -35,6 +35,7 @@ type Translation struct {
 		PageTop       render.H `help:"In TOC link to page top"`
 		Presentation  render.H
 		SchemaLink    render.H `help:"Schema link"`
+		ReuseDataLink string
 		SearchInside  string
 		Source        render.H
 	}

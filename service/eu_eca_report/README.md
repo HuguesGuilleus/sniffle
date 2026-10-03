@@ -20,5 +20,4 @@
 ## TODO
 
 - This ECA document type fail: `Special Report` and `Opinion`
-- "Report" give until 2020 document
 - The newsletter

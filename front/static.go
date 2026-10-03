@@ -36,6 +36,7 @@ var (
 		"_colorA":     "#2E98FF",
 		"_colorADark": "#006ad0",
 		"_colorEdito": "orchid",
+		"_colorData":  "gold",
 	})
 	StyleHash, StyleIntegrity = fronttool.FileSum(styleData)
 )

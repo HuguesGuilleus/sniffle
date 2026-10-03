@@ -17,7 +17,6 @@ func renderByYear(l language.Language, year int, reports []*report) []byte {
 	return render.Merge(render.Na("html", "lang", l.String()).N(
 		component.Head(l, "all", title, tr.EU_ECA.INDEX_BY_YEAR.Desc),
 		render.N("body",
-			component.InDevHeader(l),
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup",
@@ -45,7 +44,6 @@ func renderByKind(l language.Language, kind string, reports []report) []byte {
 	return render.Merge(render.Na("html", "lang", l.String()).N(
 		component.Head(l, "all", tr.EU_ECA.Kind[kind], tr.EU_ECA.INDEX_BY_KIND.Desc+tr.EU_ECA.Kind[kind]),
 		render.N("body",
-			component.InDevHeader(l),
 			component.TopHeader(l),
 			render.N("header",
 				render.N("div.headerSup",

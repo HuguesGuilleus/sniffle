@@ -2,6 +2,9 @@
 	--color: _colorEdito;
 }
 
+.data {
+	--color: _colorData;
+}
 
 div.edito {
 	border: solid _line2 _colorEdito;

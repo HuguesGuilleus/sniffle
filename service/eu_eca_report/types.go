@@ -24,7 +24,7 @@ type report struct {
 	// Values is equal to API `ECADocType`.
 	Kind            string
 	PublicationDate time.Time
-	Image           *rimage.Image `json:"-"`
+	Image           *rimage.Image
 	ImageURL        string
 	L               [language.Len]*reportL
 }

@@ -39,7 +39,7 @@ var schemaPage = render.Merge(render.Na("html", "lang", "en").N(
 				render.Na("a", "href", "/eu/").A("title", translate.T[language.AllEnglish].EU.Name).N("eu"), " / ",
 				render.Na("a", "href", "/eu/eca/").A("title", translate.T[language.AllEnglish].EU_ECA.Name).N("eca"),
 			),
-			render.N("div.headerID", "report / all"),
+			render.N("div.headerID", "report / schema"),
 			render.N("h1", "Schema of ECA"),
 		),
 		render.N("div.wt.wide",
