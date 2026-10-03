@@ -40,9 +40,9 @@ func main() {
 	config.Run("home", home.Do)
 
 	config.Run("eu_ec_eci", eu_ec_eci.Do)
-	config.Run("//eu_eca_report", eu_eca_report.Do)
-	// config.Run("//eu_parl_mep", eu_parl_mep.Do)
+	config.Run("eu_eca_report", eu_eca_report.Do)
 
+	// config.Run("//eu_parl_mep", eu_parl_mep.Do)
 	// config.Run("//eu_curia", eu_curia.Do)
 
 	writefs.WriteFile(config.Writefile, "/sitemap.txt", writerSitemap.Sitemap(common.Host))
