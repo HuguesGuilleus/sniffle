@@ -22,10 +22,6 @@ header {
 		repeating-linear-gradient(90deg, _back 0 1ex, _back1 1ex 1.5ex);
 }
 
-.headerHome {
-	text-decoration: none;
-}
-
 .headerID {
 	display: inline-block;
 	margin: 0 _sp _sp 0;

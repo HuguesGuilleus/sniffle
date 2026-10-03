@@ -22,7 +22,7 @@ func InDevHeader(l language.Language) render.Node {
 func HomeAnchor(l language.Language) render.Node {
 	tr := translate.T[l]
 	return render.N("",
-		render.Na("a.headerHome", "href", l.Path("/")).A("title", tr.HOME.Name).N("⾕"),
+		render.Na("a", "href", l.Path("/")).A("title", tr.HOME.Name).N("H"),
 		" / ",
 	)
 }
