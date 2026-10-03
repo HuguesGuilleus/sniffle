@@ -37,13 +37,14 @@ func renderHome(l language.Language, years []int) []byte {
 				),
 				render.N("div.boxFlex.summary",
 					render.Na("a.box.edito", "href", "report/schema.html").N(tr.GLOBAL.SchemaLink),
-					render.Na("a.box.data", "href", "report/data.html").N(tr.GLOBAL.SchemaLink),
+					render.Na("a.box.data", "href", "report/data.html").N(tr.GLOBAL.ReuseDataLink),
 				),
 				render.N("div.boxFlex.summary",
 					render.Na("a.box", "href", l.Path("report/ar.")).N(tr.EU_ECA.Kind["Annual report"]),
 					render.Na("a.box", "href", l.Path("report/rv.")).N(tr.EU_ECA.Kind["Review"]),
 					render.Na("a.box", "href", l.Path("report/act.")).N(tr.EU_ECA.Kind["Activity Report"]),
 					render.Na("a.box", "href", l.Path("report/j.")).N(tr.EU_ECA.Kind["Journal"]),
+					"[!opinions are missing]",
 				),
 				render.N("div.boxFlex.summary", render.S(years, "", func(year int) render.Node {
 					return render.Na("a.box", "href", fmt.Sprintf("report/%d.%s.html", year, l)).N(render.Int(year))
