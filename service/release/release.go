@@ -15,6 +15,7 @@ var steps = []render.Node{
 	step("2024-07-27", "", "tool", "Begin tool development for this website."),
 	step("2024-08-11", "2025-03-26", "eu/ec/eci", "Creation of European Citizens' Initiative pages."),
 	step("2024-12-27", "", "release", "Creation of release pages."),
+	step("2026-10-03", "", "release", "Add ECA reports (without opinion)."),
 }
 
 func Do(t *tool.Tool) {
